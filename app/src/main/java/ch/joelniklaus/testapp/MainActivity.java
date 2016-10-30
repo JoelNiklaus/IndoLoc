@@ -17,6 +17,7 @@ import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.instance.RemovePercentage;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,23 +25,67 @@ public class MainActivity extends AppCompatActivity {
 
     private String testTrain() {
         try {
+            // Load
+            Instances data = loadArffFromAssets("supermarket.arff");
+
+            // Filtering
+            RemovePercentage remove = new RemovePercentage();
+            remove.setInputFormat(data);
+            String trainingSetPercentage = "99";
+
+            String[] optionsTrain = {"-P", trainingSetPercentage};
+            remove.setOptions(optionsTrain);
+            Instances newData = Filter.useFilter(data, remove);
+            saveArff(newData, "train.arff");
+
+            String[] optionsTest = {"-P", trainingSetPercentage, "-V"};
+            remove.setOptions(optionsTest);
+            newData = Filter.useFilter(data, remove);
+            saveArff(newData, "test.arff");
+
+
             // Train and test set
-            Instances train = loadArff("weather_train.arff");   // from internal storage
-            Instances test = loadArff("weather_train.arff");    // from internal storage
+            Instances train = loadArff("train.arff");   // from internal storage
+            train.setClassIndex(data.numAttributes() - 1);
+            Instances test = loadArff("test.arff");    // from internal storage
+            test.setClassIndex(data.numAttributes() - 1);
             // train classifier
             Classifier cls = new J48();
             cls.buildClassifier(train);
             // evaluate classifier and print some statistics
             Evaluation eval = new Evaluation(train);
             eval.evaluateModel(cls, test);
-            System.out.println(eval.toSummaryString("\nResults\n======\n", false));
+
+            String result = eval.toSummaryString("\nResults\n======\n", false);
+
+            System.out.println(result);
+            return "success";
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "fail";
     }
 
-    private String testWeka() {
+    private String testClassifier() {
+        try {
+            Instances data = loadArffFromAssets("weather.arff");
+
+            // Classifier
+            String[] options = new String[1];
+            options[0] = "-U";            // unpruned tree
+            J48 tree = new J48();         // new instance of tree
+            tree.setOptions(options);     // set the options
+
+            // Evaluation
+            Evaluation eval = new Evaluation(data);
+            eval.crossValidateModel(tree, data, 10, new Random(1));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "fail";
+    }
+
+    private String testLoadAndSave() {
         try {
             // Load
             Instances data = loadArffFromAssets("weather.arff");
@@ -55,22 +100,9 @@ public class MainActivity extends AppCompatActivity {
             Instances newData = Filter.useFilter(data, remove);   // apply filter
 
             // Save
-            saveArff(data, "weather_new.arff");
+            saveArff(newData, "weather_new.arff");
 
             newData = loadArff("weather_new.arff");
-
-
-            // Classifier
-            options = new String[1];
-            options[0] = "-U";            // unpruned tree
-            J48 tree = new J48();         // new instance of tree
-            tree.setOptions(options);     // set the options
-            tree.buildClassifier(data);   // build classifier
-
-            // Evaluation
-            Evaluation eval = new Evaluation(newData);
-            eval.crossValidateModel(tree, data, 10, new Random(1));
-
 
             return newData.toSummaryString();
         } catch (Exception e) {
@@ -90,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Load Arff from internal storage
     private Instances loadArff(String filePath) throws Exception {
-        DataSource source = new DataSource(getBaseContext().getFilesDir()+"/"+filePath);
+        DataSource source = new DataSource(getBaseContext().getFilesDir() + "/" + filePath);
         return source.getDataSet();
     }
 
@@ -106,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonTap(View v) {
-        Toast myToast = Toast.makeText(getApplicationContext(), testWeka(), Toast.LENGTH_LONG);
+        Toast myToast = Toast.makeText(getApplicationContext(), testTrain(), Toast.LENGTH_LONG);
         myToast.show();
     }
 }
