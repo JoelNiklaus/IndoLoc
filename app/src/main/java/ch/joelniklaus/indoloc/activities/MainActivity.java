@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonTap(View v) {
         // instantiate WekaService with context
         WekaService wekaService = new WekaService(MainActivity.this);
-        Toast myToast = Toast.makeText(getApplicationContext(), wekaService.testTrain(), Toast.LENGTH_LONG);
+        Toast myToast = Toast.makeText(this, wekaService.testTrain(), Toast.LENGTH_LONG);
         myToast.show();
     }
 

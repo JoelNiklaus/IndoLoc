@@ -25,6 +25,10 @@ public class WekaService extends Service {
 
     private Context context;
 
+    public WekaService () {
+
+    }
+
     public WekaService(Context context) {
         this.context = context;
     }

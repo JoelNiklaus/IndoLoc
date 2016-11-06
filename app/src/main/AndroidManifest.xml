@@ -21,11 +21,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name=".activities.CollectDataActivity"
-            android:label="@string/title_activity_collect_data"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+        <activity android:name=".activities.CollectDataActivity"></activity>
     </application>
 
 </manifest>
