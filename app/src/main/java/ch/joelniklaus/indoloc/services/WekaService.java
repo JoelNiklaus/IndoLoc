@@ -1,9 +1,9 @@
-package ch.joelniklaus.indoloc;
+package ch.joelniklaus.indoloc.services;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Toast;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.IBinder;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,17 +15,29 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
-import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.converters.ConverterUtils;
 import weka.core.converters.LibSVMLoader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
-public class MainActivity extends AppCompatActivity {
+public class WekaService extends Service {
+
+    private Context context;
+
+    public WekaService(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 
     // Weka version = 3.7.3
 
-    private String testTrain() {
+    public String testTrain() {
         try {
             // Load
             Instances data = loadArffFromAssets("supermarket.arff");
@@ -38,18 +50,18 @@ public class MainActivity extends AppCompatActivity {
             String[] optionsTrain = {"-P", trainingSetPercentage};
             remove.setOptions(optionsTrain);
             Instances newData = Filter.useFilter(data, remove);
-            saveArff(newData, "train.arff");
+            saveArffToInternalStorage(newData, "train.arff");
 
             String[] optionsTest = {"-P", trainingSetPercentage, "-V"};
             remove.setOptions(optionsTest);
             newData = Filter.useFilter(data, remove);
-            saveArff(newData, "test.arff");
+            saveArffToInternalStorage(newData, "test.arff");
 
 
             // Train and test set
-            Instances train = loadArff("train.arff");   // from internal storage
+            Instances train = loadArffFromInternalStorage("train.arff");   // from internal storage
             train.setClassIndex(data.numAttributes() - 1);
-            Instances test = loadArff("test.arff");    // from internal storage
+            Instances test = loadArffFromInternalStorage("test.arff");    // from internal storage
             test.setClassIndex(data.numAttributes() - 1);
             // train classifier
             Classifier cls = new J48();
@@ -68,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         return "fail";
     }
 
-    private String testClassifier() {
+    public String testClassifier() {
         try {
             Instances data = loadArffFromAssets("weather.arff");
 
@@ -87,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         return "fail";
     }
 
-    private String testLoadAndSave() {
+    public String testLoadAndSave() {
         try {
             // Load
             Instances data = loadArffFromAssets("weather.arff");
@@ -102,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
             Instances newData = Filter.useFilter(data, remove);   // apply filter
 
             // Save
-            saveArff(newData, "weather_new.arff");
+            saveArffToInternalStorage(newData, "weather_new.arff");
 
-            newData = loadArff("weather_new.arff");
+            newData = loadArffFromInternalStorage("weather_new.arff");
 
             return newData.toSummaryString();
         } catch (Exception e) {
@@ -114,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         return "fail";
     }
 
-    private String testSVM() {
+    public String testSVM() {
 
         try {
             AbstractClassifier classifier = null;
@@ -141,32 +153,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // save Arff to internal storage
-    private void saveArff(Instances data, String filePath) throws IOException {
+    private void saveArffToInternalStorage(Instances data, String filePath) throws IOException {
         ArffSaver saver = new ArffSaver();
         saver.setInstances(data);
-        saver.setFile(new File(getBaseContext().getFilesDir(), filePath)); // save to internal storage
+        saver.setFile(new File(context.getFilesDir() + "/" + filePath)); // save to internal storage
         saver.writeBatch();
     }
 
     // Load Arff from internal storage
-    private Instances loadArff(String filePath) throws Exception {
-        DataSource source = new DataSource(getBaseContext().getFilesDir() + "/" + filePath);
+    private Instances loadArffFromInternalStorage(String filePath) throws Exception {
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(context.getFilesDir() + "/" + filePath);
         return source.getDataSet();
     }
 
     private Instances loadArffFromAssets(String filePath) throws Exception {
-        DataSource source = new DataSource(getAssets().open(filePath));
+        ConverterUtils.DataSource source = new ConverterUtils.DataSource(context.getAssets().open(filePath));
         return source.getDataSet();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-
-    public void onButtonTap(View v) {
-        Toast myToast = Toast.makeText(getApplicationContext(), testTrain(), Toast.LENGTH_LONG);
-        myToast.show();
     }
 }
