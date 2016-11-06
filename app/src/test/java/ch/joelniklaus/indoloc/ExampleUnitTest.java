@@ -1,4 +1,4 @@
-package ch.joelniklaus.testapp;
+package ch.joelniklaus.indoloc;
 
 import org.junit.Test;
 

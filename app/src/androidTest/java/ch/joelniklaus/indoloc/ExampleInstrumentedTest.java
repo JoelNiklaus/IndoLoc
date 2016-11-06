@@ -1,4 +1,4 @@
-package ch.joelniklaus.testapp;
+package ch.joelniklaus.indoloc;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("ch.joelniklaus.testapp", appContext.getPackageName());
+        assertEquals("ch.joelniklaus.indoloc", appContext.getPackageName());
     }
 }
