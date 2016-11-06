@@ -55,18 +55,24 @@ public class CollectDataActivity extends AppCompatActivity {
         attributes.add(new Attribute("room", rooms));
         attributes.add(new Attribute("Barometer", Attribute.NUMERIC));
 
-        Instances dataRaw = new Instances("TestInstances", attributes, 0);
+        Instances dataRaw = new Instances("TestInstances", attributes, dataPoints.size());
         System.out.println("Before adding any instance");
         System.out.println("--------------------------");
         System.out.println(dataRaw);
         System.out.println("--------------------------");
 
-        double[] instanceValues = new double[dataRaw.numAttributes()];
+        double[] instanceValues = null;
         for (int i = 0; i < dataPoints.size(); i++) {
+            instanceValues = new double[dataRaw.numAttributes()];
             instanceValues[0] = rooms.indexOf(dataPoints.get(i).getRoom());
             instanceValues[1] = dataPoints.get(i).getBarometer();
 
             dataRaw.add(new DenseInstance(1.0, instanceValues));
+
+            System.out.println("After instance number " + i);
+            System.out.println("--------------------------");
+            System.out.println(dataRaw);
+            System.out.println("--------------------------");
         }
 
         System.out.println("After adding all instances");

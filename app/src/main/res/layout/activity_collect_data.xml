@@ -27,7 +27,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="64dp"
-        android:id="@+id/saveDataPoint"
+        android:id="@+id/addDataPoint"
         android:onClick="addDataPoint" />
 
     <TextView
@@ -43,7 +43,7 @@
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/saveDataPoint"
+        android:layout_above="@+id/addDataPoint"
         android:layout_centerHorizontal="true">
 
         <RadioButton
