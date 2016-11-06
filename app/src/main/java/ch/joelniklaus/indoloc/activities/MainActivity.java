@@ -1,5 +1,6 @@
 package ch.joelniklaus.indoloc.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,4 +23,9 @@ public class MainActivity extends AppCompatActivity {
         Toast myToast = Toast.makeText(getApplicationContext(), wekaService.testTrain(), Toast.LENGTH_LONG);
         myToast.show();
     }
+
+    public void goToCollectData(View v) {
+        startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
+    }
 }
+

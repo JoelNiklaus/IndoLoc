@@ -10,21 +10,34 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.joelniklaus.indoloc.activities.MainActivity">
 
+    <Button
+        android:text="Train!"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:onClick="onButtonTap"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="162dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tap me if you dare!"
-        android:layout_marginTop="31dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:text="Tap to train data"
+        android:id="@+id/textView2"
+        android:layout_alignBottom="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="87dp" />
 
     <Button
-        android:text="Tap Me!"
+        android:text="Collect Data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="77dp"
-        android:id="@+id/button"
-        android:onClick="onButtonTap" />
+        android:id="@+id/collectData"
+        android:onClick="goToCollectData"
+        android:layout_marginTop="34dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

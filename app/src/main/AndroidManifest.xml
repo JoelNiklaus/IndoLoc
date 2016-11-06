@@ -19,7 +19,13 @@
         <service
             android:name=".services.WekaService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".activities.CollectDataActivity"
+            android:label="@string/title_activity_collect_data"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>
