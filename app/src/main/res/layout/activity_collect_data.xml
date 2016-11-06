@@ -19,55 +19,83 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="87dp" />
 
-    <TextView
-        android:text="Data values at your location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="86dp"
-        android:id="@+id/data"
-        android:layout_above="@+id/radioGroup"
-        android:layout_centerHorizontal="true" />
-
-
-
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/saveDataPoint"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="67dp" >
-
-        <RadioButton
-            android:text="Corridor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioButton3"
-            android:layout_weight="1" />
-
-        <RadioButton
-            android:text="Kitchen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/kitchen"
-            android:layout_weight="1" />
-
-        <RadioButton
-            android:text="RadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/livingRoom"
-            android:layout_weight="1" />
-    </RadioGroup>
 
     <Button
-        android:text="Save Data Point"
+        android:text="Add Data Point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="64dp"
         android:id="@+id/saveDataPoint"
-        android:onClick="saveDataPoint" />
+        android:onClick="addDataPoint" />
+
+    <TextView
+        android:text="Data values at your location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="26dp"
+        android:id="@+id/data"
+        android:layout_above="@+id/radioGroup"
+        android:layout_centerHorizontal="true" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveDataPoint"
+        android:layout_centerHorizontal="true">
+
+        <RadioButton
+            android:text="@string/corridor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/corridor"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/kitchen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/kitchen"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/living_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/livingRoom"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/nicola_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/roomNicola"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/tobias_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/roomTobias"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:text="@string/joel_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/roomJoel"
+            android:layout_weight="1" />
+    </RadioGroup>
+
+    <Button
+        android:text="Save Data Points to Arff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/saveToArff"
+        android:onClick="saveToArff" />
 
 </RelativeLayout>

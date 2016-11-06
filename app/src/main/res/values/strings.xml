@@ -2,7 +2,15 @@
     <string name="app_name">Indoor Localization</string>
     <string name="title_activity_collect_data">Collect Data</string>
     <string name="intro">
-        Here you can add training and testing data. The data has to be classified with the room name. In the training data this is used to build a model and in the testing data to check whether the model classified the input correctly.
+        Here you can add training and testing data. The data has to be classified with the room name.
+        In the training data this is used to build a model and in the testing data to check whether
+        the model classified the input correctly.
     </string>
     <string name="action_settings">Settings</string>
+    <string name="corridor">Corridor</string>
+    <string name="kitchen">Kitchen</string>
+    <string name="living_room">LivingRoom</string>
+    <string name="joel_room">JoelsRoom</string>
+    <string name="tobias_room">TobiasRoom</string>
+    <string name="nicola_room">NicolasRoom</string>
 </resources>

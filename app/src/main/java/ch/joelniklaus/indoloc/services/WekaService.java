@@ -157,7 +157,7 @@ public class WekaService extends Service {
     }
 
     // save Arff to internal storage
-    private void saveArffToInternalStorage(Instances data, String filePath) throws IOException {
+    public void saveArffToInternalStorage(Instances data, String filePath) throws IOException {
         ArffSaver saver = new ArffSaver();
         saver.setInstances(data);
         saver.setFile(new File(context.getFilesDir() + "/" + filePath)); // save to internal storage
@@ -165,12 +165,12 @@ public class WekaService extends Service {
     }
 
     // Load Arff from internal storage
-    private Instances loadArffFromInternalStorage(String filePath) throws Exception {
+    public Instances loadArffFromInternalStorage(String filePath) throws Exception {
         ConverterUtils.DataSource source = new ConverterUtils.DataSource(context.getFilesDir() + "/" + filePath);
         return source.getDataSet();
     }
 
-    private Instances loadArffFromAssets(String filePath) throws Exception {
+    public Instances loadArffFromAssets(String filePath) throws Exception {
         ConverterUtils.DataSource source = new ConverterUtils.DataSource(context.getAssets().open(filePath));
         return source.getDataSet();
     }

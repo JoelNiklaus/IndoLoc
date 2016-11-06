@@ -11,6 +11,9 @@ import ch.joelniklaus.indoloc.services.WekaService;
 
 public class MainActivity extends AppCompatActivity {
 
+    // instantiate WekaService with context
+    private WekaService wekaService = new WekaService(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonTap(View v) {
-        // instantiate WekaService with context
-        WekaService wekaService = new WekaService(MainActivity.this);
         Toast myToast = Toast.makeText(this, wekaService.testTrain(), Toast.LENGTH_LONG);
         myToast.show();
     }
