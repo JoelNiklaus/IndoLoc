@@ -1,4 +1,4 @@
-package ch.joelniklaus.testapp;
+package ch.joelniklaus.indoloc;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.converters.LibSVMLoader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
@@ -105,6 +107,32 @@ public class MainActivity extends AppCompatActivity {
             newData = loadArff("weather_new.arff");
 
             return newData.toSummaryString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "fail";
+    }
+
+    private String testSVM() {
+
+        try {
+            AbstractClassifier classifier = null;
+            classifier = (AbstractClassifier) Class.forName(
+                    "weka.classifiers.functions.LibSVM" ).newInstance();
+
+            String options = ( "-S 0 -K 0 -D 3 -G 0.0 -R 0.0 -N 0.5 -M 40.0 -C 1.0 -E 0.001 -P 0.1" );
+            String[] optionsArray = options.split( " " );
+
+            classifier.setOptions( optionsArray );
+
+
+            Instances train = loadArffFromAssets("weather.arff");
+
+            LibSVMLoader svmLoader = new LibSVMLoader();
+            svmLoader.getDataSet();
+
+            classifier.buildClassifier( train );
         } catch (Exception e) {
             e.printStackTrace();
         }
