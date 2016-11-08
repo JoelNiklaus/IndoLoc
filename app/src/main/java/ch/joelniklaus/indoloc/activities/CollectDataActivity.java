@@ -39,11 +39,14 @@ public class CollectDataActivity extends AppCompatActivity {
     }
 
     public void saveToArff(View v) {
-        createArffFile();
+        String filePath = "localizationData.arff";
+        createArffFile(filePath);
         this.dataPoints = new ArrayList<DataPoint>();
+        Toast myToast = Toast.makeText(this, "Saved data points to " + filePath, Toast.LENGTH_LONG);
+        myToast.show();
     }
 
-    private void createArffFile() {
+    private void createArffFile(String filePath) {
         ArrayList<Attribute> attributes = new ArrayList<Attribute>(2);
         ArrayList<String> rooms = new ArrayList<String>(6);
         rooms.add(getString(R.string.corridor));
@@ -81,8 +84,8 @@ public class CollectDataActivity extends AppCompatActivity {
         System.out.println("--------------------------");
 
         try {
-            wekaService.saveArffToInternalStorage(dataRaw, "localizationData.arff");
-            Instances data = wekaService.loadArffFromInternalStorage("localizationData.arff");
+            wekaService.saveArffToInternalStorage(dataRaw, filePath);
+            Instances data = wekaService.loadArffFromInternalStorage(filePath);
             System.out.println(data.toSummaryString());
         } catch (Exception e) {
             e.printStackTrace();

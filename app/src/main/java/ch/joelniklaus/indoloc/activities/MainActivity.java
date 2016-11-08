@@ -28,5 +28,9 @@ public class MainActivity extends AppCompatActivity {
     public void goToCollectData(View v) {
         startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
     }
+
+    public void goToRangingTraining(View v) {
+        startActivity(new Intent(MainActivity.this, RangingTraining.class));
+    }
 }
 
