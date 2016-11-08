@@ -28,7 +28,7 @@ public class CollectDataActivity extends AppCompatActivity {
     }
 
     public void addDataPoint(View v) {
-        dataPoints.add(new DataPoint(getRadioButtonText(), 1.23));
+        dataPoints.add(new DataPoint(getRadioButtonText(), null, 1.23));
 
         String output = "Data Point added:\n" +
                 "Room: " + getRadioButtonText() + "\n" +

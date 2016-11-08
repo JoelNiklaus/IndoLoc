@@ -21,8 +21,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonTap(View v) {
-        Toast myToast = Toast.makeText(this, wekaService.testTrain(), Toast.LENGTH_LONG);
-        myToast.show();
+        Toast.makeText(this, wekaService.testTrain(), Toast.LENGTH_SHORT).show();
     }
 
     public void goToCollectData(View v) {

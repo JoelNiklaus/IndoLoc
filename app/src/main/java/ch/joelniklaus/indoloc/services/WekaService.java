@@ -3,6 +3,7 @@ package ch.joelniklaus.indoloc.services;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.IBinder;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class WekaService extends Service {
 
     private Context context;
 
-    public WekaService () {
+    public WekaService() {
 
     }
 
@@ -135,12 +136,12 @@ public class WekaService extends Service {
         try {
             AbstractClassifier classifier = null;
             classifier = (AbstractClassifier) Class.forName(
-                    "weka.classifiers.functions.LibSVM" ).newInstance();
+                    "weka.classifiers.functions.LibSVM").newInstance();
 
-            String options = ( "-S 0 -K 0 -D 3 -G 0.0 -R 0.0 -N 0.5 -M 40.0 -C 1.0 -E 0.001 -P 0.1" );
-            String[] optionsArray = options.split( " " );
+            String options = ("-S 0 -K 0 -D 3 -G 0.0 -R 0.0 -N 0.5 -M 40.0 -C 1.0 -E 0.001 -P 0.1");
+            String[] optionsArray = options.split(" ");
 
-            classifier.setOptions( optionsArray );
+            classifier.setOptions(optionsArray);
 
 
             Instances train = loadArffFromAssets("weather.arff");
@@ -148,7 +149,7 @@ public class WekaService extends Service {
             LibSVMLoader svmLoader = new LibSVMLoader();
             svmLoader.getDataSet();
 
-            classifier.buildClassifier( train );
+            classifier.buildClassifier(train);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,22 +157,64 @@ public class WekaService extends Service {
         return "fail";
     }
 
-    // save Arff to internal storage
-    public void saveArffToInternalStorage(Instances data, String filePath) throws IOException {
+    public void saveArffToExternalStorage(Instances data, String fileName) throws IOException {
+        if (isExternalStorageWritable()) {
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+            File directory = new File(root + "/locations");
+            directory.mkdirs();
+            saveArff(data, new File(directory + "/" + fileName));
+        }
+    }
+
+    public Instances loadArffFromExternalStorage(String fileName) throws Exception {
+        if (isExternalStorageReadable()) {
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+            File directory = new File(root + "/locations");
+            return loadArff(directory + "/" + fileName);
+        }
+        return null;
+    }
+
+    public void saveArffToInternalStorage(Instances data, String fileName) throws IOException {
+        saveArff(data, new File(context.getFilesDir() + "/" + fileName));
+    }
+
+
+    public Instances loadArffFromInternalStorage(String fileName) throws Exception {
+        return loadArff(context.getFilesDir() + "/" + fileName);
+    }
+
+    public Instances loadArffFromAssets(String fileName) throws Exception {
+        return new ConverterUtils.DataSource(context.getAssets().open(fileName)).getDataSet();
+    }
+
+    private void saveArff(Instances data, File file) throws IOException {
         ArffSaver saver = new ArffSaver();
         saver.setInstances(data);
-        saver.setFile(new File(context.getFilesDir() + "/" + filePath)); // save to internal storage
+        saver.setFile(file);
         saver.writeBatch();
     }
 
-    // Load Arff from internal storage
-    public Instances loadArffFromInternalStorage(String filePath) throws Exception {
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(context.getFilesDir() + "/" + filePath);
-        return source.getDataSet();
+    private Instances loadArff(String filePath) throws Exception {
+        return new ConverterUtils.DataSource(filePath).getDataSet();
     }
 
-    public Instances loadArffFromAssets(String filePath) throws Exception {
-        ConverterUtils.DataSource source = new ConverterUtils.DataSource(context.getAssets().open(filePath));
-        return source.getDataSet();
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }
