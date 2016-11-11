@@ -159,7 +159,7 @@ public class RangingTraining extends Activity implements SensorEventListener {
         RSS7 = (TextView) findViewById(R.id.txtRSS7);
         btnStart = (Button) findViewById(R.id.btnStart);
 
-        editPosition = (EditText) findViewById(R.id.editPosition);
+        editPosition = (EditText) findViewById(R.id.editRoom);
 
         //txt file
         rssData = "rssData.txt";

@@ -11,12 +11,12 @@ public class DataPoint {
 
     private ArrayList<Integer> rssList;
 
-    private double barometer;
+    private SensorsValue sensors;
 
-    public DataPoint(String room, ArrayList<Integer> rssList, double barometer) {
+    public DataPoint(String room, ArrayList<Integer> rssList, SensorsValue sensors) {
         this.room = room;
         this.rssList = rssList;
-        this.barometer = barometer;
+        this.sensors = sensors;
     }
 
     public String getRoom() {
@@ -35,11 +35,20 @@ public class DataPoint {
         this.rssList = rssList;
     }
 
-    public double getBarometer() {
-        return barometer;
+    public SensorsValue getSensors() {
+        return sensors;
     }
 
-    public void setBarometer(double barometer) {
-        this.barometer = barometer;
+    public void setSensors(SensorsValue sensors) {
+        this.sensors = sensors;
+    }
+
+    @Override
+    public String toString() {
+        return "DataPoint{" +
+                "room='" + room + '\'' +
+                ", rssList=" + rssList +
+                ", sensors=" + sensors +
+                '}';
     }
 }

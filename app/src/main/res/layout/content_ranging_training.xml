@@ -22,14 +22,14 @@
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:text="Position:"
-                  android:id="@+id/txtPos"
+                  android:id="@+id/txtRoom"
                   android:layout_alignParentLeft="true"
                   android:layout_alignParentStart="true"
                   />
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/editPosition"
+                android:id="@+id/editRoom"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                  />

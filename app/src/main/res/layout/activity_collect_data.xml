@@ -11,91 +11,301 @@
     tools:context="ch.joelniklaus.indoloc.activities.CollectDataActivity">
 
 
-    <TextView
+    <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/intro"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Room:" />
+
+            <EditText
+                android:id="@+id/editRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </TableRow>
+
+        <!--
+        <TableRow>
+
+            <Button
+                android:id="@+id/addRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="saveToArff"
+                android:text="Add Room" />
+
+        </TableRow>
+-->
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtScanV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Scan Number:" />
+
+            <TextView
+                android:id="@+id/txtScan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS1V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS1:" />
+
+            <TextView
+                android:id="@+id/txtRSS1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS2V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS2:" />
+
+            <TextView
+                android:id="@+id/txtRSS2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS3V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS3:" />
+
+            <TextView
+                android:id="@+id/txtRSS3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS4V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS4:" />
+
+            <TextView
+                android:id="@+id/txtRSS4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS5V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS5:" />
+
+            <TextView
+                android:id="@+id/txtRSS5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS6V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS6:" />
+
+            <TextView
+                android:id="@+id/txtRSS6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtRSS7V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS7:" />
+
+            <TextView
+                android:id="@+id/txtRSS7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/chronometer"
+                android:layout_centerHorizontal="true"
+                android:onClick="start"
+                android:text="START" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnCreate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="createFile"
+                android:text="Create File" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnRead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="readFile"
+                android:text="Read File" />
+
+        </TableRow>
+
+
+    </TableLayout>
+
+    <TextView
         android:id="@+id/intro"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="87dp" />
-
-
-    <Button
-        android:text="Add Data Point"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="64dp"
-        android:id="@+id/addDataPoint"
-        android:onClick="addDataPoint" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/intro" />
 
-    <TextView
-        android:text="Data values at your location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp"
-        android:id="@+id/data"
-        android:layout_above="@+id/radioGroup"
-        android:layout_centerHorizontal="true" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/addDataPoint"
-        android:layout_centerHorizontal="true">
+    <!--
+   <RadioGroup
+       android:id="@+id/radioGroup"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginRight="31dp"
+       android:layout_marginEnd="31dp"
+       android:layout_marginTop="118dp"
+       android:layout_alignParentTop="true"
+       android:layout_alignParentRight="true"
+       android:layout_alignParentEnd="true">
 
-        <RadioButton
-            android:text="@string/corridor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/corridor"
-            android:layout_weight="1" />
+       <RadioButton
+           android:text="@string/corridor"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/corridor"
+           android:layout_weight="1" />
 
-        <RadioButton
-            android:text="@string/kitchen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/kitchen"
-            android:layout_weight="1" />
+       <RadioButton
+           android:text="@string/kitchen"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/kitchen"
+           android:layout_weight="1" />
 
-        <RadioButton
-            android:text="@string/living_room"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/livingRoom"
-            android:layout_weight="1" />
+       <RadioButton
+           android:text="@string/living_room"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/livingRoom"
+           android:layout_weight="1" />
 
-        <RadioButton
-            android:text="@string/nicola_room"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/roomNicola"
-            android:layout_weight="1" />
+       <RadioButton
+           android:text="@string/nicola_room"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/roomNicola"
+           android:layout_weight="1" />
 
-        <RadioButton
-            android:text="@string/tobias_room"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/roomTobias"
-            android:layout_weight="1" />
+       <RadioButton
+           android:text="@string/tobias_room"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/roomTobias"
+           android:layout_weight="1" />
 
-        <RadioButton
-            android:text="@string/joel_room"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/roomJoel"
-            android:layout_weight="1" />
-    </RadioGroup>
-
-    <Button
-        android:text="Save Data Points to Arff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/saveToArff"
-        android:onClick="saveToArff" />
+       <RadioButton
+           android:text="@string/joel_room"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/roomJoel"
+           android:layout_weight="1" />
+   </RadioGroup>
+   -->
 
 </RelativeLayout>
