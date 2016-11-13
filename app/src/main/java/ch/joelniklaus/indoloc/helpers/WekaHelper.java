@@ -1,13 +1,16 @@
-package ch.joelniklaus.indoloc.services;
+package ch.joelniklaus.indoloc.helpers;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Random;
 
 import weka.classifiers.AbstractClassifier;
@@ -22,15 +25,15 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
-public class WekaService extends Service {
+public class WekaHelper extends Service {
 
     private Context context;
 
-    public WekaService() {
+    public WekaHelper() {
 
     }
 
-    public WekaService(Context context) {
+    public WekaHelper(Context context) {
         this.context = context;
     }
 
@@ -159,11 +162,71 @@ public class WekaService extends Service {
 
     public void saveArffToExternalStorage(Instances data, String fileName) throws IOException {
         if (isExternalStorageWritable()) {
-            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString();
+
+            try {
+                File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "test");
+                FileOutputStream os = new FileOutputStream(file);
+                OutputStreamWriter out = new OutputStreamWriter(os);
+                out.close();
+                alert("File created!" + getExternalFilesDir(null).toString());
+            } catch (IOException e) {
+                alert("error");
+            }
+
+            /*
+            String file = "example.xml";
+            String dirName = "MyDirectory";
+            String contentToWrite = "Your Content Goes Here";
+            File myDir = new File("sdcard", dirName);
+
+            if(!myDir.exists())
+                myDir.mkdirs();
+
+
+            File myFile = new File(myDir, file);
+
+            try {
+                FileWriter fileWriter = new FileWriter(myFile);
+                fileWriter.append(contentToWrite);
+                fileWriter.flush();
+                fileWriter.close();
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+            */
+
+            /*
+            File dir = new File("sdcard", "data");
+            if(!dir.exists())
+                dir.mkdirs();
+
+
+
+
+            saveArff(data, new File(dir, fileName));
+            */
+
+            /*
+            File root = new File(Environment.getExternalStorageDirectory(), "Documents");
+            if(!root.exists()) {
+                root.mkdirs();
+            }
+            saveArff(data, new File(root, fileName));
+
+
+
+
+            File root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
             File directory = new File(root + "/locations");
-            directory.mkdirs();
-            saveArff(data, new File(directory + "/" + fileName));
+            if (!directory.exists())
+                directory.mkdirs();
+            File file = new File(directory, fileName);
+            saveArff(data, file);
+*/
         }
+        else
+            Toast.makeText(this, "External Storage is not writable", Toast.LENGTH_SHORT).show();
     }
 
     public Instances loadArffFromExternalStorage(String fileName) throws Exception {
@@ -217,4 +280,9 @@ public class WekaService extends Service {
         }
         return false;
     }
+
+    public void alert(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
 }

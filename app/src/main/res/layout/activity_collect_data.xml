@@ -15,8 +15,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp">
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <TableRow>
 
@@ -204,6 +207,44 @@
 
         <TableRow>
 
+            <TextView
+                android:id="@+id/txtLightV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Light:" />
+
+            <TextView
+                android:id="@+id/txtLight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPressureV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Pressure:" />
+
+            <TextView
+                android:id="@+id/txtPressure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
             <Button
                 android:id="@+id/btnStart"
                 android:layout_width="wrap_content"
@@ -224,11 +265,6 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="createFile"
                 android:text="Create File" />
-
-        </TableRow>
-
-        <TableRow>
-
             <Button
                 android:id="@+id/btnRead"
                 android:layout_width="wrap_content"
@@ -236,12 +272,41 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="readFile"
                 android:text="Read File" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnTrain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="trainModel"
+                android:text="Train Model" />
 
         </TableRow>
 
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="testModel"
+                android:text="Test Model" />
+            <Button
+                android:id="@+id/btnLiveTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="liveTestModel"
+                android:text="Live Test Model" />
+        </TableRow>
 
     </TableLayout>
 
+    <!--
     <TextView
         android:id="@+id/intro"
         android:layout_width="wrap_content"
@@ -252,7 +317,7 @@
         android:text="@string/intro" />
 
 
-    <!--
+
    <RadioGroup
        android:id="@+id/radioGroup"
        android:layout_width="wrap_content"

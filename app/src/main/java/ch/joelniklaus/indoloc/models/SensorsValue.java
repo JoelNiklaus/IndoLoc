@@ -5,33 +5,20 @@ package ch.joelniklaus.indoloc.models;
  */
 public class SensorsValue {
 
-    private double ambientTemperature;
+    //private double ambientTemperature;
+    //private double relativeHumidity;
     private double light;
     private double pressure;
-    private double relativeHumidity;
 
-    public SensorsValue(double ambientTemperature, double light, double pressure, double relativeHumidity) {
-        this.ambientTemperature = ambientTemperature;
+    public SensorsValue(double light, double pressure) {
+        //this.ambientTemperature = ambientTemperature;
+        //this.relativeHumidity = relativeHumidity;
         this.light = light;
         this.pressure = pressure;
-        this.relativeHumidity = relativeHumidity;
+
     }
 
-    public double getRelativeHumidity() {
-        return relativeHumidity;
-    }
 
-    public void setRelativeHumidity(double relativeHumidity) {
-        this.relativeHumidity = relativeHumidity;
-    }
-
-    public double getAmbientTemperature() {
-        return ambientTemperature;
-    }
-
-    public void setAmbientTemperature(double ambientTemperature) {
-        this.ambientTemperature = ambientTemperature;
-    }
 
     public double getLight() {
         return light;
@@ -52,10 +39,8 @@ public class SensorsValue {
     @Override
     public String toString() {
         return "SensorsValue{" +
-                "ambientTemperature=" + ambientTemperature +
-                ", light=" + light +
+                "light=" + light +
                 ", pressure=" + pressure +
-                ", relativeHumidity=" + relativeHumidity +
                 '}';
     }
 }

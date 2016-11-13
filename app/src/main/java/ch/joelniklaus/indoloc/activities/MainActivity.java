@@ -7,12 +7,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import ch.joelniklaus.indoloc.R;
-import ch.joelniklaus.indoloc.services.WekaService;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-    // instantiate WekaService with context
-    private WekaService wekaService = new WekaService(this);
+    // instantiate WekaHelper with context
+    private WekaHelper wekaHelper = new WekaHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,15 +21,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonTap(View v) {
-        Toast.makeText(this, wekaService.testTrain(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, wekaHelper.testTrain(), Toast.LENGTH_SHORT).show();
     }
 
     public void goToCollectData(View v) {
         startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
     }
 
-    public void goToRangingTraining(View v) {
-        startActivity(new Intent(MainActivity.this, RangingTraining.class));
-    }
 }
 
