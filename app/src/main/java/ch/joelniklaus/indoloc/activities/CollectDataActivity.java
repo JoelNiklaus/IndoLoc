@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -25,6 +24,7 @@ import java.util.Random;
 
 import ch.joelniklaus.indoloc.R;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
+import ch.joelniklaus.indoloc.helpers.SensorHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorsValue;
@@ -52,12 +52,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private WifiReceiver wifiReceiver;
     private WifiManager wifiManager;
     private ArrayList<Integer> rssList = new ArrayList<Integer>(7);
-    ;
 
-    private SensorManager sensorManager;
-    private Sensor ambientTemperatureSensor, lightSensor, pressureSensor, relativeHumiditySensor;
-    private double ambientTemperature, light, pressure, relativeHumidity;
-    private SensorsValue sensorsValue = null;
+    SensorsValue sensorsValue;
 
     private Classifier classifier;
 
@@ -67,12 +63,12 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private static final int NUMBER_OF_ACCESS_POINTS = 7;
 
     private FileHelper fileHelper = new FileHelper(this);
+    private SensorHelper sensorHelper = new SensorHelper(this);
 
     //WIFI broadcaster class
     public class WifiReceiver extends BroadcastReceiver {
 
         public void onReceive(Context c, Intent intent) {
-            scanText.setText(Integer.toString(scanNumber++));
             List<ScanResult> scanResults = wifiManager.getScanResults();
             rssList = new ArrayList<Integer>(NUMBER_OF_ACCESS_POINTS);
             for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
@@ -116,45 +112,17 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         setContentView(R.layout.activity_collect_data);
 
         // Sensors
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
-/*
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null){
-            ambientTemperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-            alert("Success: ambient temperature");
-        }
-        else {
-            alert("Failure: ambient temperature");
-        }
-
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null){
-            relativeHumiditySensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-            alert("Success: relative humidity");
-        }
-        else {
-            alert("Failure: reltive humidity");
-        }
-        */
-
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT) != null) {
-            lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-            alert("Success: light");
-        } else {
-            alert("Failure: light");
-        }
-
-        if (sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
-            pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-            alert("Success: pressure");
-        } else {
-            alert("Failure: pressure");
-        }
+        sensorHelper.setUpSensors();
 
         // WiFi
-        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiReceiver = new WifiReceiver();
 
 
+        setUpTextViews();
+    }
+
+    private void setUpTextViews() {
         scanText = (TextView) findViewById(R.id.txtScan);
         rss1Text = (TextView) findViewById(R.id.txtRSS1);
         rss2Text = (TextView) findViewById(R.id.txtRSS2);
@@ -167,17 +135,13 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         pressureText = (TextView) findViewById(R.id.txtPressure);
         startButton = (Button) findViewById(R.id.btnStart);
         roomEditText = (EditText) findViewById(R.id.editRoom);
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        //sensorManager.registerListener(this, ambientTemperatureSensor, SensorManager.SENSOR_DELAY_UI);
-        //sensorManager.registerListener(this, relativeHumiditySensor, SensorManager.SENSOR_DELAY_UI);
-        sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_UI);
-        sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_UI);
+        sensorHelper.registerListeners();
 
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
@@ -186,39 +150,17 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     protected void onPause() {
         super.onPause();
 
-        sensorManager.unregisterListener(this);
+        sensorHelper.unRegisterListeners();
+
         unregisterReceiver(wifiReceiver);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        /*
-        if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-            //take the values
-            ambientTemperature = event.values[0];
-        }
-
-         if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
-            //take the values
-            relativeHumidity = event.values[0];
-        }
-        */
-
-        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-            //take the values
-            light = event.values[0];
-            lightText.setText(Double.toString(light));
-        }
-
-        if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
-            //take the values
-            pressure = event.values[0];
-            pressureText.setText(Double.toString(pressure));
-        }
-
-        sensorsValue = new SensorsValue(light, pressure);
-
+        sensorsValue = sensorHelper.readSensorData(event);
+        pressureText.setText(Double.toString(sensorsValue.getPressure()));
+        lightText.setText(Double.toString(sensorsValue.getLight()));
 
         wifiManager.startScan();
     }
@@ -229,11 +171,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
     public void start(View view) {
-
         String label = startButton.getText().toString();
         try {
+            // reset scan Number
+            scanNumber = 0;
             if (label.equals("START")) {
-                scanNumber = 0;
                 startButton.setText("STOP");
                 // Start registering
                 registering = true;
@@ -250,6 +192,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private void saveDataPoint() {
         if (registering) {
+            scanText.setText(Integer.toString(scanNumber++));
             DataPoint dataPoint = registerDataPoint();
             this.dataPoints.add(dataPoint);
         }
@@ -331,7 +274,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     public void trainModel(View v) {
         try {
-            Instances data =  fileHelper.loadArffFromExternalStorage("data.arff");
+            Instances data = fileHelper.loadArffFromExternalStorage("data.arff");
 
             // Randomizing
             data.randomize(new Random());
@@ -404,7 +347,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void readFile(View v) {
         String filePath = "data.arff";
         try {
-            Instances instances =  fileHelper.loadArffFromInternalStorage(filePath);
+            Instances instances = fileHelper.loadArffFromInternalStorage(filePath);
             Toast.makeText(this, instances.toString(), Toast.LENGTH_LONG).show();
             Toast.makeText(this, instances.toSummaryString(), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
@@ -487,5 +430,4 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void alert(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
 }

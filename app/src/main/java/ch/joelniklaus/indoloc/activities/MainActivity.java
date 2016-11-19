@@ -28,5 +28,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
     }
 
+    public void alert(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }
 
