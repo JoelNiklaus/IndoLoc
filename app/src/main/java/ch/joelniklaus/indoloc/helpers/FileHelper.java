@@ -18,6 +18,7 @@ import weka.core.converters.ConverterUtils;
 public class FileHelper {
 
     private static final File EXTERNAL_DIRECTORY = new File("sdcard", "Indoloc");
+
     private Context context;
 
     public FileHelper(Context context) {
