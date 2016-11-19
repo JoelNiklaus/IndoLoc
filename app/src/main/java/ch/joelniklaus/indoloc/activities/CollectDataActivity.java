@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,27 +19,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import ch.joelniklaus.indoloc.R;
+import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorsValue;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.Bagging;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
+import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.converters.ArffSaver;
-import weka.core.converters.ConverterUtils;
 import weka.filters.Filter;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
@@ -69,7 +65,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private boolean registering = false;
 
     private static final int NUMBER_OF_ACCESS_POINTS = 7;
-    private static final File EXTERNAL_DIRECTORY = new File("sdcard", "Indoloc");
+
+    private FileHelper fileHelper = new FileHelper(this);
 
     //WIFI broadcaster class
     public class WifiReceiver extends BroadcastReceiver {
@@ -264,21 +261,45 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         return new DataPoint(room, rssList, sensorsValue);
     }
 
-
-    private void test(Instances test, Instances train) throws Exception {
-        // evaluate classifier and print some statistics
-        Evaluation eval = new Evaluation(train);
-        eval.evaluateModel(classifier, test);
-        alert(eval.toSummaryString("\nResults\n======\n", false));
-    }
-
     public void liveTestModel(View v) {
         try {
-            ArrayList<DataPoint> lastDataPoint = new ArrayList<DataPoint>(1);
-            lastDataPoint.add(registerDataPoint());
-            Instances test = buildInstances(lastDataPoint);
-            Instances train = loadArffFromExternalStorage("train.arff");
-            test(test, train);
+            Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
+
+            DataPoint dataPoint = registerDataPoint();
+            Instances unlabeled = new Instances(train);
+            unlabeled.removeAll(train);
+
+            double[] instanceValues = new double[unlabeled.numAttributes()];
+
+            // room
+            instanceValues[0] = 0;
+
+            // rss
+            ArrayList<Integer> rssListTemp = dataPoint.getRssList();
+            ;
+            for (int i = 0; i < rssListTemp.size(); i++)
+                instanceValues[1 + i] = rssListTemp.get(i);
+
+            // sensors
+            SensorsValue sensors = dataPoint.getSensors();
+
+            instanceValues[rssListTemp.size() + 1] = sensors.getLight();
+            instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
+
+            unlabeled.add(new DenseInstance(1.0, instanceValues));
+
+
+            // set class attribute
+            unlabeled.setClassIndex(0);
+
+            // create copy
+            Instances labeled = new Instances(unlabeled);
+
+            // label instance
+            double clsLabel = classifier.classifyInstance(unlabeled.instance(0));
+            labeled.instance(0).setClassValue(clsLabel);
+
+            alert(String.valueOf(labeled.instance(0).classValue()) + " of " + labeled.classAttribute());
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -287,10 +308,21 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     public void testModel(View v) {
         try {
-            Instances test = loadArffFromExternalStorage("test.arff");
-            Instances train = loadArffFromExternalStorage("train.arff");
-            // evaluate classifier and print some statistics
-            test(test, train);
+            Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
+
+            for (int i = 0; i < test.numInstances(); i++) {
+                double actualClass = test.instance(i).classValue();
+
+                String actual = test.classAttribute().value((int) actualClass);
+
+                Instance newInstance = test.instance(i);
+
+                double predictedClass = classifier.classifyInstance(newInstance);
+
+                String predicted = test.classAttribute().value((int) predictedClass);
+
+                alert("Predicted Room: " + predicted + ", Actual Room: " + actual);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -299,7 +331,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     public void trainModel(View v) {
         try {
-            Instances data = loadArffFromExternalStorage("data.arff");
+            Instances data =  fileHelper.loadArffFromExternalStorage("data.arff");
 
             // Randomizing
             data.randomize(new Random());
@@ -312,15 +344,15 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             String[] optionsTrain = {"-P", trainingSetPercentage, "-V"};
             remove.setOptions(optionsTrain);
             Instances train = Filter.useFilter(data, remove);
-            saveArffToExternalStorage(train, "train.arff");
+            fileHelper.saveArffToExternalStorage(train, "train.arff");
 
             String[] optionsTest = {"-P", trainingSetPercentage};
             remove.setOptions(optionsTest);
             Instances test = Filter.useFilter(data, remove);
-            saveArffToExternalStorage(test, "test.arff");
+            fileHelper.saveArffToExternalStorage(test, "test.arff");
 
-            train.setClassIndex(train.numAttributes() - 1);
-            test.setClassIndex(test.numAttributes() - 1);
+            train.setClassIndex(0);
+            test.setClassIndex(0);
 
             trainKNN(train);
 
@@ -372,7 +404,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void readFile(View v) {
         String filePath = "data.arff";
         try {
-            Instances instances = loadArffFromInternalStorage(filePath);
+            Instances instances =  fileHelper.loadArffFromInternalStorage(filePath);
             Toast.makeText(this, instances.toString(), Toast.LENGTH_LONG).show();
             Toast.makeText(this, instances.toSummaryString(), Toast.LENGTH_LONG).show();
         } catch (Exception e) {
@@ -391,8 +423,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         Instances dataRaw = buildInstances(dataPoints);
 
         try {
-            saveArffToInternalStorage(dataRaw, filePath);
-            saveArffToExternalStorage(dataRaw, filePath);
+            fileHelper.saveArffToInternalStorage(dataRaw, filePath);
+            fileHelper.saveArffToExternalStorage(dataRaw, filePath);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -408,16 +440,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         for (DataPoint dataPoint : dataPoints)
             if (!rooms.contains(dataPoint.getRoom()))
                 rooms.add(dataPoint.getRoom());
-        /*
-        rooms.add(getString(R.string.corridor));
-        rooms.add(getString(R.string.kitchen));
-        rooms.add(getString(R.string.living_room));
-        rooms.add(getString(R.string.joel_room));
-        rooms.add(getString(R.string.tobias_room));
-        rooms.add(getString(R.string.nicola_room));
-        */
 
-        // room
+        // class: room
         attributes.add(new Attribute("room", rooms));
 
         // rss
@@ -431,11 +455,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         attributes.add(new Attribute("pressure", Attribute.NUMERIC));
 
         Instances data = new Instances("TestInstances", attributes, dataPoints.size());
-
-        System.out.println("Before adding any instance");
-        System.out.println("--------------------------");
-        System.out.println(data);
-        System.out.println("--------------------------");
 
         double[] instanceValues = null;
         for (DataPoint dataPoint : dataPoints) {
@@ -458,107 +477,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
 
             data.add(new DenseInstance(1.0, instanceValues));
-
-            System.out.println("After instance i");
-            System.out.println("--------------------------");
-            System.out.println(data);
-            System.out.println("--------------------------");
         }
 
-        System.out.println("After adding all instances");
-        System.out.println("--------------------------");
-        System.out.println(data);
-        System.out.println("--------------------------");
-
-        data.setClassIndex(data.numAttributes() - 1);
+        data.setClassIndex(0);
 
         return data;
-    }
-
-/*
-    public void addDataPoint(View v) {
-        dataPoints.add(new DataPoint(getRadioButtonText(), null, null));
-
-        String output = "Data Point added:\n" +
-                "Room: " + getRadioButtonText() + "\n" +
-                "Barometer: ..." + "\n";
-
-        Toast.makeText(this, output, Toast.LENGTH_SHORT).show();
-    }
-
-    private String getRadioButtonText() {
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        int radioButtonId = radioGroup.getCheckedRadioButtonId();
-        RadioButton radioButton = (RadioButton) radioGroup.findViewById(radioButtonId);
-        return (String) radioButton.getText();
-    }
-*/
-
-    public void saveArffToExternalStorage(Instances data, String fileName) throws IOException {
-        if (isExternalStorageWritable()) {
-            if (!EXTERNAL_DIRECTORY.exists())
-                EXTERNAL_DIRECTORY.mkdirs();
-
-            File file = new File(EXTERNAL_DIRECTORY, fileName);
-
-            saveArff(data, file);
-        } else
-            Toast.makeText(this, "External Storage is not writable", Toast.LENGTH_SHORT).show();
-    }
-
-    public Instances loadArffFromExternalStorage(String fileName) throws Exception {
-        if (isExternalStorageReadable()) {
-            File file = new File(EXTERNAL_DIRECTORY, fileName);
-            return loadArff(file.getAbsolutePath());
-        }
-        return null;
-    }
-
-    public void saveArffToInternalStorage(Instances data, String fileName) throws IOException {
-        saveArff(data, new File(getFilesDir() + "/" + fileName));
-    }
-
-
-    public Instances loadArffFromInternalStorage(String fileName) throws Exception {
-        return loadArff(getFilesDir() + "/" + fileName);
-    }
-
-    public Instances loadArffFromAssets(String fileName) throws Exception {
-        Instances data =  new ConverterUtils.DataSource(getAssets().open(fileName)).getDataSet();
-        data.setClassIndex(data.numAttributes() - 1);
-        return data;
-    }
-
-    private void saveArff(Instances data, File file) throws IOException {
-        ArffSaver saver = new ArffSaver();
-        saver.setInstances(data);
-        saver.setFile(file);
-        saver.writeBatch();
-    }
-
-    private Instances loadArff(String filePath) throws Exception {
-        Instances data = new ConverterUtils.DataSource(filePath).getDataSet();
-        data.setClassIndex(data.numAttributes() - 1);
-        return data;
-    }
-
-    /* Checks if external storage is available for read and write */
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    /* Checks if external storage is available to at least read */
-    public boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
     }
 
     public void alert(String message) {

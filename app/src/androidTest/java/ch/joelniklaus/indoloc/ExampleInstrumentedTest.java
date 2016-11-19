@@ -23,4 +23,5 @@ public class ExampleInstrumentedTest {
 
         assertEquals("ch.joelniklaus.indoloc", appContext.getPackageName());
     }
+
 }
