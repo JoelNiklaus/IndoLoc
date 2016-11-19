@@ -25,7 +25,6 @@ import ch.joelniklaus.indoloc.R;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.SensorHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import ch.joelniklaus.indoloc.helpers.WifiHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorsValue;
 import weka.core.Instances;
@@ -52,7 +51,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private FileHelper fileHelper = new FileHelper(this);
     private SensorHelper sensorHelper = new SensorHelper(this);
-    private WifiHelper wifiHelper = new WifiHelper(this);
     private WekaHelper wekaHelper = new WekaHelper(this);
 
     //WIFI broadcaster class

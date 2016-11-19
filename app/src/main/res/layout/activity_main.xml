@@ -49,18 +49,6 @@
                 android:text="Test Model" />
         </TableRow>
 
-        <TableRow>
-
-            <Button
-                android:id="@+id/btnLiveTest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:onClick="liveTestModel"
-                android:text="Live Test Model" />
-        </TableRow>
-
-
     </TableLayout>
 
 

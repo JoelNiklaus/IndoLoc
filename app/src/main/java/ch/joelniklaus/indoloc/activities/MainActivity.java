@@ -26,10 +26,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
     }
 
-    public void liveTestModel(View v) {
-
-    }
-
     public void testModel(View v) {
         try {
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
