@@ -7,6 +7,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Random;
 
+import ch.joelniklaus.indoloc.LibSVM;
 import ch.joelniklaus.indoloc.activities.CollectDataActivity;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorsValue;
@@ -15,7 +16,6 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.Bagging;
-import weka.classifiers.pmml.consumer.SupportVectorMachineModel;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -75,65 +75,101 @@ public class WekaHelper {
         Instances test = Filter.useFilter(data, remove);
         test.setClassIndex(0);
 
-        trainKNN(train);
+        buildClassifier(train);
 
         alert("Model successfully trained: \n" + classifier.toString());
 
         return test;
     }
 
-    // K-Nearest Neighbour
-    private void trainKNN(Instances train) throws Exception {
-        // train classifier
-        classifier = new IBk();
+    // Change Model to be trained here!
+    private void buildClassifier(Instances train) throws Exception {
+        trainSVM();
         classifier.buildClassifier(train);
+    }
+
+    // K-Nearest Neighbour
+    private void trainKNN() {
+        classifier = new IBk();
     }
 
 
     // Support Vector Machine
-    private void trainSVM(Instances train) throws Exception {
-        // train classifier
-        classifier = new SupportVectorMachineModel();
-        classifier.buildClassifier(train);
+    private void trainSVM() {
+        classifier = new LibSVM();
     }
 
 
     // Naive Bayes
-    private void trainNB(Instances train) throws Exception {
-        // train classifier
+    private void trainNB() {
         classifier = new NaiveBayes();
-        classifier.buildClassifier(train);
     }
 
     // Logistic Regression
-    private void trainLR(Instances train) throws Exception {
-        // train classifier
+    private void trainLR() {
         classifier = new Logistic();
-        classifier.buildClassifier(train);
     }
 
     // Bagging
-    private void trainBagging(Instances train) throws Exception {
-        // train classifier
+    private void trainBagging() {
         classifier = new Bagging();
-        classifier.buildClassifier(train);
     }
 
-    public void alert(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    @NonNull
+    public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {
+        instances.delete();
+
+        ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
+        dataPoints.add(dataPoint);
+        addInstances(dataPoints, instances);
+        return instances;
     }
 
     @NonNull
     public static Instances buildInstances(ArrayList<DataPoint> dataPoints) {
+        ArrayList<Attribute> attributes = buildAttributes(dataPoints);
+
+        Instances data = new Instances("TestInstances", attributes, dataPoints.size());
+        data.setClassIndex(0);
+
+        addInstances(dataPoints, data);
+
+        return data;
+    }
+
+    public static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) {
+        double[] instanceValues = null;
+        for (DataPoint dataPoint : dataPoints) {
+            instanceValues = new double[data.numAttributes()];
+
+            // room
+            instanceValues[0] = data.classAttribute().indexOfValue(dataPoint.getRoom());
+
+            // rss
+            ArrayList<Integer> rssListTemp = dataPoint.getRssList();
+
+            for (int i = 0; i < rssListTemp.size(); i++)
+                instanceValues[1 + i] = rssListTemp.get(i);
+
+            // sensors
+            SensorsValue sensors = dataPoint.getSensors();
+            //instanceValues[rssListTemp.size() + 1] = sensors.getAmbientTemperature();
+            //instanceValues[rssListTemp.size() + 4] = sensors.getRelativeHumidity();
+            instanceValues[rssListTemp.size() + 1] = sensors.getLight();
+            instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
+
+            data.add(new DenseInstance(1.0, instanceValues));
+        }
+    }
+
+    @NonNull
+    public static ArrayList<Attribute> buildAttributes(ArrayList<DataPoint> dataPoints) {
+        ArrayList<String> rooms = getRooms(dataPoints);
+
         // rooms + number of rss + number of sensors
         int numberOfAttributes = 1 + CollectDataActivity.NUMBER_OF_ACCESS_POINTS + CollectDataActivity.NUMBER_OF_SENSORS;
         ArrayList<Attribute> attributes = new ArrayList<Attribute>(numberOfAttributes);
-
-        ArrayList<String> rooms = new ArrayList<String>();
-
-        for (DataPoint dataPoint : dataPoints)
-            if (!rooms.contains(dataPoint.getRoom()))
-                rooms.add(dataPoint.getRoom());
 
         // class: room
         attributes.add(new Attribute("room", rooms));
@@ -147,35 +183,21 @@ public class WekaHelper {
         //attributes.add(new Attribute("relative_humidity", Attribute.NUMERIC));
         attributes.add(new Attribute("light", Attribute.NUMERIC));
         attributes.add(new Attribute("pressure", Attribute.NUMERIC));
-
-        Instances data = new Instances("TestInstances", attributes, dataPoints.size());
-
-        double[] instanceValues = null;
-        for (DataPoint dataPoint : dataPoints) {
-            instanceValues = new double[data.numAttributes()];
-
-            // room
-            instanceValues[0] = rooms.indexOf(dataPoint.getRoom());
-
-            // rss
-            ArrayList<Integer> rssListTemp = dataPoint.getRssList();
-            ;
-            for (int i = 0; i < rssListTemp.size(); i++)
-                instanceValues[1 + i] = rssListTemp.get(i);
-
-            // sensors
-            SensorsValue sensors = dataPoint.getSensors();
-            //instanceValues[rssListTemp.size() + 1] = sensors.getAmbientTemperature();
-            //instanceValues[rssListTemp.size() + 4] = sensors.getRelativeHumidity();
-            instanceValues[rssListTemp.size() + 1] = sensors.getLight();
-            instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
-
-            data.add(new DenseInstance(1.0, instanceValues));
-        }
-
-        data.setClassIndex(0);
-
-        return data;
+        return attributes;
     }
 
+    @NonNull
+    public static ArrayList<String> getRooms(ArrayList<DataPoint> dataPoints) {
+        ArrayList<String> rooms = new ArrayList<String>();
+
+        for (DataPoint dataPoint : dataPoints)
+            if (!rooms.contains(dataPoint.getRoom()))
+                rooms.add(dataPoint.getRoom());
+        return rooms;
+    }
+
+
+    public void alert(String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
 }

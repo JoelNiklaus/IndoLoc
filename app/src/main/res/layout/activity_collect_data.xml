@@ -282,7 +282,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:onClick="trainModel"
-                android:text="Train Model" />
+                android:text="Train Model (SD Card)" />
 
         </TableRow>
 

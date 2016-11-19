@@ -20,7 +20,6 @@ import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils;
-import weka.core.converters.LibSVMLoader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
@@ -148,9 +147,6 @@ public class WekaHelperOld extends Service {
 
 
             Instances train = loadArffFromAssets("weather.arff");
-
-            LibSVMLoader svmLoader = new LibSVMLoader();
-            svmLoader.getDataSet();
 
             classifier.buildClassifier(train);
         } catch (Exception e) {

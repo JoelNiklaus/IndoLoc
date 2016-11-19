@@ -28,7 +28,6 @@ import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.helpers.WifiHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorsValue;
-import weka.core.DenseInstance;
 import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
@@ -39,8 +38,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private WifiReceiver wifiReceiver;
     private WifiManager wifiManager;
-    // TODO store all ssidNames in here
-    private ArrayList<String> ssidNames = new ArrayList<String>(NUMBER_OF_ACCESS_POINTS);
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
     private ArrayList<Integer> rssList = new ArrayList<Integer>(NUMBER_OF_ACCESS_POINTS);
@@ -71,7 +68,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             for (int i = 0; i < scanResults.size(); i++) {
                 ScanResult scanResult = scanResults.get(i);
                 switch (scanResult.SSID) {
-                    case "My Passwort is Monkey":
+                    case "jxx-10375": // My Passwort is Monkey
                         rssList.set(0, scanResult.level);
                         rss1Text.setText(Integer.toString(scanResult.level));
                     case "ADCH-Guest":
@@ -195,38 +192,14 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         return new DataPoint(room, rssList, sensorsValue);
     }
 
-    // TODO build test instances faster and more simply
     public void liveTestModel(View v) {
         try {
-            Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
+            Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
-            DataPoint dataPoint = registerDataPoint();
-            Instances test = new Instances(train);
-            test.removeAll(train);
+            Instances data = WekaHelper.convertToSingleInstance(test, registerDataPoint());
+            data.setClassIndex(0);
 
-            double[] instanceValues = new double[test.numAttributes()];
-
-            // room
-            instanceValues[0] = 0;
-
-            // rss
-            ArrayList<Integer> rssListTemp = dataPoint.getRssList();
-            ;
-            for (int i = 0; i < rssListTemp.size(); i++)
-                instanceValues[1 + i] = rssListTemp.get(i);
-
-            // sensors
-            SensorsValue sensors = dataPoint.getSensors();
-
-            instanceValues[rssListTemp.size() + 1] = sensors.getLight();
-            instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
-
-            test.add(new DenseInstance(1.0, instanceValues));
-
-            // set class attribute
-            test.setClassIndex(0);
-
-            wekaHelper.test(test);
+            wekaHelper.test(data);
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -246,7 +219,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     public void trainModel(View v) {
         try {
-            Instances data = fileHelper.loadArffFromAssets("data.arff");
+            Instances data = fileHelper.loadArffFromExternalStorage("rickenbach.arff");
 
             Instances test = wekaHelper.train(data);
 
@@ -276,11 +249,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
     private void createArffFile(String filePath) {
-        Instances dataRaw = WekaHelper.buildInstances(dataPoints);
+        Instances data = WekaHelper.buildInstances(dataPoints);
 
         try {
-            fileHelper.saveArffToInternalStorage(dataRaw, filePath);
-            fileHelper.saveArffToExternalStorage(dataRaw, filePath);
+            fileHelper.saveArffToInternalStorage(data, filePath);
+            fileHelper.saveArffToExternalStorage(data, filePath);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
