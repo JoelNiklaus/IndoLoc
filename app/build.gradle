@@ -32,6 +32,7 @@ dependencies {
     })
     compile project(':weka')
     compile project(':libsvm')
+    compile project(':junit-benchmarks-0.7.2')
     //compile files('libs/libsvm.jar')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'

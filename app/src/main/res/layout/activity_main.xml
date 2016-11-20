@@ -30,6 +30,17 @@
         <TableRow>
 
             <Button
+                android:id="@+id/btnEvaluate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="evaluateModel"
+                android:text="Evaluate Model (Assets)" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
                 android:id="@+id/btnTrain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

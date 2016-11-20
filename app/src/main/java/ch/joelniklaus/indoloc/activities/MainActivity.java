@@ -9,12 +9,14 @@ import android.widget.Toast;
 import ch.joelniklaus.indoloc.R;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
+import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 
 public class MainActivity extends AppCompatActivity {
 
     private FileHelper fileHelper = new FileHelper(this);
     private WekaHelper wekaHelper = new WekaHelper(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToCollectData(View v) {
         startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
+    }
+
+    public void evaluateModel(View v) {
+        try {
+            Instances data = fileHelper.loadArffFromAssets("data.arff");
+
+            wekaHelper.evaluate(data, new IBk());
+        } catch (Exception e) {
+            e.printStackTrace();
+            alert(e.getMessage());
+        }
     }
 
     public void testModel(View v) {

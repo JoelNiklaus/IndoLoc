@@ -12,6 +12,7 @@ import ch.joelniklaus.indoloc.activities.CollectDataActivity;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorsValue;
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
@@ -33,11 +34,37 @@ public class WekaHelper {
 
     public static final String TRAINING_SET_PERCENTAGE = "80";
 
+    private Timer timer = new Timer();
+
+    public WekaHelper() {
+
+    }
+
     public WekaHelper(Context context) {
         this.context = context;
     }
 
+    public Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
+        timer.reset();
+        RemovePercentage remove = getRemovePercentage(data);
+
+        Instances train = getTrainingSet(data, remove);
+
+        Instances test = getTestingSet(data, remove);
+
+        classifier.buildClassifier(train);
+
+        Evaluation evaluation = new Evaluation(train);
+        evaluation.evaluateModel(classifier, test);
+
+        //alert(evaluation.toSummaryString("Time: " + timer.timeElapsed() + "ms\n\nResults\n======\n", false));
+
+        return evaluation;
+    }
+
     public void test(Instances test) throws Exception {
+        timer.reset();
+        String results = "";
         for (int i = 0; i < test.numInstances(); i++) {
             double actualClass = test.instance(i).classValue();
             String actual = test.classAttribute().value((int) actualClass);
@@ -45,8 +72,9 @@ public class WekaHelper {
             double predictedClass = classifier.classifyInstance(test.instance(i));
             String predicted = test.classAttribute().value((int) predictedClass);
 
-            alert("Predicted Room: " + predicted + "\nActual Room: " + actual);
+            results += "Predicted: " + predicted + "-> Actual: " + actual + "\n";
         }
+        alert("Time: " + timer.timeElapsed() + "ms\n\n" + results);
     }
 
     /**
@@ -58,33 +86,58 @@ public class WekaHelper {
      * @throws Exception
      */
     public Instances train(Instances data) throws Exception {
+        timer.reset();
+        RemovePercentage remove = getRemovePercentage(data);
+
+        Instances train = getTrainingSet(data, remove);
+
+        Instances test = getTestingSet(data, remove);
+
+        buildClassifier(train);
+
+        alert("Time: " + timer.timeElapsed() + "ms\n\nModel successfully trained: \n" + classifier.toString());
+        return test;
+    }
+
+    @NonNull
+    private Instances getTestingSet(Instances data, RemovePercentage remove) throws Exception {
+        String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
+        remove.setOptions(optionsTest);
+        Instances test = Filter.useFilter(data, remove);
+        test.setClassIndex(0);
+        return test;
+    }
+
+    @NonNull
+    private Instances getTrainingSet(Instances data, RemovePercentage remove) throws Exception {
+        String[] optionsTrain = {"-P", TRAINING_SET_PERCENTAGE, "-V"};
+        remove.setOptions(optionsTrain);
+        Instances train = Filter.useFilter(data, remove);
+        train.setClassIndex(0);
+        return train;
+    }
+
+    /**
+     * Randomizes the data and then gets a RemovePercentage used to divide the data into train and test Instances.
+     *
+     * @param data
+     * @return
+     * @throws Exception
+     */
+    @NonNull
+    private RemovePercentage getRemovePercentage(Instances data) throws Exception {
         // Randomizing
         data.randomize(new Random());
 
         // Filtering
         RemovePercentage remove = new RemovePercentage();
         remove.setInputFormat(data);
-
-        String[] optionsTrain = {"-P", TRAINING_SET_PERCENTAGE, "-V"};
-        remove.setOptions(optionsTrain);
-        Instances train = Filter.useFilter(data, remove);
-        train.setClassIndex(0);
-
-        String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
-        remove.setOptions(optionsTest);
-        Instances test = Filter.useFilter(data, remove);
-        test.setClassIndex(0);
-
-        buildClassifier(train);
-
-        alert("Model successfully trained: \n" + classifier.toString());
-
-        return test;
+        return remove;
     }
 
     // Change Model to be trained here!
     private void buildClassifier(Instances train) throws Exception {
-        trainSVM();
+        trainLR();
         classifier.buildClassifier(train);
     }
 

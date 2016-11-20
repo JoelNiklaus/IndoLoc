@@ -21,6 +21,10 @@ public class FileHelper {
 
     private Context context;
 
+    public FileHelper() {
+
+    }
+
     public FileHelper(Context context) {
         this.context = context;
     }
@@ -69,7 +73,7 @@ public class FileHelper {
         saver.writeBatch();
     }
 
-    private Instances loadArff(String filePath) throws Exception {
+    public Instances loadArff(String filePath) throws Exception {
         Instances data = new ConverterUtils.DataSource(filePath).getDataSet();
         data.setClassIndex(0);
         return data;
