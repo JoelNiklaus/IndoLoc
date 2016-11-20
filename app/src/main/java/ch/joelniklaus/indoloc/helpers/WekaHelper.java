@@ -45,6 +45,32 @@ public class WekaHelper {
     }
 
     public Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
+        RemovePercentage remove = getRemovePercentage(data);
+
+        Instances train = getTrainingSet(data, remove);
+
+        Instances test = getTestingSet(data, remove);
+
+        classifier.buildClassifier(train);
+
+        Evaluation evaluation = new Evaluation(train);
+        evaluation.evaluateModel(classifier, test);
+
+        return evaluation;
+    }
+
+
+    public void test(Instances test, Classifier classifier) throws Exception {
+        for (int i = 0; i < test.numInstances(); i++)
+            classifier.classifyInstance(test.instance(i));
+    }
+
+    public Classifier train(Instances train, Classifier classifier) throws Exception {
+        classifier.buildClassifier(train);
+        return classifier;
+    }
+
+    public Evaluation evaluateForView(Instances data) throws Exception {
         timer.reset();
         RemovePercentage remove = getRemovePercentage(data);
 
@@ -57,12 +83,12 @@ public class WekaHelper {
         Evaluation evaluation = new Evaluation(train);
         evaluation.evaluateModel(classifier, test);
 
-        //alert(evaluation.toSummaryString("Time: " + timer.timeElapsed() + "ms\n\nResults\n======\n", false));
+        alert(evaluation.toSummaryString("Time: " + timer.timeElapsed() + "ms\n\nResults\n======\n", false));
 
         return evaluation;
     }
 
-    public void test(Instances test) throws Exception {
+    public void testForView(Instances test) throws Exception {
         timer.reset();
         String results = "";
         for (int i = 0; i < test.numInstances(); i++) {
@@ -85,7 +111,7 @@ public class WekaHelper {
      * @return test set
      * @throws Exception
      */
-    public Instances train(Instances data) throws Exception {
+    public Instances trainForView(Instances data) throws Exception {
         timer.reset();
         RemovePercentage remove = getRemovePercentage(data);
 
@@ -100,7 +126,7 @@ public class WekaHelper {
     }
 
     @NonNull
-    private Instances getTestingSet(Instances data, RemovePercentage remove) throws Exception {
+    public Instances getTestingSet(Instances data, RemovePercentage remove) throws Exception {
         String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
         remove.setOptions(optionsTest);
         Instances test = Filter.useFilter(data, remove);
@@ -109,7 +135,7 @@ public class WekaHelper {
     }
 
     @NonNull
-    private Instances getTrainingSet(Instances data, RemovePercentage remove) throws Exception {
+    public Instances getTrainingSet(Instances data, RemovePercentage remove) throws Exception {
         String[] optionsTrain = {"-P", TRAINING_SET_PERCENTAGE, "-V"};
         remove.setOptions(optionsTrain);
         Instances train = Filter.useFilter(data, remove);
@@ -125,7 +151,7 @@ public class WekaHelper {
      * @throws Exception
      */
     @NonNull
-    private RemovePercentage getRemovePercentage(Instances data) throws Exception {
+    public RemovePercentage getRemovePercentage(Instances data) throws Exception {
         // Randomizing
         data.randomize(new Random());
 

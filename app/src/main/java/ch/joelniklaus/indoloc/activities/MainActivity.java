@@ -9,7 +9,6 @@ import android.widget.Toast;
 import ch.joelniklaus.indoloc.R;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Instances data = fileHelper.loadArffFromAssets("data.arff");
 
-            wekaHelper.evaluate(data, new IBk());
+            wekaHelper.evaluateForView(data);
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
-            wekaHelper.test(test);
+            wekaHelper.testForView(test);
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Instances data = fileHelper.loadArffFromAssets("data.arff");
 
-            Instances test = wekaHelper.train(data);
+            Instances test = wekaHelper.trainForView(data);
 
             fileHelper.saveArffToExternalStorage(test, "test.arff");
         } catch (Exception e) {

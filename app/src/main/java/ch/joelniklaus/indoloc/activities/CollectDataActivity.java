@@ -197,7 +197,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             Instances data = WekaHelper.convertToSingleInstance(test, registerDataPoint());
             data.setClassIndex(0);
 
-            wekaHelper.test(data);
+            wekaHelper.testForView(data);
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -208,7 +208,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         try {
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
-            wekaHelper.test(test);
+            wekaHelper.testForView(test);
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
@@ -219,7 +219,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         try {
             Instances data = fileHelper.loadArffFromExternalStorage("rickenbach.arff");
 
-            Instances test = wekaHelper.train(data);
+            Instances test = wekaHelper.trainForView(data);
 
             fileHelper.saveArffToExternalStorage(test, "test.arff");
         } catch (Exception e) {
