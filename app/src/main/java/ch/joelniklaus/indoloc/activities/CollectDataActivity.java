@@ -66,7 +66,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             for (int i = 0; i < scanResults.size(); i++) {
                 ScanResult scanResult = scanResults.get(i);
                 switch (scanResult.SSID) {
-                    case "jxx-10375": // My Passwort is Monkey
+                    case "My Passwort is Monkey":
                         rssList.set(0, scanResult.level);
                         rss1Text.setText(Integer.toString(scanResult.level));
                     case "ADCH-Guest":
@@ -217,7 +217,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     public void trainModel(View v) {
         try {
-            Instances data = fileHelper.loadArffFromExternalStorage("rickenbach.arff");
+            Instances data = fileHelper.loadArffFromExternalStorage("data.arff");
 
             Instances test = wekaHelper.trainForView(data);
 

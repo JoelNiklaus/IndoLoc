@@ -16,6 +16,18 @@ public class Timer {
         return (System.nanoTime() - startTime)/1000000;
     }
 
+    public long timeElapsedMilliS() {
+        return (System.nanoTime() - startTime)/1000000;
+    }
+
+    public long timeElapsedMicroS() {
+        return (System.nanoTime() - startTime)/1000;
+    }
+
+    public long timeElapsedNanoS() {
+        return (System.nanoTime() - startTime);
+    }
+
     public void reset() {
         startTime = System.nanoTime();
     }

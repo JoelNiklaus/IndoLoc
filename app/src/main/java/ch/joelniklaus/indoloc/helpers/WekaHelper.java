@@ -163,7 +163,7 @@ public class WekaHelper {
 
     // Change Model to be trained here!
     private void buildClassifier(Instances train) throws Exception {
-        trainLR();
+        trainKNN();
         classifier.buildClassifier(train);
     }
 
