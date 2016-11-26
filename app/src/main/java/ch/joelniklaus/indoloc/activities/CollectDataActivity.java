@@ -68,25 +68,25 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                 switch (scanResult.SSID) {
                     case "My Passwort is Monkey":
                         rssList.set(0, scanResult.level);
-                        rss1Text.setText(Integer.toString(scanResult.level));
+                        rss1Text.setText(scanResult.level);
                     case "ADCH-Guest":
                         rssList.set(1, scanResult.level);
-                        rss2Text.setText(Integer.toString(scanResult.level));
+                        rss2Text.setText(scanResult.level);
                     case "ADCH-Intern":
                         rssList.set(2, scanResult.level);
-                        rss3Text.setText(Integer.toString(scanResult.level));
+                        rss3Text.setText(scanResult.level);
                     case "Core-Guest":
                         rssList.set(3, scanResult.level);
-                        rss4Text.setText(Integer.toString(scanResult.level));
+                        rss4Text.setText(scanResult.level);
                     case "Core-Intern":
                         rssList.set(4, scanResult.level);
-                        rss5Text.setText(Integer.toString(scanResult.level));
+                        rss5Text.setText(scanResult.level);
                     case "UPC248577407":
                         rssList.set(5, scanResult.level);
-                        rss6Text.setText(Integer.toString(scanResult.level));
+                        rss6Text.setText(scanResult.level);
                     case "UPC503960977":
                         rssList.set(6, scanResult.level);
-                        rss7Text.setText(Integer.toString(scanResult.level));
+                        rss7Text.setText(scanResult.level);
                 }
             }
             saveDataPoint();
