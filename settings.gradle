@@ -1,1 +1,1 @@
-include ':app', ':weka', ':libsvm', ':junit-benchmarks-0.7.2'
+include ':app', ':weka', ':libsvm', ':junit-benchmarks-0.7.2', ':autoweka'
