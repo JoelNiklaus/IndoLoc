@@ -1,8 +1,5 @@
 package ch.joelniklaus.indoloc.Benchmarks;
 
-import com.carrotsearch.junitbenchmarks.AbstractBenchmark;
-import com.carrotsearch.junitbenchmarks.BenchmarkOptions;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,10 +18,10 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.Bagging;
+import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.LogitBoost;
-import weka.classifiers.meta.Stacking;
-import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.filters.unsupervised.instance.RemovePercentage;
@@ -36,11 +33,11 @@ import static org.junit.Assert.assertEquals;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class WekaHelperBenchmarkTest extends AbstractBenchmark {
+public class WekaHelperBenchmarkTest {
 
     private Timer timer = new Timer();
 
-    private int numberOfTestRounds = 50;
+    private int numberOfTestRounds = 100;
 
     private WekaHelper wekaHelper = new WekaHelper();
     private FileHelper fileHelper = new FileHelper();
@@ -83,6 +80,9 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
         classifiers.add(new Bagging());
         classifiers.add(new AdaBoostM1());
 
+        // Auto Weka
+        //classifiers.add(new AutoWEKAClassifier());
+
         for (int i = 0; i < classifiers.size(); i++)
             trainedClassifiers.add(i, wekaHelper.train(train, classifiers.get(i)));
     }
@@ -92,9 +92,44 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
         assertEquals(4, 2 + 2);
     }
 
-    @BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 0)
     @Test
-    public void testEverything() throws Exception {
+    public void testAutoWeka() throws Exception {
+        AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
+        autoweka.setTimeLimit(1); // in minutes
+        autoweka.setMemLimit(1024); // in MB
+        autoweka.setDebug(true);
+        autoweka.setSeed(123);
+        autoweka.buildClassifier(train);
+    }
+
+    @Test
+    public void testCVParameterSelection() throws Exception {
+        IBk classifier = new IBk();
+        System.out.println(getCorrectPctSum(classifier));
+        CVParameterSelection cvParameterSelection = new CVParameterSelection();
+        String[] options = {"-W", classifier.getClass().getName()};
+        cvParameterSelection.setOptions(options);
+        cvParameterSelection.buildClassifier(train);
+        String[] classifierOptions = cvParameterSelection.getBestClassifierOptions();
+        classifier.setOptions(classifierOptions);
+        classifier.buildClassifier(train);
+        for (String option : classifierOptions)
+            System.out.println(option);
+        System.out.println(getCorrectPctSum(classifier));
+    }
+
+    @Test
+    public void testGridSearch() throws Exception {
+
+    }
+
+    @Test
+    public void testMultiSearch() throws Exception {
+
+    }
+
+    @Test
+    public void testAllClassifiersWithDefaultParameters() throws Exception {
         for (Classifier classifier : classifiers) {
             double correctPctSum = 0;
             long trainTimeSum = 0;
@@ -116,7 +151,7 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
             double meanTrainTime = trainTimeSum / numberOfTestRounds;
             double meanTestTime = testTimeSum / numberOfTestRounds;
             double meanAccuracy = correctPctSum / numberOfTestRounds;
-            classifierRatings.add(new ClassifierRating(classifier.getClass().getSimpleName(),meanAccuracy, meanTestTime, meanTrainTime));
+            classifierRatings.add(new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime));
         }
         // Sort by Accuracy
         classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
@@ -126,7 +161,6 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
             System.out.println(classifierRating);
     }
 
-    @BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 1)
     @Test
     public void testAccuracy() throws Exception {
         double currentBest = 0;
@@ -134,13 +168,9 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
         Evaluation evaluation = null;
         for (Classifier classifier : classifiers) {
             String classifierName = classifier.getClass().getSimpleName();
-            long correctPctSum = 0;
-            for (int round = 0; round < numberOfTestRounds; round++) {
-                evaluation = wekaHelper.evaluate(data, classifier);
-                correctPctSum += evaluation.pctCorrect();
-            }
-            correctPctSum /= numberOfTestRounds;
-            System.out.println("\n\nLast evaluation: " + classifierName + "\n\n" + evaluation.toSummaryString());
+            double correctPctSum = getCorrectPctSum(classifier);
+
+            System.out.println("\n\nLast evaluation: " + classifierName + "\n\n" + wekaHelper.evaluate(data, classifier).toSummaryString());
             if (correctPctSum > currentBest) {
                 currentBest = correctPctSum;
                 bestClassifier = classifierName;
@@ -150,7 +180,16 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
         System.out.println("\n\nBest Classifier: " + bestClassifier + ": " + currentBest + "% mean correct classification\n\n");
     }
 
-    @BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 0)
+    private double getCorrectPctSum(Classifier classifier) throws Exception {
+        Evaluation evaluation;
+        double correctPctSum = 0;
+        for (int round = 0; round < numberOfTestRounds; round++) {
+            evaluation = wekaHelper.evaluate(data, classifier);
+            correctPctSum += evaluation.pctCorrect();
+        }
+        return correctPctSum / numberOfTestRounds;
+    }
+
     @Test
     public void testTrainPerformance() throws Exception {
         long currentBest = Long.MAX_VALUE;
@@ -158,13 +197,7 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
 
         for (Classifier classifier : classifiers) {
             String classifierName = classifier.getClass().getSimpleName();
-            long trainTimeSum = 0;
-            for (int round = 0; round < numberOfTestRounds; round++) {
-                timer.reset();
-                wekaHelper.train(train, classifier);
-                trainTimeSum += timer.timeElapsedMicroS();
-            }
-            trainTimeSum /= numberOfTestRounds;
+            long trainTimeSum = getMeanTrainTime(classifier);
 
             System.out.println("\n\nClassifier: " + classifierName + ": " + trainTimeSum + " micros mean train time\n\n");
             if (trainTimeSum < currentBest) {
@@ -175,7 +208,16 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
         System.out.println("\n\nBest Classifier: " + bestClassifier + ": " + currentBest + " micros mean train time\n\n");
     }
 
-    @BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 1)
+    private long getMeanTrainTime(Classifier classifier) throws Exception {
+        long trainTimeSum = 0;
+        for (int round = 0; round < numberOfTestRounds; round++) {
+            timer.reset();
+            wekaHelper.train(train, classifier);
+            trainTimeSum += timer.timeElapsedMicroS();
+        }
+       return trainTimeSum / numberOfTestRounds;
+    }
+
     @Test
     public void testTestPerformance() throws Exception {
         long currentBest = Long.MAX_VALUE;
@@ -183,13 +225,8 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
 
         for (Classifier classifier : classifiers) {
             String classifierName = classifier.getClass().getSimpleName();
-            long testTimeSum = 0;
-            for (int round = 0; round < numberOfTestRounds; round++) {
-                timer.reset();
-                wekaHelper.test(test, classifier);
-                testTimeSum += timer.timeElapsedMicroS();
-            }
-            testTimeSum /= numberOfTestRounds;
+            long testTimeSum = getMeanTestTime(classifier);
+
             System.out.println("\n\nClassifier: " + classifierName + ": " + testTimeSum + " micros mean test time\n\n");
             if (testTimeSum < currentBest) {
                 currentBest = testTimeSum;
@@ -197,5 +234,15 @@ public class WekaHelperBenchmarkTest extends AbstractBenchmark {
             }
         }
         System.out.println("\n\nBest Classifier: " + bestClassifier + ": " + currentBest + " micros mean test time\n\n");
+    }
+
+    private long getMeanTestTime(Classifier classifier) throws Exception {
+        long testTimeSum = 0;
+        for (int round = 0; round < numberOfTestRounds; round++) {
+            timer.reset();
+            wekaHelper.test(test, classifier);
+            testTimeSum += timer.timeElapsedMicroS();
+        }
+        return testTimeSum / numberOfTestRounds;
     }
 }
