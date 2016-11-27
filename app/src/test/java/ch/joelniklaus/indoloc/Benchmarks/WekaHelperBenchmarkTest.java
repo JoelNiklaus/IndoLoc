@@ -22,8 +22,10 @@ import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
+import weka.core.Utils;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
 import static org.junit.Assert.assertEquals;
@@ -104,17 +106,17 @@ public class WekaHelperBenchmarkTest {
 
     @Test
     public void testCVParameterSelection() throws Exception {
-        IBk classifier = new IBk();
+        J48 classifier = new J48();
         System.out.println(getCorrectPctSum(classifier));
         CVParameterSelection cvParameterSelection = new CVParameterSelection();
-        String[] options = {"-W", classifier.getClass().getName()};
-        cvParameterSelection.setOptions(options);
+        cvParameterSelection.setClassifier(classifier);
         cvParameterSelection.buildClassifier(train);
+        cvParameterSelection.setNumFolds(5);  // using 5-fold CV
+        cvParameterSelection.addCVParameter("C 0.1 0.5 5");
         String[] classifierOptions = cvParameterSelection.getBestClassifierOptions();
         classifier.setOptions(classifierOptions);
         classifier.buildClassifier(train);
-        for (String option : classifierOptions)
-            System.out.println(option);
+        System.out.println(Utils.joinOptions(classifierOptions));
         System.out.println(getCorrectPctSum(classifier));
     }
 
