@@ -101,7 +101,9 @@ public class WekaHelperBenchmarkTest {
         autoweka.setMemLimit(1024); // in MB
         autoweka.setDebug(true);
         autoweka.setSeed(123);
+        autoweka.setnBestConfigs(3);
         autoweka.buildClassifier(train);
+        System.out.println();
     }
 
     @Test
@@ -140,12 +142,14 @@ public class WekaHelperBenchmarkTest {
                 //Training
                 timer.reset();
                 classifier = wekaHelper.train(train, classifier);
-                trainTimeSum += timer.timeElapsedMicroS();
+                // mean training time per instance
+                trainTimeSum += timer.timeElapsedMicroS()/train.numInstances();
 
                 // Testing
                 timer.reset();
                 wekaHelper.test(test, classifier);
-                testTimeSum += timer.timeElapsedMicroS();
+                // mean testing time per instance
+                testTimeSum += timer.timeElapsedMicroS()/test.numInstances();
 
                 // Evaluation
                 correctPctSum += wekaHelper.evaluate(data, classifier).pctCorrect();
