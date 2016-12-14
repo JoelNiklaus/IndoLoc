@@ -10,9 +10,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        /*
         jackOptions {
             enabled true
         }
+        */
     }
     buildTypes {
         release {
@@ -26,10 +28,12 @@ android {
     aaptOptions {
         noCompress "arff"
     }
+    /*
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    */
 }
 
 dependencies {
@@ -40,7 +44,6 @@ dependencies {
     compile project(':weka')
     compile project(':libsvm')
     compile project(':junit-benchmarks-0.7.2')
-    compile project(':autoweka')
     //compile files('libs/libsvm.jar')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'

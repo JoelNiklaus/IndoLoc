@@ -65,6 +65,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             // search by SSID
             for (int i = 0; i < scanResults.size(); i++) {
                 ScanResult scanResult = scanResults.get(i);
+                /*
                 switch (scanResult.SSID) {
                     case "My Passwort is Monkey":
                         rssList.set(0, scanResult.level);
@@ -88,6 +89,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                         rssList.set(6, scanResult.level);
                         rss7Text.setText(scanResult.BSSID);
                 }
+                */
+                rss1Text.setText(rss1Text.getText() + "\nName: "+scanResult.SSID +", MAC:" + scanResult.BSSID);
             }
             saveDataPoint();
         }

@@ -18,7 +18,6 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.AdaBoostM1;
-import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.LogitBoost;
@@ -96,6 +95,7 @@ public class WekaHelperBenchmarkTest {
 
     @Test
     public void testAutoWeka() throws Exception {
+        /*
         AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
         autoweka.setTimeLimit(1); // in minutes
         autoweka.setMemLimit(1024); // in MB
@@ -104,6 +104,7 @@ public class WekaHelperBenchmarkTest {
         autoweka.setnBestConfigs(3);
         autoweka.buildClassifier(train);
         System.out.println();
+        */
     }
 
     @Test
@@ -160,7 +161,15 @@ public class WekaHelperBenchmarkTest {
             classifierRatings.add(new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime));
         }
         // Sort by Accuracy
-        classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
+        // Only possible in Java 8
+        //classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
+        Collections.sort(classifierRatings, new Comparator<ClassifierRating>(){
+            public int compare(ClassifierRating o1, ClassifierRating o2){
+                if(o1.getMeanAccuracy() == o2.getMeanAccuracy())
+                    return 0;
+                return o1.getMeanAccuracy() < o2.getMeanAccuracy() ? -1 : 1;
+            }
+        });
         Collections.reverse(classifierRatings);
         // Display Statistics
         for (ClassifierRating classifierRating : classifierRatings)
