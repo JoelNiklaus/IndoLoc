@@ -31,7 +31,8 @@ import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
-    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, lightText, pressureText;
+    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, lightText, pressureText;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, lightValue, pressureValue;
     private Button startButton;
     private EditText roomEditText;
 
@@ -45,7 +46,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private int scanNumber = 0;
     private boolean registering = false;
 
-    public static final int NUMBER_OF_ACCESS_POINTS = 7;
+    public static final int NUMBER_OF_ACCESS_POINTS = 8;
     public static final int NUMBER_OF_SENSORS = 2;
 
 
@@ -65,32 +66,45 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             // search by SSID
             for (int i = 0; i < scanResults.size(); i++) {
                 ScanResult scanResult = scanResults.get(i);
-                /*
-                switch (scanResult.SSID) {
-                    case "My Passwort is Monkey":
-                        rssList.set(0, scanResult.level);
-                        rss1Text.setText(scanResult.BSSID);
-                    case "ADCH-Guest":
-                        rssList.set(1, scanResult.level);
-                        rss2Text.setText(scanResult.BSSID);
-                    case "ADCH-Intern":
-                        rssList.set(2, scanResult.level);
-                        rss3Text.setText(scanResult.BSSID);
-                    case "Core-Guest":
-                        rssList.set(3, scanResult.level);
-                        rss4Text.setText(scanResult.BSSID);
-                    case "Core-Intern":
-                        rssList.set(4, scanResult.level);
-                        rss5Text.setText(scanResult.BSSID);
-                    case "UPC248577407":
-                        rssList.set(5, scanResult.level);
-                        rss6Text.setText(scanResult.BSSID);
-                    case "UPC503960977":
-                        rssList.set(6, scanResult.level);
-                        rss7Text.setText(scanResult.BSSID);
+                int level = scanResult.level;
+
+                switch (scanResult.BSSID) {
+                    case "38:10:d5:0e:1f:25":
+                        rssList.set(0, level);
+                        rss1Value.setText(level + "");
+                        rss1Text.setText("My Passwort is Monkey");
+                    case "b4:ee:b4:60:fa:60":
+                        rssList.set(1, level);
+                        rss2Value.setText(level + "");
+                        rss2Text.setText("Chris Breezy");
+                    case "0e:18:d6:97:0c:8e":
+                        rssList.set(2, level);
+                        rss3Value.setText(level + "");
+                        rss3Text.setText("Core-Guest");
+                    case "82:2a:a8:17:34:b3":
+                        rssList.set(3, level);
+                        rss4Value.setText(level + "");
+                        rss4Text.setText("ADCH-Guest");
+                    case "14:49:e0.c9:ef:80":
+                        rssList.set(4, level);
+                        rss5Value.setText(level + "");
+                        rss5Text.setText("UPC503960977");
+                    case "56:67:51:ea.91:85":
+                        rssList.set(5, level);
+                        rss6Value.setText(level + "");
+                        rss6Text.setText("UPC731B685");
+                    case "c4:27:95:89:f3:5a":
+                        rssList.set(6, level);
+                        rss7Value.setText(level + "");
+                        rss7Text.setText("UPC2058401");
+                    case "14:49:e0:c9:ef:88":
+                        rssList.set(7, level);
+                        rss8Value.setText(level + "");
+                        rss8Text.setText("UPC248577407");
                 }
-                */
-                rss1Text.setText(rss1Text.getText() + "\nName: "+scanResult.SSID +", MAC:" + scanResult.BSSID);
+
+
+                //rss1Value.setText(rss1Value.getText() + "\nName: " + scanResult.SSID + "\nMAC:" + scanResult.BSSID);
             }
             saveDataPoint();
         }
@@ -112,16 +126,31 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
     private void setUpTextViews() {
-        scanText = (TextView) findViewById(R.id.txtScan);
-        rss1Text = (TextView) findViewById(R.id.txtRSS1);
-        rss2Text = (TextView) findViewById(R.id.txtRSS2);
-        rss3Text = (TextView) findViewById(R.id.txtRSS3);
-        rss4Text = (TextView) findViewById(R.id.txtRSS4);
-        rss5Text = (TextView) findViewById(R.id.txtRSS5);
-        rss6Text = (TextView) findViewById(R.id.txtRSS6);
-        rss7Text = (TextView) findViewById(R.id.txtRSS7);
-        lightText = (TextView) findViewById(R.id.txtLight);
-        pressureText = (TextView) findViewById(R.id.txtPressure);
+        scanText = (TextView) findViewById(R.id.txtScanV);
+        scanValue = (TextView) findViewById(R.id.txtScan);
+
+        rss1Text = (TextView) findViewById(R.id.txtRSS1V);
+        rss1Value = (TextView) findViewById(R.id.txtRSS1);
+        rss2Text = (TextView) findViewById(R.id.txtRSS2V);
+        rss2Value = (TextView) findViewById(R.id.txtRSS2);
+        rss3Text = (TextView) findViewById(R.id.txtRSS3V);
+        rss3Value = (TextView) findViewById(R.id.txtRSS3);
+        rss4Text = (TextView) findViewById(R.id.txtRSS4V);
+        rss4Value = (TextView) findViewById(R.id.txtRSS4);
+        rss5Text = (TextView) findViewById(R.id.txtRSS5V);
+        rss5Value = (TextView) findViewById(R.id.txtRSS5);
+        rss6Text = (TextView) findViewById(R.id.txtRSS6V);
+        rss6Value = (TextView) findViewById(R.id.txtRSS6);
+        rss7Text = (TextView) findViewById(R.id.txtRSS7V);
+        rss7Value = (TextView) findViewById(R.id.txtRSS7);
+        rss8Text = (TextView) findViewById(R.id.txtRSS8V);
+        rss8Value = (TextView) findViewById(R.id.txtRSS8);
+
+        lightText = (TextView) findViewById(R.id.txtLightV);
+        lightValue = (TextView) findViewById(R.id.txtLight);
+        pressureText = (TextView) findViewById(R.id.txtPressureV);
+        pressureValue = (TextView) findViewById(R.id.txtPressure);
+
         startButton = (Button) findViewById(R.id.btnStart);
         roomEditText = (EditText) findViewById(R.id.editRoom);
     }
@@ -148,8 +177,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void onSensorChanged(SensorEvent event) {
 
         sensorsValue = sensorHelper.readSensorData(event);
-        pressureText.setText(Double.toString(sensorsValue.getPressure()));
-        lightText.setText(Double.toString(sensorsValue.getLight()));
+
+        pressureValue.setText(Double.toString(sensorsValue.getPressure()));
+        pressureText.setText("Pressure");
+        lightValue.setText(Double.toString(sensorsValue.getLight()));
+        lightText.setText("Light");
 
         wifiManager.startScan();
     }
@@ -181,7 +213,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private void saveDataPoint() {
         if (registering) {
-            scanText.setText(Integer.toString(scanNumber++));
+            scanValue.setText(Integer.toString(scanNumber++));
+            scanText.setText("Scan Number");
+
             DataPoint dataPoint = registerDataPoint();
             this.dataPoints.add(dataPoint);
         }

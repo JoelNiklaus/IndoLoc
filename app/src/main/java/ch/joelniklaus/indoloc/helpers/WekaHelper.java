@@ -10,7 +10,6 @@ import java.util.Random;
 import ch.joelniklaus.indoloc.LibSVM;
 import ch.joelniklaus.indoloc.activities.CollectDataActivity;
 import ch.joelniklaus.indoloc.models.DataPoint;
-import ch.joelniklaus.indoloc.models.SensorsValue;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -232,11 +231,11 @@ public class WekaHelper {
                 instanceValues[1 + i] = rssListTemp.get(i);
 
             // sensors
-            SensorsValue sensors = dataPoint.getSensors();
+            //SensorsValue sensors = dataPoint.getSensors();
             //instanceValues[rssListTemp.size() + 1] = sensors.getAmbientTemperature();
             //instanceValues[rssListTemp.size() + 4] = sensors.getRelativeHumidity();
-            instanceValues[rssListTemp.size() + 1] = sensors.getLight();
-            instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
+            //instanceValues[rssListTemp.size() + 1] = sensors.getLight();
+            //instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
 
             data.add(new DenseInstance(1.0, instanceValues));
         }
@@ -260,8 +259,8 @@ public class WekaHelper {
         // sensors
         //attributes.add(new Attribute("ambient_temperature", Attribute.NUMERIC));
         //attributes.add(new Attribute("relative_humidity", Attribute.NUMERIC));
-        attributes.add(new Attribute("light", Attribute.NUMERIC));
-        attributes.add(new Attribute("pressure", Attribute.NUMERIC));
+        //attributes.add(new Attribute("light", Attribute.NUMERIC));
+        //attributes.add(new Attribute("pressure", Attribute.NUMERIC));
         return attributes;
     }
 

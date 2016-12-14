@@ -208,6 +208,25 @@
         <TableRow>
 
             <TextView
+                android:id="@+id/txtRSS8V"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="RSS8:" />
+
+            <TextView
+                android:id="@+id/txtRSS8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="0" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
                 android:id="@+id/txtLightV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
