@@ -1,7 +1,5 @@
 package ch.joelniklaus.indoloc.models;
 
-import java.util.ArrayList;
-
 /**
  * Created by joelniklaus on 06.11.16.
  */
@@ -9,14 +7,14 @@ public class DataPoint {
 
     private String room;
 
-    private ArrayList<Integer> rssList;
+    private RSSData rssData;
 
-    private SensorsValue sensors;
+    private SensorData sensorData;
 
-    public DataPoint(String room, ArrayList<Integer> rssList, SensorsValue sensors) {
+    public DataPoint(String room, RSSData rssData, SensorData sensorData) {
         this.room = room;
-        this.rssList = rssList;
-        this.sensors = sensors;
+        this.rssData = rssData;
+        this.sensorData = sensorData;
     }
 
     public String getRoom() {
@@ -27,28 +25,28 @@ public class DataPoint {
         this.room = room;
     }
 
-    public ArrayList<Integer> getRssList() {
-        return rssList;
+    public RSSData getRssData() {
+        return rssData;
     }
 
-    public void setRssList(ArrayList<Integer> rssList) {
-        this.rssList = rssList;
+    public void setRssData(RSSData rssData) {
+        this.rssData = rssData;
     }
 
-    public SensorsValue getSensors() {
-        return sensors;
+    public SensorData getSensorData() {
+        return sensorData;
     }
 
-    public void setSensors(SensorsValue sensors) {
-        this.sensors = sensors;
+    public void setSensorData(SensorData sensorData) {
+        this.sensorData = sensorData;
     }
 
     @Override
     public String toString() {
         return "DataPoint{" +
                 "room='" + room + '\'' +
-                ", rssList=" + rssList +
-                ", sensors=" + sensors +
+                ", rssData=" + rssData +
+                ", sensorData=" + sensorData +
                 '}';
     }
 }

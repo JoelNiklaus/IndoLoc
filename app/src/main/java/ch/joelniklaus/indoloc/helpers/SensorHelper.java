@@ -8,7 +8,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import ch.joelniklaus.indoloc.models.SensorsValue;
+import ch.joelniklaus.indoloc.models.SensorData;
 
 /**
  * Created by joelniklaus on 13.11.16.
@@ -93,7 +93,7 @@ public class SensorHelper {
         sensorManager.unregisterListener((SensorEventListener) context);
     }
 
-    public SensorsValue readSensorData(SensorEvent event) {
+    public SensorData readSensorData(SensorEvent event) {
                 /*
         if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
             //take the values
@@ -161,10 +161,7 @@ public class SensorHelper {
         }
 
 
-
-
-
-        return new SensorsValue(magneticFingerprint, gravity);
+        return new SensorData(magneticFingerprint, gravity);
     }
 
     public void alert(String message) {

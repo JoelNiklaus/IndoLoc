@@ -27,7 +27,8 @@ import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.SensorHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
-import ch.joelniklaus.indoloc.models.SensorsValue;
+import ch.joelniklaus.indoloc.models.RSSData;
+import ch.joelniklaus.indoloc.models.SensorData;
 import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
@@ -42,7 +43,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
     private ArrayList<Integer> rssList = new ArrayList<Integer>(NUMBER_OF_ACCESS_POINTS);
-    private SensorsValue sensorsValue;
+    private SensorData sensorData;
 
     private int scanNumber = 0;
     private boolean registering = false;
@@ -176,11 +177,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        sensorsValue = sensorHelper.readSensorData(event);
+        sensorData = sensorHelper.readSensorData(event);
 
-        magnetometerValue.setText(Arrays.toString(sensorsValue.getMagnetic()));
+        magnetometerValue.setText(Arrays.toString(sensorData.getMagnetic()));
         magnetometerText.setText("Magnetic");
-        accelerometerValue.setText(Arrays.toString(sensorsValue.getGravity()));
+        accelerometerValue.setText(Arrays.toString(sensorData.getGravity()));
         accelerometerText.setText("Gravity");
 
         wifiManager.startScan();
@@ -224,8 +225,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     @NonNull
     private DataPoint registerDataPoint() {
         String room = roomEditText.getText().toString();
-        return new DataPoint(room, rssList, sensorsValue);
+        return new DataPoint(room, new RSSData(rssList), sensorData);
     }
+
+
 
     public void liveTestModel(View v) {
         try {

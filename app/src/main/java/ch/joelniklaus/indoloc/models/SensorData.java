@@ -3,7 +3,7 @@ package ch.joelniklaus.indoloc.models;
 /**
  * Created by joelniklaus on 11.11.16.
  */
-public class SensorsValue {
+public class SensorData {
 
     //private double ambientTemperature;
     //private double relativeHumidity;
@@ -16,7 +16,7 @@ public class SensorsValue {
     private float[] gravity = new float[3];
 
 
-    public SensorsValue(float[] magnetic, float[] gravity) {
+    public SensorData(float[] magnetic, float[] gravity) {
         //this.ambientTemperature = ambientTemperature;
         //this.relativeHumidity = relativeHumidity;
         //this.light = light;
@@ -40,4 +40,6 @@ public class SensorsValue {
     public void setGravity(float[] gravity) {
         this.gravity = gravity;
     }
+
+    // TODO add tostring method
 }
