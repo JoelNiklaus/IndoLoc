@@ -1,4 +1,4 @@
-package ch.joelniklaus.indoloc;
+package ch.joelniklaus.indoloc.helpers;
 
 import java.text.DecimalFormat;
 
@@ -12,7 +12,7 @@ public class ClassifierRating {
     private double meanTestTime;
     private double meanAccuracy;
 
-    public ClassifierRating(String name,double meanAccuracy, double meanTestTime, double meanTrainTime) {
+    public ClassifierRating(String name, double meanAccuracy, double meanTestTime, double meanTrainTime) {
         this.name = name;
         this.meanAccuracy = meanAccuracy;
         this.meanTestTime = meanTestTime;
@@ -53,6 +53,13 @@ public class ClassifierRating {
 
     @Override
     public String toString() {
-        return "\n"+name + ": " + new DecimalFormat("#.##").format(meanAccuracy) + " % Accuracy, " + meanTestTime +" micros Test Time, " + meanTrainTime + " micros Train Time";
+        return "\n" + fixedLengthString(name, 15) +
+                fixedLengthString("Accuracy: " + new DecimalFormat("#.##").format(meanAccuracy) + " %", 25)
+                + fixedLengthString("Test Time: " + meanTestTime + " µs", 25)
+                + fixedLengthString("Train Time: " + meanTrainTime + " µs", 25);
+    }
+
+    public static String fixedLengthString(String string, int length) {
+        return String.format("%1$" + length + "s", string);
     }
 }

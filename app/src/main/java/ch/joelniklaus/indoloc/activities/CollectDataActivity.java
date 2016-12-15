@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ch.joelniklaus.indoloc.R;
@@ -31,8 +32,8 @@ import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
-    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, lightText, pressureText;
-    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, lightValue, pressureValue;
+    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, accelerometerText, magnetometerText;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, accelerometerValue, magnetometerValue;
     private Button startButton;
     private EditText roomEditText;
 
@@ -85,7 +86,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                         rssList.set(3, level);
                         rss4Value.setText(level + "");
                         rss4Text.setText("ADCH-Guest");
-                    case "14:49:e0.c9:ef:80":
+                    case "14:49:e0:c9:ef:80":
                         rssList.set(4, level);
                         rss5Value.setText(level + "");
                         rss5Text.setText("UPC503960977");
@@ -146,10 +147,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         rss8Text = (TextView) findViewById(R.id.txtRSS8V);
         rss8Value = (TextView) findViewById(R.id.txtRSS8);
 
-        lightText = (TextView) findViewById(R.id.txtLightV);
-        lightValue = (TextView) findViewById(R.id.txtLight);
-        pressureText = (TextView) findViewById(R.id.txtPressureV);
-        pressureValue = (TextView) findViewById(R.id.txtPressure);
+        magnetometerText = (TextView) findViewById(R.id.txtMagnetometerV);
+        magnetometerValue = (TextView) findViewById(R.id.txtMagnetometer);
+        accelerometerText = (TextView) findViewById(R.id.txtAccelerometerV);
+        accelerometerValue = (TextView) findViewById(R.id.txtAccelerometer);
 
         startButton = (Button) findViewById(R.id.btnStart);
         roomEditText = (EditText) findViewById(R.id.editRoom);
@@ -175,13 +176,12 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         sensorsValue = sensorHelper.readSensorData(event);
 
-        pressureValue.setText(Double.toString(sensorsValue.getPressure()));
-        pressureText.setText("Pressure");
-        lightValue.setText(Double.toString(sensorsValue.getLight()));
-        lightText.setText("Light");
+        magnetometerValue.setText(Arrays.toString(sensorsValue.getMagnetic()));
+        magnetometerText.setText("Magnetic");
+        accelerometerValue.setText(Arrays.toString(sensorsValue.getGravity()));
+        accelerometerText.setText("Gravity");
 
         wifiManager.startScan();
     }
@@ -232,7 +232,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
             Instances data = WekaHelper.convertToSingleInstance(test, registerDataPoint());
-            data.setClassIndex(0);
+
 
             wekaHelper.testForView(data);
         } catch (Exception e) {

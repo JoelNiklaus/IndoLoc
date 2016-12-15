@@ -197,6 +197,7 @@ public class WekaHelper {
     @NonNull
     public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {
         instances.delete();
+        instances.setClassIndex(0);
 
         ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
         dataPoints.add(dataPoint);

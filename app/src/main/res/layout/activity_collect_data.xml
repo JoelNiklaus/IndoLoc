@@ -227,7 +227,7 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/txtLightV"
+                android:id="@+id/txtAccelerometerV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -235,7 +235,7 @@
                 android:text="Light:" />
 
             <TextView
-                android:id="@+id/txtLight"
+                android:id="@+id/txtAccelerometer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -246,7 +246,7 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/txtPressureV"
+                android:id="@+id/txtMagnetometerV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -254,7 +254,7 @@
                 android:text="Pressure:" />
 
             <TextView
-                android:id="@+id/txtPressure"
+                android:id="@+id/txtMagnetometer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"

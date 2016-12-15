@@ -1,14 +1,16 @@
-package ch.joelniklaus.indoloc.Benchmarks;
+package ch.joelniklaus.indoloc;
+
+import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import ch.joelniklaus.indoloc.helpers.ClassifierRating;
-import ch.joelniklaus.indoloc.LibSVM;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
@@ -30,10 +32,11 @@ import weka.filters.unsupervised.instance.RemovePercentage;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Instrumentation test, which will execute on an Android device.
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
+@RunWith(AndroidJUnit4.class)
 public class WekaHelperBenchmarkTest {
 
     private Timer timer = new Timer();
@@ -49,12 +52,12 @@ public class WekaHelperBenchmarkTest {
     private ArrayList<ClassifierRating> classifierRatings = new ArrayList<ClassifierRating>();
 
     private Instances data, train, test;
-    String filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/data.arff";
+    String filePath = "data.arff";
 
 
     @Before
     public void setUp() throws Exception {
-        data = fileHelper.loadArff(filePath);
+        data = fileHelper.loadArffFromExternalStorage(filePath);
         RemovePercentage remove = wekaHelper.getRemovePercentage(data);
 
         train = wekaHelper.getTrainingSet(data, remove);
@@ -161,7 +164,6 @@ public class WekaHelperBenchmarkTest {
             classifierRatings.add(new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime));
         }
         sortClassifierRatings();
-
 
         // Display Statistics
         for (ClassifierRating classifierRating : classifierRatings)
