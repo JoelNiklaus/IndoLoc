@@ -245,12 +245,6 @@ public class WekaHelper {
             }
 
             // sensors
-            //SensorData sensors = dataPoint.getSensorData();
-            //instanceValues[rssListTemp.size() + 1] = sensors.getAmbientTemperature();
-            //instanceValues[rssListTemp.size() + 4] = sensors.getRelativeHumidity();
-            //instanceValues[rssListTemp.size() + 1] = sensors.getLight();
-            //instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
-
             instanceValues[index] = dataPoint.getSensorData().getMagneticY();
             index++;
             instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
@@ -285,11 +279,6 @@ public class WekaHelper {
             attributes.add(new Attribute("rssVariance" + i, Attribute.NUMERIC));
 
         // sensors
-        //attributes.add(new Attribute("ambient_temperature", Attribute.NUMERIC));
-        //attributes.add(new Attribute("relative_humidity", Attribute.NUMERIC));
-        //attributes.add(new Attribute("light", Attribute.NUMERIC));
-        //attributes.add(new Attribute("pressure", Attribute.NUMERIC));
-
         attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
 

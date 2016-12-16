@@ -39,19 +39,6 @@
                 android:layout_alignParentStart="true" />
         </TableRow>
 
-        <!--
-        <TableRow>
-
-            <Button
-                android:id="@+id/addRoom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="saveToArff"
-                android:text="Add Room" />
-
-        </TableRow>
--->
-
         <TableRow>
 
             <TextView
@@ -227,15 +214,15 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/txtAccelerometerV"
+                android:id="@+id/txtmagneticYV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:text="Light:" />
+                android:text="Pressure:" />
 
             <TextView
-                android:id="@+id/txtAccelerometer"
+                android:id="@+id/txtmagneticY"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -246,21 +233,23 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/txtMagnetometerV"
+                android:id="@+id/txtmagneticZV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:text="Pressure:" />
+                android:text="Light:" />
 
             <TextView
-                android:id="@+id/txtMagnetometer"
+                android:id="@+id/txtmagneticZ"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:text="0" />
         </TableRow>
+
+
 
         <TableRow>
 
@@ -324,72 +313,5 @@
         </TableRow>
 
     </TableLayout>
-
-    <!--
-    <TextView
-        android:id="@+id/intro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="@string/intro" />
-
-
-
-   <RadioGroup
-       android:id="@+id/radioGroup"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginRight="31dp"
-       android:layout_marginEnd="31dp"
-       android:layout_marginTop="118dp"
-       android:layout_alignParentTop="true"
-       android:layout_alignParentRight="true"
-       android:layout_alignParentEnd="true">
-
-       <RadioButton
-           android:text="@string/corridor"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/corridor"
-           android:layout_weight="1" />
-
-       <RadioButton
-           android:text="@string/kitchen"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/kitchen"
-           android:layout_weight="1" />
-
-       <RadioButton
-           android:text="@string/living_room"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/livingRoom"
-           android:layout_weight="1" />
-
-       <RadioButton
-           android:text="@string/nicola_room"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/roomNicola"
-           android:layout_weight="1" />
-
-       <RadioButton
-           android:text="@string/tobias_room"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/roomTobias"
-           android:layout_weight="1" />
-
-       <RadioButton
-           android:text="@string/joel_room"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:id="@+id/roomJoel"
-           android:layout_weight="1" />
-   </RadioGroup>
-   -->
 
 </RelativeLayout>

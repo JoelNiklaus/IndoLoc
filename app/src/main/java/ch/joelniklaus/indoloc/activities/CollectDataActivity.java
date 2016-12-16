@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import ch.joelniklaus.indoloc.R;
@@ -33,8 +32,8 @@ import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
-    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, accelerometerText, magnetometerText;
-    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, accelerometerValue, magnetometerValue;
+    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue;
     private Button startButton;
     private EditText roomEditText;
 
@@ -148,10 +147,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         rss8Text = (TextView) findViewById(R.id.txtRSS8V);
         rss8Value = (TextView) findViewById(R.id.txtRSS8);
 
-        magnetometerText = (TextView) findViewById(R.id.txtMagnetometerV);
-        magnetometerValue = (TextView) findViewById(R.id.txtMagnetometer);
-        accelerometerText = (TextView) findViewById(R.id.txtAccelerometerV);
-        accelerometerValue = (TextView) findViewById(R.id.txtAccelerometer);
+        magneticYText = (TextView) findViewById(R.id.txtmagneticYV);
+        magneticYValue = (TextView) findViewById(R.id.txtmagneticY);
+        magneticZText = (TextView) findViewById(R.id.txtmagneticZV);
+        magneticZValue = (TextView) findViewById(R.id.txtmagneticZ);
 
         startButton = (Button) findViewById(R.id.btnStart);
         roomEditText = (EditText) findViewById(R.id.editRoom);
@@ -179,10 +178,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void onSensorChanged(SensorEvent event) {
         sensorData = sensorHelper.readSensorData(event);
 
-        magnetometerValue.setText(Float.toString(sensorData.getMagneticY()));
-        magnetometerText.setText("MagneticY");
-        accelerometerValue.setText(Float.toString(sensorData.getMagneticZ()));
-        accelerometerText.setText("MagneticZ");
+        magneticYValue.setText(Float.toString(sensorData.getMagneticY()));
+        magneticYText.setText("MagneticY");
+        magneticZValue.setText(Float.toString(sensorData.getMagneticZ()));
+        magneticZText.setText("MagneticZ");
 
         wifiManager.startScan();
     }
@@ -229,13 +228,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
 
-
     public void liveTestModel(View v) {
         try {
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
             Instances data = WekaHelper.convertToSingleInstance(test, registerDataPoint());
-
 
             wekaHelper.testForView(data);
         } catch (Exception e) {
