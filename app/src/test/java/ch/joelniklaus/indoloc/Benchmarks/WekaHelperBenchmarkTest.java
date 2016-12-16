@@ -7,20 +7,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ch.joelniklaus.indoloc.helpers.ClassifierRating;
 import ch.joelniklaus.indoloc.LibSVM;
+import ch.joelniklaus.indoloc.helpers.ClassifierRating;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.bayes.NaiveBayesUpdateable;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.meta.Stacking;
+import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
@@ -62,13 +66,19 @@ public class WekaHelperBenchmarkTest {
         test = wekaHelper.getTestingSet(data, remove);
 
         // Support Vector Machine
-        classifiers.add(new LibSVM());
+        Classifier libSVM = new LibSVM();
+        //classifiers.add(libSVM);
+
+        // J48 Tree
+        classifiers.add(new J48());
 
         // K nearest neighbour
         classifiers.add(new IBk());
 
         // Naive Bayes
         classifiers.add(new NaiveBayes());
+        classifiers.add(new NaiveBayesUpdateable());
+        classifiers.add(new BayesNet());
 
         // Logistic Regression
         classifiers.add(new Logistic());
@@ -80,6 +90,8 @@ public class WekaHelperBenchmarkTest {
         classifiers.add(new LogitBoost());
         classifiers.add(new Bagging());
         classifiers.add(new AdaBoostM1());
+        classifiers.add(new Vote());
+        classifiers.add(new Stacking());
 
         // Auto Weka
         //classifiers.add(new AutoWEKAClassifier());
