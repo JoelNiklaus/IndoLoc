@@ -9,37 +9,39 @@ public class SensorData {
     //private double relativeHumidity;
     //private double light;
     //private double pressure;
-
-    private double[] magneticFingerprint = new double[3];
-
-    private float[] magnetic = new float[3];
-    private float[] gravity = new float[3];
+    private float magneticY, magneticZ;
 
 
-    public SensorData(float[] magnetic, float[] gravity) {
+    public SensorData(float magneticY, float magneticZ) {
         //this.ambientTemperature = ambientTemperature;
         //this.relativeHumidity = relativeHumidity;
         //this.light = light;
         //this.pressure = pressure;
-        this.magnetic = magnetic;
-        this.gravity = gravity;
+        this.magneticY = magneticY;
+        this.magneticZ = magneticZ;
     }
 
-    public float[] getMagnetic() {
-        return magnetic;
+    public float getMagneticY() {
+        return magneticY;
     }
 
-    public void setMagnetic(float[] magnetic) {
-        this.magnetic = magnetic;
+    public void setMagneticY(float magneticY) {
+        this.magneticY = magneticY;
     }
 
-    public float[] getGravity() {
-        return gravity;
+    public float getMagneticZ() {
+        return magneticZ;
     }
 
-    public void setGravity(float[] gravity) {
-        this.gravity = gravity;
+    public void setMagneticZ(float magneticZ) {
+        this.magneticZ = magneticZ;
     }
 
-    // TODO add tostring method
+    @Override
+    public String toString() {
+        return "SensorData{" +
+                "magneticY=" + magneticY +
+                ", magneticZ=" + magneticZ +
+                '}';
+    }
 }

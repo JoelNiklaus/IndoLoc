@@ -251,7 +251,10 @@ public class WekaHelper {
             //instanceValues[rssListTemp.size() + 1] = sensors.getLight();
             //instanceValues[rssListTemp.size() + 2] = sensors.getPressure();
 
-            // TODO add sensor data
+            instanceValues[index] = dataPoint.getSensorData().getMagneticY();
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
+            index++;
 
             data.add(new DenseInstance(1.0, instanceValues));
         }
@@ -287,8 +290,8 @@ public class WekaHelper {
         //attributes.add(new Attribute("light", Attribute.NUMERIC));
         //attributes.add(new Attribute("pressure", Attribute.NUMERIC));
 
-        attributes.add(new Attribute("magnetometerY", Attribute.NUMERIC));
-        attributes.add(new Attribute("magnetometerZ", Attribute.NUMERIC));
+        attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
+        attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
 
         return attributes;
     }

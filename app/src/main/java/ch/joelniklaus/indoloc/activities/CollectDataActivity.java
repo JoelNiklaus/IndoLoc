@@ -179,10 +179,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void onSensorChanged(SensorEvent event) {
         sensorData = sensorHelper.readSensorData(event);
 
-        magnetometerValue.setText(Arrays.toString(sensorData.getMagnetic()));
-        magnetometerText.setText("Magnetic");
-        accelerometerValue.setText(Arrays.toString(sensorData.getGravity()));
-        accelerometerText.setText("Gravity");
+        magnetometerValue.setText(Float.toString(sensorData.getMagneticY()));
+        magnetometerText.setText("MagneticY");
+        accelerometerValue.setText(Float.toString(sensorData.getMagneticZ()));
+        accelerometerText.setText("MagneticZ");
 
         wifiManager.startScan();
     }
