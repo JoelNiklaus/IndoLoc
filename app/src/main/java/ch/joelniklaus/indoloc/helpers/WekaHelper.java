@@ -9,7 +9,6 @@ import java.util.Random;
 
 import ch.joelniklaus.indoloc.BuildConfig;
 import ch.joelniklaus.indoloc.LibSVM;
-import ch.joelniklaus.indoloc.activities.CollectDataActivity;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -17,6 +16,8 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.Bagging;
+import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
@@ -32,7 +33,7 @@ public class WekaHelper {
 
     private Classifier classifier;
 
-    public static final String TRAINING_SET_PERCENTAGE = "80";
+    public static final String TRAINING_SET_PERCENTAGE = "70";
 
     private Timer timer = new Timer();
 
@@ -166,7 +167,7 @@ public class WekaHelper {
 
     // Change Model to be trained here!
     private void buildClassifier(Instances train) throws Exception {
-        trainKNN();
+        trainRF();
         classifier.buildClassifier(train);
     }
 
@@ -175,12 +176,10 @@ public class WekaHelper {
         classifier = new IBk();
     }
 
-
     // Support Vector Machine
     private void trainSVM() {
         classifier = new LibSVM();
     }
-
 
     // Naive Bayes
     private void trainNB() {
@@ -195,6 +194,16 @@ public class WekaHelper {
     // Bagging
     private void trainBagging() {
         classifier = new Bagging();
+    }
+
+    // Boosting
+    private void trainBoosting() {
+        classifier = new LogitBoost();
+    }
+
+    // Random Forest
+    private void trainRF() {
+        classifier = new RandomForest();
     }
 
 
@@ -252,10 +261,12 @@ public class WekaHelper {
             }
 
             // sensors
+            /*
             instanceValues[index] = dataPoint.getSensorData().getMagneticY();
             index++;
             instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
             index++;
+            */
 
             data.add(new DenseInstance(1.0, instanceValues));
         }
@@ -266,8 +277,8 @@ public class WekaHelper {
         ArrayList<String> rooms = getRooms(dataPoints);
 
         // rooms + number of rss + number of sensors
-        int numberOfAttributes = 1 + CollectDataActivity.NUMBER_OF_ACCESS_POINTS + CollectDataActivity.NUMBER_OF_SENSORS;
-        ArrayList<Attribute> attributes = new ArrayList<Attribute>(numberOfAttributes);
+        //int numberOfAttributes = 1 + CollectDataActivity.NUMBER_OF_ACCESS_POINTS + CollectDataActivity.NUMBER_OF_SENSORS;
+        ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 
         // class: room
         attributes.add(new Attribute("room", rooms));
@@ -286,8 +297,8 @@ public class WekaHelper {
             attributes.add(new Attribute("rssVariance" + i, Attribute.NUMERIC));
 
         // sensors
-        attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
-        attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
+        //attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
+        //attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
 
         return attributes;
     }
