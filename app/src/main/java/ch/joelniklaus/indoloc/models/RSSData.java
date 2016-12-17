@@ -52,14 +52,14 @@ public class RSSData {
     private ArrayList<Integer> computeRelativeRSSValues(ArrayList<Integer> values) {
         int max = Collections.max(values);
         for (int i = 0; i < values.size(); i++) {
-            values.set(i, values.get(i) - max);
+            values.set(i, max - values.get(i));
         }
         return values;
     }
 
     private ArrayList<Double> variances(double mean, ArrayList<Integer> values) {
         variances = new ArrayList<>();
-        for(int i = 0; i < values.size(); i++)
+        for (int i = 0; i < values.size(); i++)
             variances.add(i, mean - values.get(i));
         return variances;
     }

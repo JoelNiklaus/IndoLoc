@@ -93,7 +93,10 @@ public class WekaHelper {
         String results = "";
         for (int i = 0; i < test.numInstances(); i++) {
             double actualClass = test.instance(i).classValue();
-            String actual = test.classAttribute().value((int) actualClass);
+            String actual = "?";
+            // class is set
+            if(actualClass > -1)
+                 actual = test.classAttribute().value((int) actualClass);
 
             double predictedClass = classifier.classifyInstance(test.instance(i));
             String predicted = test.classAttribute().value((int) predictedClass);
@@ -203,6 +206,10 @@ public class WekaHelper {
         ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
         dataPoints.add(dataPoint);
         addInstances(dataPoints, instances);
+
+        assertion(instances.numInstances() == 1);
+        assertion(instances.classIndex() == 0);
+
         return instances;
     }
 
