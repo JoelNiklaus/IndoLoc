@@ -19,10 +19,13 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.bayes.NaiveBayesUpdateable;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
+import weka.classifiers.lazy.KStar;
 import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.meta.MultiSearch;
 import weka.classifiers.meta.Stacking;
 import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
@@ -93,6 +96,12 @@ public class WekaHelperBenchmarkTest {
         classifiers.add(new Vote());
         classifiers.add(new Stacking());
 
+        // Auto Weka Suggestion 5 min
+        String[] options = {"-B", "59", "-M", "m"};
+        KStar kStar = new KStar();
+        kStar.setOptions(options);
+        classifiers.add(kStar);
+
         // Auto Weka
         //classifiers.add(new AutoWEKAClassifier());
 
@@ -107,16 +116,14 @@ public class WekaHelperBenchmarkTest {
 
     @Test
     public void testAutoWeka() throws Exception {
-        /*
         AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
-        autoweka.setTimeLimit(1); // in minutes
+        autoweka.setTimeLimit(10); // in minutes
         autoweka.setMemLimit(1024); // in MB
         autoweka.setDebug(true);
         autoweka.setSeed(123);
         autoweka.setnBestConfigs(3);
         autoweka.buildClassifier(train);
-        System.out.println();
-        */
+        System.out.println(autoweka.getnBestConfigs());
     }
 
     @Test
@@ -142,6 +149,7 @@ public class WekaHelperBenchmarkTest {
 
     @Test
     public void testMultiSearch() throws Exception {
+        Classifier multiSearch = new MultiSearch();
 
     }
 
@@ -156,13 +164,13 @@ public class WekaHelperBenchmarkTest {
                 timer.reset();
                 classifier = wekaHelper.train(train, classifier);
                 // mean training time per instance
-                trainTimeSum += timer.timeElapsedMicroS()/train.numInstances();
+                trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
 
                 // Testing
                 timer.reset();
                 wekaHelper.test(test, classifier);
                 // mean testing time per instance
-                testTimeSum += timer.timeElapsedMicroS()/test.numInstances();
+                testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
 
                 // Evaluation
                 correctPctSum += wekaHelper.evaluate(data, classifier).pctCorrect();
@@ -184,9 +192,9 @@ public class WekaHelperBenchmarkTest {
         // Sort by Accuracy
         // Only possible in Java 8
         //classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
-        Collections.sort(classifierRatings, new Comparator<ClassifierRating>(){
-            public int compare(ClassifierRating o1, ClassifierRating o2){
-                if(o1.getMeanAccuracy() == o2.getMeanAccuracy())
+        Collections.sort(classifierRatings, new Comparator<ClassifierRating>() {
+            public int compare(ClassifierRating o1, ClassifierRating o2) {
+                if (o1.getMeanAccuracy() == o2.getMeanAccuracy())
                     return 0;
                 return o1.getMeanAccuracy() < o2.getMeanAccuracy() ? -1 : 1;
             }
@@ -248,7 +256,7 @@ public class WekaHelperBenchmarkTest {
             wekaHelper.train(train, classifier);
             trainTimeSum += timer.timeElapsedMicroS();
         }
-       return trainTimeSum / numberOfTestRounds;
+        return trainTimeSum / numberOfTestRounds;
     }
 
     @Test

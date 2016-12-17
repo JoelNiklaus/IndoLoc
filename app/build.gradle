@@ -42,10 +42,19 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile project(':weka')
+    compile project(':autoweka')
     compile project(':libsvm')
-    compile project(':junit-benchmarks-0.7.2')
-    //compile files('libs/libsvm.jar')
+    //compile project(':junit-benchmarks-0.7.2')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
     testCompile 'junit:junit:4.12'
+    // MultiSearch
+    compile 'com.github.fracpete:multisearch-weka-package:2016.6.7'
+    // GridSearch
+    compile group: 'nz.ac.waikato.cms.weka', name: 'gridSearch', version: '1.0.9'
+    // LibSVM
+    //compile group: 'nz.ac.waikato.cms.weka', name: 'LibSVM', version: '1.0.10'
+    // Weka
+    //compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0'
+
 }
