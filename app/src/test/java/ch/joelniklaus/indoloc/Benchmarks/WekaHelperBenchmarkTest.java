@@ -16,16 +16,13 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.bayes.NaiveBayesUpdateable;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
 import weka.classifiers.meta.AdaBoostM1;
-import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.LogitBoost;
-import weka.classifiers.meta.MultiSearch;
 import weka.classifiers.meta.Stacking;
 import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
@@ -75,19 +72,25 @@ public class WekaHelperBenchmarkTest {
         // J48 Tree
         classifiers.add(new J48());
 
-        // K nearest neighbour
-        classifiers.add(new IBk());
+        // K nearest neighbour (Auto Weka Suggestion 30 min)
+        String[] iBkOptions = {"-K", "4", "-I" };
+        IBk iBk = new IBk();
+        iBk.setOptions(iBkOptions);
+        classifiers.add(iBk);
 
         // Naive Bayes
         classifiers.add(new NaiveBayes());
-        classifiers.add(new NaiveBayesUpdateable());
         classifiers.add(new BayesNet());
 
         // Logistic Regression
         classifiers.add(new Logistic());
 
-        // Random Forest
-        classifiers.add(new RandomForest());
+        // Random Forest (Auto Weka Suggestion 10 min)
+        String[] randomForestOptions = {"-I", "10", "-K", "0", "-depth", "0"};
+        RandomForest randomForest = new RandomForest();
+        randomForest.setOptions(randomForestOptions);
+        classifiers.add(randomForest);
+
 
         // Ensemble methods
         classifiers.add(new LogitBoost());
@@ -96,10 +99,10 @@ public class WekaHelperBenchmarkTest {
         classifiers.add(new Vote());
         classifiers.add(new Stacking());
 
-        // Auto Weka Suggestion 5 min
-        String[] options = {"-B", "59", "-M", "m"};
+        // KStar (Auto Weka Suggestion 5 min)
+        String[] kStarOptions = {"-B", "59", "-M", "m"};
         KStar kStar = new KStar();
-        kStar.setOptions(options);
+        kStar.setOptions(kStarOptions);
         classifiers.add(kStar);
 
         // Auto Weka
@@ -116,14 +119,16 @@ public class WekaHelperBenchmarkTest {
 
     @Test
     public void testAutoWeka() throws Exception {
+        /*
         AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
-        autoweka.setTimeLimit(10); // in minutes
+        autoweka.setTimeLimit(1); // in minutes
         autoweka.setMemLimit(1024); // in MB
         autoweka.setDebug(true);
         autoweka.setSeed(123);
         autoweka.setnBestConfigs(3);
         autoweka.buildClassifier(train);
         System.out.println(autoweka.getnBestConfigs());
+        */
     }
 
     @Test
@@ -149,7 +154,6 @@ public class WekaHelperBenchmarkTest {
 
     @Test
     public void testMultiSearch() throws Exception {
-        Classifier multiSearch = new MultiSearch();
 
     }
 
@@ -181,7 +185,6 @@ public class WekaHelperBenchmarkTest {
             classifierRatings.add(new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime));
         }
         sortClassifierRatings();
-
 
         // Display Statistics
         for (ClassifierRating classifierRating : classifierRatings)

@@ -27,7 +27,7 @@ public class SensorHelper {
         this.context = context;
     }
 
-    public void setUpSensors() {
+    public void setUp() {
         sensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null) {
@@ -63,10 +63,10 @@ public class SensorHelper {
         }
 
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            //take the values
-            magnetic[0] = event.values[0];
-            magnetic[1] = event.values[1];
-            magnetic[2] = event.values[2];
+            //take the values: round to 1 decimal place because of sensor resolution
+            magnetic[0] = Math.round(event.values[0]*10.0)/(float)10.0;
+            magnetic[1] = Math.round(event.values[1]*10.0)/(float)10.0;
+            magnetic[2] = Math.round(event.values[2]*10.0)/(float)10.0;
 
             float[] R = new float[9];
             float[] I = new float[9];
