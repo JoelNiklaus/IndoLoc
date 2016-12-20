@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import ch.joelniklaus.indoloc.BuildConfig;
-import ch.joelniklaus.indoloc.LibSVM;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.Bagging;
