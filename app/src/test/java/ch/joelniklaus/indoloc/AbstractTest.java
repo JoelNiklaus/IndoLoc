@@ -4,8 +4,6 @@ import org.junit.Before;
 
 import java.util.ArrayList;
 
-import ch.joelniklaus.indoloc.LibSVM;
-import ch.joelniklaus.indoloc.helpers.ClassifierRating;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
@@ -45,8 +43,6 @@ public class AbstractTest {
     protected ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
     protected ArrayList<Classifier> trainedClassifiers = new ArrayList<Classifier>();
 
-    protected ArrayList<ClassifierRating> classifierRatings = new ArrayList<ClassifierRating>();
-
     protected Instances data, train, test;
 
     protected String filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/data.arff";
@@ -57,10 +53,9 @@ public class AbstractTest {
         addClassifiers();
 
         data = fileHelper.loadArff(filePath);
+
         RemovePercentage remove = wekaHelper.getRemovePercentage(data);
-
         train = wekaHelper.getTrainingSet(data, remove);
-
         test = wekaHelper.getTestingSet(data, remove);
 
         // Train Classifiers
@@ -151,5 +146,12 @@ public class AbstractTest {
         classifiers.add(new Grading());
 
         // Ensemble Selection
+    }
+
+    /**
+     * Has to be called before setUp() in order to work properly.
+     */
+    public void setFile(String fileName) {
+        filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/" + fileName;
     }
 }

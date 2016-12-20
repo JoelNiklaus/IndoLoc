@@ -21,9 +21,15 @@ public class WekaHelperUnitTest extends AbstractTest{
     }
 
     @Test
-    public void testRemoveAttribute() throws Exception {
+    public void testRemoveOneAttribute() throws Exception {
+        System.out.println(data.attribute(0));
+        Instances newData1 = wekaHelper.removeAttributes(data, "1");
+        System.out.println(newData1.attribute(0));
+
+
+
         // Remove third Attribute (index 2)
-        Instances newData = wekaHelper.removeAttribute(data, "3");
+        Instances newData = wekaHelper.removeAttributes(data, "3");
         assertNotEquals(data, newData);
         assertTrue(data.numAttributes() == newData.numAttributes() + 1);
         assertTrue(data.attribute(0).equals(newData.attribute(0)));
@@ -32,5 +38,20 @@ public class WekaHelperUnitTest extends AbstractTest{
         assertFalse(data.attribute(3).equals(newData.attribute(3)));
         assertTrue(data.attribute(3).equals(newData.attribute(2)));
         assertTrue(data.attribute(4).equals(newData.attribute(3)));
+    }
+
+    @Test
+    public void testRemoveMultipleAttributes() throws Exception {
+        // Remove third to fifth Attribute (indices 2 to 4)
+        Instances newData = wekaHelper.removeAttributes(data, "3-5");
+        assertNotEquals(data, newData);
+        assertTrue(data.numAttributes() == newData.numAttributes() + 3);
+        assertTrue(data.attribute(0).equals(newData.attribute(0)));
+        assertTrue(data.attribute(1).equals(newData.attribute(1)));
+        assertFalse(data.attribute(2).equals(newData.attribute(2)));
+        assertFalse(data.attribute(3).equals(newData.attribute(3)));
+        assertFalse(data.attribute(4).equals(newData.attribute(4)));
+        assertTrue(data.attribute(5).equals(newData.attribute(2)));
+        assertTrue(data.attribute(6).equals(newData.attribute(3)));
     }
 }

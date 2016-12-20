@@ -47,7 +47,7 @@ dependencies {
 
     // Weka
     //compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0'
-    compile project(':weka')
+    compile project(':weka') // 3.7.3
 
     // Classifiers
     // LibSVM

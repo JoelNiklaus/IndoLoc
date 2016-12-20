@@ -168,8 +168,15 @@ public class WekaHelper {
         return remove;
     }
 
-    public static Instances removeAttribute(Instances data, String attributeIndex) throws Exception {
-        String[] options = {"-R", attributeIndex};
+    /**
+     *
+     * @param data
+     * @param attributeIndices one Index: e.g. 1, multiple Indices: eg. 2-5
+     * @return
+     * @throws Exception
+     */
+    public static Instances removeAttributes(Instances data, String attributeIndices) throws Exception {
+        String[] options = {"-R", attributeIndices};
         Remove remove = new Remove();
         remove.setInputFormat(data);
         remove.setOptions(options);
