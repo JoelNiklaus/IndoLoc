@@ -1,166 +1,68 @@
 package ch.joelniklaus.indoloc;
 
-import android.support.test.runner.AndroidJUnit4;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import ch.joelniklaus.indoloc.helpers.ClassifierRating;
-import ch.joelniklaus.indoloc.helpers.FileHelper;
-import ch.joelniklaus.indoloc.helpers.Timer;
-import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.functions.Logistic;
-import weka.classifiers.lazy.IBk;
-import weka.classifiers.meta.AdaBoostM1;
-import weka.classifiers.meta.Bagging;
-import weka.classifiers.meta.CVParameterSelection;
-import weka.classifiers.meta.LogitBoost;
-import weka.classifiers.trees.J48;
-import weka.classifiers.trees.RandomForest;
-import weka.core.Instances;
-import weka.core.Utils;
-import weka.filters.unsupervised.instance.RemovePercentage;
 
-import static org.junit.Assert.assertEquals;
 
 /**
- * Instrumentation test, which will execute on an Android device.
+ * Example local unit test, which will execute on the development machine (host).
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-@RunWith(AndroidJUnit4.class)
-public class WekaHelperBenchmarkTest {
-
-    private Timer timer = new Timer();
-
-    private int numberOfTestRounds = 100;
-
-    private WekaHelper wekaHelper = new WekaHelper();
-    private FileHelper fileHelper = new FileHelper();
-
-    private ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
-    private ArrayList<Classifier> trainedClassifiers = new ArrayList<Classifier>();
-
-    private ArrayList<ClassifierRating> classifierRatings = new ArrayList<ClassifierRating>();
-
-    private Instances data, train, test;
-    String filePath = "data.arff";
-
+public class ClassifierTest extends AbstractTest {
 
     @Before
     public void setUp() throws Exception {
-        data = fileHelper.loadArffFromExternalStorage(filePath);
-        RemovePercentage remove = wekaHelper.getRemovePercentage(data);
-
-        train = wekaHelper.getTrainingSet(data, remove);
-
-        test = wekaHelper.getTestingSet(data, remove);
-
-        // Support Vector Machine
-        classifiers.add(new LibSVM());
-
-        // K nearest neighbour
-        classifiers.add(new IBk());
-
-        // Naive Bayes
-        classifiers.add(new NaiveBayes());
-
-        // Logistic Regression
-        classifiers.add(new Logistic());
-
-        // Random Forest
-        classifiers.add(new RandomForest());
-
-        // Ensemble methods
-        classifiers.add(new LogitBoost());
-        classifiers.add(new Bagging());
-        classifiers.add(new AdaBoostM1());
-
-        // Auto Weka
-        //classifiers.add(new AutoWEKAClassifier());
-
-        for (int i = 0; i < classifiers.size(); i++)
-            trainedClassifiers.add(i, wekaHelper.train(train, classifiers.get(i)));
+        super.setUp();
     }
 
     @Test
-    public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
-    }
-
-    @Test
-    public void testAutoWeka() throws Exception {
-        /*
-        AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
-        autoweka.setTimeLimit(1); // in minutes
-        autoweka.setMemLimit(1024); // in MB
-        autoweka.setDebug(true);
-        autoweka.setSeed(123);
-        autoweka.setnBestConfigs(3);
-        autoweka.buildClassifier(train);
-        System.out.println();
-        */
-    }
-
-    @Test
-    public void testCVParameterSelection() throws Exception {
-        J48 classifier = new J48();
-        System.out.println(getCorrectPctSum(classifier));
-        CVParameterSelection cvParameterSelection = new CVParameterSelection();
-        cvParameterSelection.setClassifier(classifier);
-        cvParameterSelection.buildClassifier(train);
-        cvParameterSelection.setNumFolds(5);  // using 5-fold CV
-        cvParameterSelection.addCVParameter("C 0.1 0.5 5");
-        String[] classifierOptions = cvParameterSelection.getBestClassifierOptions();
-        classifier.setOptions(classifierOptions);
-        classifier.buildClassifier(train);
-        System.out.println(Utils.joinOptions(classifierOptions));
-        System.out.println(getCorrectPctSum(classifier));
-    }
-
-    @Test
-    public void testGridSearch() throws Exception {
+    public void testMeanImprovement() throws Exception {
 
     }
 
     @Test
-    public void testMultiSearch() throws Exception {
+    public void testVariancesImprovement() throws Exception {
 
     }
 
     @Test
-    public void testAllClassifiersWithDefaultParameters() throws Exception {
+    public void testMagneticFieldValuesImprovement() throws Exception {
+
+    }
+
+    @Test
+    public void testAllClassifiers() throws Exception {
         for (Classifier classifier : classifiers) {
             double correctPctSum = 0;
             long trainTimeSum = 0;
             long testTimeSum = 0;
-            for (int round = 0; round < numberOfTestRounds; round++) {
+            for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
                 //Training
                 timer.reset();
                 classifier = wekaHelper.train(train, classifier);
                 // mean training time per instance
-                trainTimeSum += timer.timeElapsedMicroS()/train.numInstances();
+                trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
 
                 // Testing
                 timer.reset();
                 wekaHelper.test(test, classifier);
                 // mean testing time per instance
-                testTimeSum += timer.timeElapsedMicroS()/test.numInstances();
+                testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
 
                 // Evaluation
                 correctPctSum += wekaHelper.evaluate(data, classifier).pctCorrect();
             }
-            double meanTrainTime = trainTimeSum / numberOfTestRounds;
-            double meanTestTime = testTimeSum / numberOfTestRounds;
-            double meanAccuracy = correctPctSum / numberOfTestRounds;
+            double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
+            double meanTestTime = testTimeSum / NUMBER_OF_TEST_ROUNDS;
+            double meanAccuracy = correctPctSum / NUMBER_OF_TEST_ROUNDS;
             classifierRatings.add(new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime));
         }
         sortClassifierRatings();
@@ -174,9 +76,9 @@ public class WekaHelperBenchmarkTest {
         // Sort by Accuracy
         // Only possible in Java 8
         //classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
-        Collections.sort(classifierRatings, new Comparator<ClassifierRating>(){
-            public int compare(ClassifierRating o1, ClassifierRating o2){
-                if(o1.getMeanAccuracy() == o2.getMeanAccuracy())
+        Collections.sort(classifierRatings, new Comparator<ClassifierRating>() {
+            public int compare(ClassifierRating o1, ClassifierRating o2) {
+                if (o1.getMeanAccuracy() == o2.getMeanAccuracy())
                     return 0;
                 return o1.getMeanAccuracy() < o2.getMeanAccuracy() ? -1 : 1;
             }
@@ -206,11 +108,11 @@ public class WekaHelperBenchmarkTest {
     private double getCorrectPctSum(Classifier classifier) throws Exception {
         Evaluation evaluation;
         double correctPctSum = 0;
-        for (int round = 0; round < numberOfTestRounds; round++) {
+        for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             evaluation = wekaHelper.evaluate(data, classifier);
             correctPctSum += evaluation.pctCorrect();
         }
-        return correctPctSum / numberOfTestRounds;
+        return correctPctSum / NUMBER_OF_TEST_ROUNDS;
     }
 
     @Test
@@ -233,12 +135,12 @@ public class WekaHelperBenchmarkTest {
 
     private long getMeanTrainTime(Classifier classifier) throws Exception {
         long trainTimeSum = 0;
-        for (int round = 0; round < numberOfTestRounds; round++) {
+        for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             timer.reset();
             wekaHelper.train(train, classifier);
             trainTimeSum += timer.timeElapsedMicroS();
         }
-       return trainTimeSum / numberOfTestRounds;
+        return trainTimeSum / NUMBER_OF_TEST_ROUNDS;
     }
 
     @Test
@@ -261,11 +163,11 @@ public class WekaHelperBenchmarkTest {
 
     private long getMeanTestTime(Classifier classifier) throws Exception {
         long testTimeSum = 0;
-        for (int round = 0; round < numberOfTestRounds; round++) {
+        for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             timer.reset();
             wekaHelper.test(test, classifier);
             testTimeSum += timer.timeElapsedMicroS();
         }
-        return testTimeSum / numberOfTestRounds;
+        return testTimeSum / NUMBER_OF_TEST_ROUNDS;
     }
 }

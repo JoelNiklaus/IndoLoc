@@ -22,6 +22,7 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
 // Weka version = 3.7.3
@@ -33,9 +34,11 @@ public class WekaHelper {
 
     private Classifier classifier;
 
+    private Timer timer = new Timer();
+
+
     public static final String TRAINING_SET_PERCENTAGE = "70";
 
-    private Timer timer = new Timer();
 
     public WekaHelper() {
 
@@ -165,6 +168,14 @@ public class WekaHelper {
         return remove;
     }
 
+    public static Instances removeAttribute(Instances data, String attributeIndex) throws Exception {
+        String[] options = {"-R", attributeIndex};
+        Remove remove = new Remove();
+        remove.setInputFormat(data);
+        remove.setOptions(options);
+        return Filter.useFilter(data, remove);
+    }
+
     // Change Model to be trained here!
     private void buildClassifier(Instances train) throws Exception {
         trainRF();
@@ -206,7 +217,6 @@ public class WekaHelper {
         classifier = new RandomForest();
     }
 
-
     @NonNull
     public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {
         instances.delete();
@@ -244,6 +254,12 @@ public class WekaHelper {
             instanceValues[index] = data.classAttribute().indexOfValue(dataPoint.getRoom());
             index++;
 
+            // sensors
+            instanceValues[index] = dataPoint.getSensorData().getMagneticY();
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
+            index++;
+
             // rss values
             for (int i = 0; i < dataPoint.getRssData().getValues().size(); i++) {
                 instanceValues[index] = dataPoint.getRssData().getValues().get(i);
@@ -259,14 +275,6 @@ public class WekaHelper {
                 instanceValues[index] = dataPoint.getRssData().getVariances().get(i);
                 index++;
             }
-
-            // sensors
-            /*
-            instanceValues[index] = dataPoint.getSensorData().getMagneticY();
-            index++;
-            instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
-            index++;
-            */
 
             data.add(new DenseInstance(1.0, instanceValues));
         }
@@ -285,6 +293,10 @@ public class WekaHelper {
 
         assertion( dataPoints.get(0).getRssData().getValues().size() == dataPoints.get(0).getRssData().getVariances().size());
 
+        // sensors
+        attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
+        attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
+
         // rss values
         for (int i = 0; i < dataPoints.get(0).getRssData().getValues().size(); i++)
             attributes.add(new Attribute("rssValue" + i, Attribute.NUMERIC));
@@ -295,10 +307,6 @@ public class WekaHelper {
         // rss variances
         for (int i = 0; i < dataPoints.get(0).getRssData().getVariances().size(); i++)
             attributes.add(new Attribute("rssVariance" + i, Attribute.NUMERIC));
-
-        // sensors
-        //attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
-        //attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
 
         return attributes;
     }
