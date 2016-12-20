@@ -23,6 +23,7 @@ public class SensorHelper {
     private float[] magnetic = new float[3], gravity = new float[3], magneticFingerprint = new float[3];
     private final float alpha = (float) 0.8;
 
+
     public SensorHelper(Context context) {
         this.context = context;
     }
@@ -46,8 +47,8 @@ public class SensorHelper {
     }
 
     public void registerListeners() {
-        sensorManager.registerListener((SensorEventListener) context, magnetometer, SensorManager.SENSOR_DELAY_UI);
-        sensorManager.registerListener((SensorEventListener) context, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener((SensorEventListener) context, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener((SensorEventListener) context, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void unRegisterListeners() {
@@ -63,23 +64,24 @@ public class SensorHelper {
         }
 
         if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            //take the values: round to 1 decimal place because of sensor resolution
-            magnetic[0] = Math.round(event.values[0]*10.0)/(float)10.0;
-            magnetic[1] = Math.round(event.values[1]*10.0)/(float)10.0;
-            magnetic[2] = Math.round(event.values[2]*10.0)/(float)10.0;
+            //take the values
+            magnetic[0] = alpha * magnetic[0] + (1 - alpha) * event.values[0];
+            magnetic[1] = alpha * magnetic[1] + (1 - alpha) * event.values[1];
+            magnetic[2] = alpha * magnetic[2] + (1 - alpha) * event.values[2];
 
             float[] R = new float[9];
             float[] I = new float[9];
             SensorManager.getRotationMatrix(R, I, gravity, magnetic);
-            float[] A_D = event.values.clone();
-            float[] A_W = new float[3];
-            A_W[0] = R[0] * A_D[0] + R[1] * A_D[1] + R[2] * A_D[2];
-            A_W[1] = R[3] * A_D[0] + R[4] * A_D[1] + R[5] * A_D[2];
-            A_W[2] = R[6] * A_D[0] + R[7] * A_D[1] + R[8] * A_D[2];
+            //float[] A_D = event.values.clone();
+            //float[] A_W = new float[3];
+            magneticFingerprint[0] = R[0] * magnetic[0] + R[1] * magnetic[1] + R[2] * magnetic[2];
+            magneticFingerprint[1] = R[3] * magnetic[0] + R[4] * magnetic[1] + R[5] * magnetic[2];
+            magneticFingerprint[2] = R[6] * magnetic[0] + R[7] * magnetic[1] + R[8] * magnetic[2];
 
-            magneticFingerprint[0] = A_W[0]; // x-value: should always be 0
-            magneticFingerprint[1] = A_W[1]; // y-value
-            magneticFingerprint[2] = A_W[2]; // z-value
+            // round to 1 decimal place because of sensor resolution
+            magneticFingerprint[0] = Math.round(magneticFingerprint[0]*10.0)/(float)10.0; // x-value: should always be 0
+            magneticFingerprint[1] = Math.round(magneticFingerprint[1]*10.0)/(float)10.0; // y-value
+            magneticFingerprint[2] = Math.round(magneticFingerprint[2]*10.0)/(float)10.0; // z-value
         }
 
         return new SensorData(magneticFingerprint[1], magneticFingerprint[2]);

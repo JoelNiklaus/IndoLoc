@@ -59,7 +59,7 @@ public class WifiHelper {
             for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
                 rssList.add(i, 1);
 
-            // search by SSID
+            // search by MAC address
             for (int i = 0; i < scanResults.size(); i++) {
                 ScanResult scanResult = scanResults.get(i);
                 int level = scanResult.level;

@@ -4,7 +4,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -130,10 +129,19 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void onSensorChanged(SensorEvent event) {
         sensorData = sensorHelper.readSensorData(event);
 
+        RSSData previous = rssData;
+        rssData = wifiHelper.readWifiData(getIntent());
+
+        setTextViewValues();
+
+        // TODO check if this works
+        if(!previous.equals(rssData))
+            saveDataPoint();
+    }
+
+    private void setTextViewValues() {
         magneticYValue.setText(Float.toString(sensorData.getMagneticY()));
         magneticZValue.setText(Float.toString(sensorData.getMagneticZ()));
-
-        rssData = wifiHelper.readWifiData(getIntent());
 
         rss1Value.setText(rssData.getValues().get(0).toString());
         rss2Value.setText(rssData.getValues().get(1).toString());
@@ -143,8 +151,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         rss6Value.setText(rssData.getValues().get(5).toString());
         rss7Value.setText(rssData.getValues().get(6).toString());
         rss8Value.setText(rssData.getValues().get(7).toString());
-
-        saveDataPoint();
     }
 
     @Override
@@ -179,7 +185,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
-    @NonNull
     private DataPoint registerDataPoint() {
         return new DataPoint(roomEditText.getText().toString(), rssData, sensorData);
     }
