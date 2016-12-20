@@ -75,7 +75,7 @@ public class TrajectoryPointExtraRunner
         if(instanceOverride != null)
         {
             experiment.datasetString = instanceOverride;
-            trajGroupName = trajGroupName + "." + new File(instanceOverride).getName() + ".traj";
+            trajGroupName = trajGroupName + "" + new File(instanceOverride).getName() + ".traj";
         }
 
         //Have we been given a specific seed?
@@ -85,7 +85,7 @@ public class TrajectoryPointExtraRunner
             trajGroup = new TrajectoryGroup(experiment);
             trajGroup.addTrajectory(singleTraj);
             if(splitTrajFile)
-                trajGroupName = trajGroupName + "." + targetSeed;
+                trajGroupName = trajGroupName + "" + targetSeed;
         }
 
         Properties runnerProps = new Properties();

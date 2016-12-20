@@ -101,12 +101,12 @@ class ListExperiment extends XmlSerializable
         //Have we been given a specific target run?
         if(target != -1)
         {
-            listExperimentName = listExperimentName + "." + target;
+            listExperimentName = listExperimentName + "" + target;
             String argString = argStrings.get(target);
             argStrings = new ArrayList<String>();
             argStrings.add(argString);
             //instanceStrings = new String[]{instanceStrings[target]};
-            outputFileName += "." + target;
+            outputFileName += "" + target;
         }
         ListResultGroup resGroup = new ListResultGroup(experiment);
 

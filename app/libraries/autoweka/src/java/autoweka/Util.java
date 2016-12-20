@@ -692,7 +692,7 @@ public class Util
             log.warn("Could not auto-detect the location of your Auto-WEKA install - have you moved the classes away from the 'params' diectory?");
             msFailedToFindDistributionOnce = true;
         }
-        return ".";
+        return "";
     }
 
     /**
