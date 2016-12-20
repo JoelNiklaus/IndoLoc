@@ -23,6 +23,7 @@ import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+import weka.filters.unsupervised.instance.RemoveDuplicates;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
 // Weka version = 3.7.3
@@ -181,6 +182,11 @@ public class WekaHelper {
         remove.setInputFormat(data);
         remove.setOptions(options);
         return Filter.useFilter(data, remove);
+    }
+
+    public static Instances removeDuplicates(Instances data) throws Exception {
+        RemoveDuplicates remove = new RemoveDuplicates();
+        return null;
     }
 
     // Change Model to be trained here!

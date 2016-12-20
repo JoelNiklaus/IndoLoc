@@ -1,15 +1,21 @@
 package ch.joelniklaus.indoloc;
 
+import android.support.annotation.NonNull;
+
 import org.junit.Before;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
+import ch.joelniklaus.indoloc.helpers.ClassifierRating;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
@@ -154,5 +160,74 @@ public class AbstractTest {
      */
     public void setFile(String fileName) {
         filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/" + fileName;
+    }
+
+    protected ArrayList<ClassifierRating> makeClassifierRatings(Instances data) throws Exception {
+        ArrayList<ClassifierRating> classifierRatings = testAllClassifiers(data);
+
+        classifierRatings = sortClassifierRatings(classifierRatings);
+
+        // Display Statistics
+        for (ClassifierRating classifierRating : classifierRatings)
+            System.out.println(classifierRating);
+
+        return classifierRatings;
+    }
+
+    protected ArrayList<ClassifierRating> testAllClassifiers(Instances data) throws Exception {
+        ArrayList<ClassifierRating> classifierRatings = new ArrayList<>();
+        for (Classifier classifier : classifiers) {
+            ClassifierRating classifierRating = testClassifier(classifier, data);
+            classifierRatings.add(classifierRating);
+        }
+        return classifierRatings;
+    }
+
+    @NonNull
+    protected ClassifierRating testClassifier(Classifier classifier, Instances data) throws Exception {
+        double correctPctSum = 0;
+        long trainTimeSum = 0;
+        long testTimeSum = 0;
+        for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
+            // Generate new Training and Testing set
+            RemovePercentage remove = wekaHelper.getRemovePercentage(data);
+            Instances train = wekaHelper.getTrainingSet(data, remove);
+            Instances test = wekaHelper.getTestingSet(data, remove);
+
+            // Training
+            timer.reset();
+            classifier = wekaHelper.train(train, classifier);
+            // mean training time per instance
+            trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
+
+            // Testing
+            timer.reset();
+            wekaHelper.test(test, classifier);
+            // mean testing time per instance
+            testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
+
+            // Evaluation
+            correctPctSum += wekaHelper.evaluate(data, classifier).pctCorrect();
+        }
+        double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
+        double meanTestTime = testTimeSum / NUMBER_OF_TEST_ROUNDS;
+        double meanAccuracy = correctPctSum / NUMBER_OF_TEST_ROUNDS;
+
+        return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime);
+    }
+
+    protected ArrayList<ClassifierRating> sortClassifierRatings(ArrayList<ClassifierRating> classifierRatings) {
+        // Sort by Accuracy
+        // Only possible in Java 8
+        //classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
+        Collections.sort(classifierRatings, new Comparator<ClassifierRating>() {
+            public int compare(ClassifierRating o1, ClassifierRating o2) {
+                if (o1.getMeanAccuracy() == o2.getMeanAccuracy())
+                    return 0;
+                return o1.getMeanAccuracy() > o2.getMeanAccuracy() ? -1 : 1;
+            }
+        });
+        //Collections.reverse(classifierRatings);
+        return classifierRatings;
     }
 }
