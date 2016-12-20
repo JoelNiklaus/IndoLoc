@@ -1,1 +1,1 @@
-include ':app', ':weka', ':libsvm'
+include ':app', ':weka'

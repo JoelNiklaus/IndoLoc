@@ -34,7 +34,24 @@ android {
         sourceCompatibility 1.8
     }
     */
+    packagingOptions {
+        exclude 'weka/gui/**'
+        exclude 'weka/classifiers/bayes/net/icons/**'
+        exclude 'weka/experiment/**'
+        exclude 'weka/core/logging/**'
+        exclude 'weka/core/Copyright.props'
+        exclude 'weka/core/Capabilities.props'
+        exclude 'weka/core/version.txt'
+    }
+
 }
+
+/*
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+*/
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -46,22 +63,23 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // Weka
-    //compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0'
-    compile project(':weka') // 3.7.3
+    //compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0' // maybe not compatible: problem with arff saver
+    //compile project(':weka') // 3.7.3
 
     // Classifiers
-    // LibSVM
-    //compile group: 'nz.ac.waikato.cms.weka', name: 'LibSVM', version: '1.0.10'
-    compile project(':libsvm')
+    compile group: 'nz.ac.waikato.cms.weka', name: 'LibSVM', version: '1.0.10'
     compile group: 'nz.ac.waikato.cms.weka', name: 'grading', version: '1.0.1'
     compile group: 'nz.ac.waikato.cms.weka', name: 'dagging', version: '1.0.2'
     compile group: 'nz.ac.waikato.cms.weka', name: 'decorate', version: '1.0.2'
+    compile group: 'nz.ac.waikato.cms.weka', name: 'ensembleLibrary', version: '1.0.4'
+
 
     // HyperParameterSearch
     // Auto-Weka
     //compile project(':autoweka')
+    //compile 'com.github.automl:autoweka:v2.2'
     // MultiSearch
-    //compile 'com.github.fracpete:multisearch-weka-package:2016.6.7'
+    compile 'com.github.fracpete:multisearch-weka-package:2016.6.7'
     // GridSearch
-    //compile group: 'nz.ac.waikato.cms.weka', name: 'gridSearch', version: '1.0.9'
+    compile group: 'nz.ac.waikato.cms.weka', name: 'gridSearch', version: '1.0.9'
 }

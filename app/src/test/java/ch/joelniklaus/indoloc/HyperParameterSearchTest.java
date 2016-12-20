@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import weka.classifiers.meta.CVParameterSelection;
+import weka.classifiers.meta.GridSearch;
+import weka.classifiers.meta.MultiSearch;
 import weka.classifiers.trees.J48;
 import weka.core.Utils;
 
@@ -49,12 +51,12 @@ public class HyperParameterSearchTest extends AbstractTest {
 
     @Test
     public void testGridSearch() throws Exception {
-
+        new GridSearch();
     }
 
     @Test
     public void testMultiSearch() throws Exception {
-
+        new MultiSearch();
     }
 
 }

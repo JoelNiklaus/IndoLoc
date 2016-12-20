@@ -134,9 +134,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         setTextViewValues();
 
-        // TODO check if this works
-        if(!previous.equals(rssData))
-            saveDataPoint();
+
+        //TODO collect not as many datapoints
+        saveDataPoint();
     }
 
     private void setTextViewValues() {
