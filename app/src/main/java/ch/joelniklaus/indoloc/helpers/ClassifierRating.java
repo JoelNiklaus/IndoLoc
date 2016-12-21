@@ -2,6 +2,8 @@ package ch.joelniklaus.indoloc.helpers;
 
 import java.text.DecimalFormat;
 
+import weka.classifiers.Evaluation;
+
 /**
  * Created by joelniklaus on 26.11.16.
  */
@@ -11,12 +13,14 @@ public class ClassifierRating {
     private double meanTrainTime;
     private double meanTestTime;
     private double meanAccuracy;
+    private Evaluation evaluation;
 
-    public ClassifierRating(String name, double meanAccuracy, double meanTestTime, double meanTrainTime) {
+    public ClassifierRating(String name, double meanAccuracy, double meanTestTime, double meanTrainTime, Evaluation lastEvaluation) {
         this.name = name;
         this.meanAccuracy = meanAccuracy;
         this.meanTestTime = meanTestTime;
         this.meanTrainTime = meanTrainTime;
+        this.evaluation = evaluation;
     }
 
     public String getName() {
@@ -49,6 +53,14 @@ public class ClassifierRating {
 
     public void setMeanAccuracy(double meanAccuracy) {
         this.meanAccuracy = meanAccuracy;
+    }
+
+    public Evaluation getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(Evaluation evaluation) {
+        this.evaluation = evaluation;
     }
 
     @Override

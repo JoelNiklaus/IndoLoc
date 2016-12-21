@@ -13,24 +13,19 @@ import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.Classifier;
-import weka.classifiers.bayes.BayesNet;
-import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
-import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.Bagging;
-import weka.classifiers.meta.Dagging;
-import weka.classifiers.meta.Decorate;
-import weka.classifiers.meta.Grading;
 import weka.classifiers.meta.LogitBoost;
-import weka.classifiers.meta.Stacking;
-import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.filters.unsupervised.instance.RemovePercentage;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -39,7 +34,7 @@ import weka.filters.unsupervised.instance.RemovePercentage;
  */
 public class AbstractTest {
 
-    protected final int NUMBER_OF_TEST_ROUNDS = 10;
+    protected final int NUMBER_OF_TEST_ROUNDS = 5;
 
     protected Timer timer = new Timer();
 
@@ -79,7 +74,7 @@ public class AbstractTest {
 
         // Support Vector Machine
         Classifier libSVM = new LibSVM();
-        //classifiers.add(libSVM);
+        classifiers.add(libSVM);
 
         /* ==============================
         Lazy
@@ -95,17 +90,17 @@ public class AbstractTest {
         String[] kStarOptions = {"-B", "59", "-M", "m"};
         KStar kStar = new KStar();
         kStar.setOptions(kStarOptions);
-        classifiers.add(kStar);
+        //classifiers.add(kStar);
 
         /* ==============================
         Bayes
         ============================== */
 
         // Naive Bayes
-        classifiers.add(new NaiveBayes());
+        //classifiers.add(new NaiveBayes());
 
         // Bayes Net
-        classifiers.add(new BayesNet());
+        //classifiers.add(new BayesNet());
 
 
         /* ==============================
@@ -131,25 +126,25 @@ public class AbstractTest {
         classifiers.add(new LogitBoost());
 
         // Adaptive Boosting
-        classifiers.add(new AdaBoostM1());
+        //classifiers.add(new AdaBoostM1());
 
         // Bagging
         classifiers.add(new Bagging());
 
         // Voting
-        classifiers.add(new Vote());
+        //classifiers.add(new Vote());
 
         // Stacking
-        classifiers.add(new Stacking());
+        //classifiers.add(new Stacking());
 
         // Decorate
-        classifiers.add(new Decorate());
+        //classifiers.add(new Decorate());
 
         // Dagging
-        classifiers.add(new Dagging());
+        //classifiers.add(new Dagging());
 
         // Grading
-        classifiers.add(new Grading());
+        //classifiers.add(new Grading());
 
         // Ensemble Selection
         //classifiers.add(new EnsembleSelection());
@@ -162,9 +157,8 @@ public class AbstractTest {
         filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/" + fileName;
     }
 
-    protected ArrayList<ClassifierRating> makeClassifierRatings(Instances data) throws Exception {
-        ArrayList<ClassifierRating> classifierRatings = testAllClassifiers(data);
 
+    protected ArrayList<ClassifierRating> sortAndPrintClassifierRatings(ArrayList<ClassifierRating> classifierRatings) throws Exception {
         classifierRatings = sortClassifierRatings(classifierRatings);
 
         // Display Statistics
@@ -174,7 +168,7 @@ public class AbstractTest {
         return classifierRatings;
     }
 
-    protected ArrayList<ClassifierRating> testAllClassifiers(Instances data) throws Exception {
+    protected ArrayList<ClassifierRating> getClassifierRatings(Instances data) throws Exception {
         ArrayList<ClassifierRating> classifierRatings = new ArrayList<>();
         for (Classifier classifier : classifiers) {
             ClassifierRating classifierRating = testClassifier(classifier, data);
@@ -188,6 +182,7 @@ public class AbstractTest {
         double correctPctSum = 0;
         long trainTimeSum = 0;
         long testTimeSum = 0;
+        Evaluation lastEvaluation = null;
         for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             // Generate new Training and Testing set
             RemovePercentage remove = wekaHelper.getRemovePercentage(data);
@@ -207,13 +202,14 @@ public class AbstractTest {
             testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
 
             // Evaluation
-            correctPctSum += wekaHelper.evaluate(data, classifier).pctCorrect();
+            lastEvaluation = wekaHelper.evaluate(train, test, classifier);
+            correctPctSum += lastEvaluation.pctCorrect();
         }
         double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
         double meanTestTime = testTimeSum / NUMBER_OF_TEST_ROUNDS;
         double meanAccuracy = correctPctSum / NUMBER_OF_TEST_ROUNDS;
 
-        return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime);
+        return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime, lastEvaluation);
     }
 
     protected ArrayList<ClassifierRating> sortClassifierRatings(ArrayList<ClassifierRating> classifierRatings) {
@@ -229,5 +225,32 @@ public class AbstractTest {
         });
         //Collections.reverse(classifierRatings);
         return classifierRatings;
+    }
+
+    protected void testWithAndWithout(Instances with, Instances without) throws Exception {
+        // Without
+        ArrayList<ClassifierRating> ratingsWithout = getClassifierRatings(data);
+        // With
+        ArrayList<ClassifierRating> ratingsWith = getClassifierRatings(data);
+
+        // Test each Classifier
+        for (int i = 0; i < ratingsWith.size(); i++) {
+            ClassifierRating ratingWith = ratingsWith.get(i);
+            ClassifierRating ratingWithout = ratingsWithout.get(i);
+            assertTrue(ratingWith.getName().equals(ratingWithout.getName()));
+            //assertTrue(ratingWith.getMeanAccuracy() > ratingWithout.getMeanAccuracy());
+        }
+
+        System.out.println("\n\n==========\nWithout:\n==========");
+        ratingsWithout = sortAndPrintClassifierRatings(ratingsWithout);
+
+        System.out.println("\n\n==========\nWith:\n==========");
+        ratingsWith = sortAndPrintClassifierRatings(ratingsWith);
+
+        // Test sorted ClassifierRatings
+        ClassifierRating bestWith = ratingsWith.get(0);
+        ClassifierRating bestWithout = ratingsWithout.get(0);
+        assertTrue(bestWith.getMeanAccuracy() > bestWithout.getMeanAccuracy());
+        assertTrue(bestWith.getName().equals(bestWithout.getName()));
     }
 }

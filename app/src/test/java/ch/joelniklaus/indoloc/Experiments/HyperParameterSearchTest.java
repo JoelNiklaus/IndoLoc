@@ -1,8 +1,9 @@
-package ch.joelniklaus.indoloc;
+package ch.joelniklaus.indoloc.Experiments;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.joelniklaus.indoloc.AbstractTest;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;

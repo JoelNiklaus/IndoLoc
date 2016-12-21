@@ -20,10 +20,10 @@ import weka.classifiers.meta.LogitBoost;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
+import weka.core.InstanceComparator;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
-import weka.filters.unsupervised.instance.RemoveDuplicates;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
 // Weka version = 3.7.3
@@ -58,6 +58,13 @@ public class WekaHelper {
 
         classifier.buildClassifier(train);
 
+        Evaluation evaluation = new Evaluation(train);
+        evaluation.evaluateModel(classifier, test);
+
+        return evaluation;
+    }
+
+    public Evaluation evaluate(Instances train, Instances test, Classifier classifier) throws Exception {
         Evaluation evaluation = new Evaluation(train);
         evaluation.evaluateModel(classifier, test);
 
@@ -185,8 +192,13 @@ public class WekaHelper {
     }
 
     public static Instances removeDuplicates(Instances data) throws Exception {
-        RemoveDuplicates remove = new RemoveDuplicates();
-        return null;
+        InstanceComparator comparator = new InstanceComparator();
+        for(int i = 0; i < data.numInstances()-1; i++) {
+            for(int j = i+1; j < data.numInstances(); j++)
+            if (comparator.compare(data.instance(i), data.instance(j)) == 0)
+                data.delete(j);
+        }
+        return data;
     }
 
     // Change Model to be trained here!

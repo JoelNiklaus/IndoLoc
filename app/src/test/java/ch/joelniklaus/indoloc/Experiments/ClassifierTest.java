@@ -1,21 +1,15 @@
-package ch.joelniklaus.indoloc;
-
-import android.support.annotation.NonNull;
+package ch.joelniklaus.indoloc.Experiments;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
+import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.helpers.ClassifierRating;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
-import weka.filters.unsupervised.instance.RemovePercentage;
-
-import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -31,76 +25,10 @@ public class ClassifierTest extends AbstractTest {
         super.setUp();
     }
 
-    // TODO implement these experiments
-    /* Attribute Indices:
-     * 1 -> Class Attribute: Room
-     * 2 - 3 -> Magnetic Field
-     * 4 - 11 -> RSSI Values
-     * 12 -> RSS Mean
-     * 13 - 20 RSS Variances
-     */
-
-
-    /**
-     * Tests if using the magnetic field values as features really improves the accuracy
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testMagneticFieldValuesImprovement() throws Exception {
-        Instances with = data;
-        Instances without = wekaHelper.removeAttributes(data, "2-3");
-
-        // With
-        ArrayList<ClassifierRating> ratingsWith = makeClassifierRatings(with);
-
-        // Without
-        ArrayList<ClassifierRating> ratingsWithout = makeClassifierRatings(without);
-
-    }
-
-    /**
-     * Tests if using the mean as a feature really improves the accuracy
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testMeanImprovement() throws Exception {
-        Instances with = data;
-        Instances without = wekaHelper.removeAttributes(data, "12");
-
-        // With
-        ArrayList<ClassifierRating> ratingsWith = makeClassifierRatings(with);
-
-        // Without
-        ArrayList<ClassifierRating> ratingsWithout = makeClassifierRatings(without);
-
-        ClassifierRating bestWith = ratingsWith.get(0);
-        ClassifierRating bestWithout = ratingsWithout.get(0);
-        assertTrue(bestWith.getMeanAccuracy() > bestWithout.getMeanAccuracy());
-        assertTrue(bestWith.getName().equals(bestWithout.getName()));
-    }
-
-    /**
-     * Tests if using the variances as features really improves the accuracy
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testVariancesImprovement() throws Exception {
-        Instances with = data;
-        Instances without = wekaHelper.removeAttributes(data, "13-20");
-
-        // With
-        ArrayList<ClassifierRating> ratingsWith = makeClassifierRatings(with);
-
-        // Without
-        ArrayList<ClassifierRating> ratingsWithout = makeClassifierRatings(without);
-    }
-
     @Test
     public void testAllClassifiers() throws Exception {
-        makeClassifierRatings(data);
+        ArrayList<ClassifierRating> classifierRatings = getClassifierRatings(data);
+        sortAndPrintClassifierRatings(classifierRatings);
     }
 
     @Test
