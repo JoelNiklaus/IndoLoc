@@ -1,5 +1,6 @@
 package ch.joelniklaus.indoloc.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by joelniklaus on 11.11.16.
  */
-public class RSSData {
+public class RSSData implements Serializable{
 
     private ArrayList<Integer> values;
 
@@ -77,6 +78,22 @@ public class RSSData {
             sum += list.get(i);
         // We don't want to perform an integer division, so the cast is mandatory.
         return ((double) sum) / n;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RSSData)) return false;
+
+        RSSData rssData = (RSSData) o;
+
+        return values.equals(rssData.values);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return values.hashCode();
     }
 
     @Override

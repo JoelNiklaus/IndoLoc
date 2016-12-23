@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import org.apache.commons.lang3.SerializationUtils;
 import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.R;
@@ -31,8 +33,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private EditText roomEditText;
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
-    private SensorData sensorData;
-    private RSSData rssData;
+    private DataPoint currentDataPoint;
 
     private int scanNumber = 0;
     private boolean registering = false;
@@ -42,21 +43,53 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private WifiHelper wifiHelper = new WifiHelper(this);
     private WekaHelper wekaHelper = new WekaHelper(this);
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collect_data);
 
-        // Sensors
         sensorHelper.setUp();
 
-        // WiFi
         wifiHelper.setUp();
 
         setUpTextViews();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        sensorHelper.registerListeners();
+
+        wifiHelper.registerListeners();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        sensorHelper.unRegisterListeners();
+
+        wifiHelper.unRegisterListeners();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        DataPoint previousDataPoint = null;
+        if(currentDataPoint!= null)
+         previousDataPoint = SerializationUtils.clone(currentDataPoint);
+
+        currentDataPoint = new DataPoint(roomEditText.getText().toString(), wifiHelper.readWifiData(getIntent()), sensorHelper.readSensorData(event));
+
+        // Only collect different DataPoints
+        if(!currentDataPoint.equals(previousDataPoint))
+            saveDataPoint();
+
+        setTextViewValues();
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {}
 
     private void setUpTextViews() {
         scanText = (TextView) findViewById(R.id.txtScanV);
@@ -107,42 +140,12 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         roomEditText = (EditText) findViewById(R.id.editRoom);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        sensorHelper.registerListeners();
-
-        wifiHelper.registerListeners();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        sensorHelper.unRegisterListeners();
-
-        wifiHelper.unRegisterListeners();
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        sensorData = sensorHelper.readSensorData(event);
-
-        RSSData previous = rssData;
-        rssData = wifiHelper.readWifiData(getIntent());
-
-        setTextViewValues();
-
-
-        //TODO collect not as many datapoints
-        saveDataPoint();
-    }
-
     private void setTextViewValues() {
-        magneticYValue.setText(Float.toString(sensorData.getMagneticY()));
-        magneticZValue.setText(Float.toString(sensorData.getMagneticZ()));
+        SensorData sensorData = currentDataPoint.getSensorData();
+        magneticYValue.setText(Double.toString(sensorData.getMagneticY()));
+        magneticZValue.setText(Double.toString(sensorData.getMagneticZ()));
 
+        RSSData rssData = currentDataPoint.getRssData();
         rss1Value.setText(rssData.getValues().get(0).toString());
         rss2Value.setText(rssData.getValues().get(1).toString());
         rss3Value.setText(rssData.getValues().get(2).toString());
@@ -151,11 +154,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         rss6Value.setText(rssData.getValues().get(5).toString());
         rss7Value.setText(rssData.getValues().get(6).toString());
         rss8Value.setText(rssData.getValues().get(7).toString());
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
     }
 
     public void start(View view) {
@@ -172,7 +170,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                 // Stop registering
                 registering = false;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -181,20 +178,15 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private void saveDataPoint() {
         if (registering) {
             scanValue.setText(Integer.toString(scanNumber++));
-            this.dataPoints.add(registerDataPoint());
+            this.dataPoints.add(currentDataPoint);
         }
     }
-
-    private DataPoint registerDataPoint() {
-        return new DataPoint(roomEditText.getText().toString(), rssData, sensorData);
-    }
-
 
     public void liveTestModel(View v) {
         try {
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
-            Instances data = WekaHelper.convertToSingleInstance(test, registerDataPoint());
+            Instances data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
 
             wekaHelper.testForView(data);
         } catch (Exception e) {

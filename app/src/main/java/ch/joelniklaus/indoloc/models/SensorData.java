@@ -1,40 +1,57 @@
 package ch.joelniklaus.indoloc.models;
 
+import java.io.Serializable;
+
 /**
  * Created by joelniklaus on 11.11.16.
  */
-public class SensorData {
+public class SensorData implements Serializable {
 
-    //private double ambientTemperature;
-    //private double relativeHumidity;
-    //private double light;
-    //private double pressure;
-    private float magneticY, magneticZ;
+    private double magneticY, magneticZ;
 
 
-    public SensorData(float magneticY, float magneticZ) {
-        //this.ambientTemperature = ambientTemperature;
-        //this.relativeHumidity = relativeHumidity;
-        //this.light = light;
-        //this.pressure = pressure;
+    public SensorData(double magneticY, double magneticZ) {
         this.magneticY = magneticY;
         this.magneticZ = magneticZ;
     }
 
-    public float getMagneticY() {
+    public double getMagneticY() {
         return magneticY;
     }
 
-    public void setMagneticY(float magneticY) {
+    public void setMagneticY(double magneticY) {
         this.magneticY = magneticY;
     }
 
-    public float getMagneticZ() {
+    public double getMagneticZ() {
         return magneticZ;
     }
 
-    public void setMagneticZ(float magneticZ) {
+    public void setMagneticZ(double magneticZ) {
         this.magneticZ = magneticZ;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SensorData)) return false;
+
+        SensorData that = (SensorData) o;
+
+        if (Double.compare(that.magneticY, magneticY) != 0) return false;
+        return Double.compare(that.magneticZ, magneticZ) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(magneticY);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(magneticZ);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     @Override

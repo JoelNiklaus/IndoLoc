@@ -20,7 +20,8 @@ public class SensorHelper {
     private SensorManager sensorManager;
     private Sensor ambientTemperatureSensor, lightSensor, pressureSensor, relativeHumiditySensor, magnetometer, accelerometer;
     private double ambientTemperature, light, pressure, relativeHumidity;
-    private float[] magnetic = new float[3], gravity = new float[3], magneticFingerprint = new float[3];
+    private float[] magnetic = new float[3], gravity = new float[3];
+    private double[] magneticFingerprint = new double[3];
     private final float alpha = (float) 0.8;
 
 
@@ -79,9 +80,9 @@ public class SensorHelper {
             magneticFingerprint[2] = R[6] * magnetic[0] + R[7] * magnetic[1] + R[8] * magnetic[2];
 
             // round to 1 decimal place because of sensor resolution
-            magneticFingerprint[0] = Math.round(magneticFingerprint[0]*10.0)/(float)10.0; // x-value: should always be 0
-            magneticFingerprint[1] = Math.round(magneticFingerprint[1]*10.0)/(float)10.0; // y-value
-            magneticFingerprint[2] = Math.round(magneticFingerprint[2]*10.0)/(float)10.0; // z-value
+            magneticFingerprint[0] = round(magneticFingerprint[0]); // x-value: should always be 0
+            magneticFingerprint[1] = round(magneticFingerprint[1]); // y-value
+            magneticFingerprint[2] = round(magneticFingerprint[2]); // z-value
         }
 
         return new SensorData(magneticFingerprint[1], magneticFingerprint[2]);
@@ -91,5 +92,13 @@ public class SensorHelper {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
+    public double round(double number) {
+        return Math.round(10 * number) / 10.0;
+        /*
+        BigDecimal bd = new BigDecimal(number);
+        bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
+        */
+    }
 
 }

@@ -61,6 +61,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
     testCompile 'junit:junit:4.12'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
     // Weka
     //compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0' // maybe not compatible: problem with arff saver
