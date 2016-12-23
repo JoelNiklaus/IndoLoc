@@ -8,6 +8,7 @@ import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
 import weka.classifiers.trees.J48;
+import weka.core.Instances;
 import weka.core.Utils;
 
 /**
@@ -38,6 +39,8 @@ public class HyperParameterSearchTest extends AbstractTest {
 
     @Test
     public void testCVParameterSelection() throws Exception {
+        Instances train = loadFile("train");
+
         J48 classifier = new J48();
         CVParameterSelection cvParameterSelection = new CVParameterSelection();
         cvParameterSelection.setClassifier(classifier);

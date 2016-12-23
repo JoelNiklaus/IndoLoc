@@ -19,12 +19,13 @@ import static org.junit.Assert.assertTrue;
 public class WekaHelperUnitTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
-        setFile("test/duplicates.arff");
         super.setUp();
     }
 
     @Test
     public void testRemoveOneAttribute() throws Exception {
+        Instances data = loadFile("test/duplicates");
+
         // Remove third Attribute (index 2)
         Instances newData = wekaHelper.removeAttributes(data, "3");
         assertNotEquals(data, newData);
@@ -39,6 +40,8 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     @Test
     public void testRemoveMultipleAttributes() throws Exception {
+        Instances data = loadFile("test/duplicates");
+
         // Remove third to fifth Attribute (indices 2 to 4)
         Instances newData = wekaHelper.removeAttributes(data, "3-5");
         assertNotEquals(data, newData);
@@ -54,6 +57,8 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     @Test
     public void testRemoveDuplicates() throws Exception {
+        Instances data = loadFile("test/duplicates");
+
         Instances oldData = SerializationUtils.clone(data);
         assertTrue(data.numInstances() == 9);
         data = wekaHelper.removeDuplicates(data);

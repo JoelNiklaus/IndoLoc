@@ -5,27 +5,34 @@ import android.support.annotation.NonNull;
 import org.junit.Before;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import ch.joelniklaus.indoloc.helpers.ClassifierRating;
+import ch.joelniklaus.indoloc.helpers.Statistics;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.BayesNet;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
+import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.Bagging;
+import weka.classifiers.meta.Dagging;
+import weka.classifiers.meta.Decorate;
+import weka.classifiers.meta.EnsembleSelection;
+import weka.classifiers.meta.Grading;
 import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.meta.Stacking;
+import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -43,17 +50,15 @@ public class AbstractTest {
     protected FileHelper fileHelper = new FileHelper();
 
     protected ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
-    protected ArrayList<Classifier> trainedClassifiers = new ArrayList<Classifier>();
 
-    protected Instances data, train, test;
-
-    protected String filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/data.arff";
-
+    public static final String ASSETS_PATH = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/";
+    public static final String ENDING = ".arff";
 
     @Before
     public void setUp() throws Exception {
         addClassifiers();
 
+        /*
         data = fileHelper.loadArff(filePath);
 
         int numInstances = data.numInstances();
@@ -66,6 +71,16 @@ public class AbstractTest {
         // Train Classifiers
         for (int i = 0; i < classifiers.size(); i++)
             trainedClassifiers.add(i, wekaHelper.train(train, classifiers.get(i)));
+            */
+    }
+
+    protected Instances loadFile(String fileName) throws Exception {
+        return fileHelper.loadArff(getFilePath(fileName));
+    }
+
+
+    public String getFilePath(String fileName) {
+        return ASSETS_PATH + fileName + ENDING;
     }
 
     private void addClassifiers() throws Exception {
@@ -74,7 +89,8 @@ public class AbstractTest {
         ============================== */
 
         // Logistic Regression
-        classifiers.add(new Logistic());
+        Logistic logistic = new Logistic();
+        classifiers.add(logistic);
 
         // Support Vector Machine
         Classifier libSVM = new LibSVM();
@@ -101,10 +117,12 @@ public class AbstractTest {
         ============================== */
 
         // Naive Bayes
-        //classifiers.add(new NaiveBayes());
+        NaiveBayes naiveBayes = new NaiveBayes();
+        //classifiers.add(naiveBayes);
 
         // Bayes Net
-        //classifiers.add(new BayesNet());
+        BayesNet bayesNet = new BayesNet();
+        //classifiers.add(bayesNet);
 
 
         /* ==============================
@@ -114,7 +132,8 @@ public class AbstractTest {
         // Ensemble methods
 
         // J48 Tree
-        classifiers.add(new J48());
+        J48 j48 = new J48();
+        classifiers.add(j48);
 
         // Random Forest (Auto Weka Suggestion 10 min)
         String[] randomForestOptions = {"-I", "10", "-K", "0", "-depth", "0"};
@@ -127,58 +146,98 @@ public class AbstractTest {
         ============================== */
 
         // Logistic Boosting
-        classifiers.add(new LogitBoost());
+        LogitBoost logitBoost = new LogitBoost();
+        classifiers.add(logitBoost);
 
         // Adaptive Boosting
-        //classifiers.add(new AdaBoostM1());
+        AdaBoostM1 adaBoostM1 = new AdaBoostM1();
+        classifiers.add(adaBoostM1);
 
         // Bagging
-        classifiers.add(new Bagging());
+        Bagging bagging = new Bagging();
+        classifiers.add(bagging);
 
         // Voting
-        //classifiers.add(new Vote());
+        Vote vote = new Vote();
+        classifiers.add(vote);
 
         // Stacking
-        //classifiers.add(new Stacking());
+        Stacking stacking = new Stacking();
+        classifiers.add(stacking);
 
         // Decorate
-        //classifiers.add(new Decorate());
+        Decorate decorate = new Decorate();
+        //classifiers.add(decorate);
 
         // Dagging
-        //classifiers.add(new Dagging());
+        Dagging dagging = new Dagging();
+        classifiers.add(dagging);
 
         // Grading
-        //classifiers.add(new Grading());
+        Grading grading = new Grading();
+        classifiers.add(grading);
 
         // Ensemble Selection
-        //classifiers.add(new EnsembleSelection());
-    }
-
-    /**
-     * Has to be called before setUp() in order to work properly.
-     */
-    public void setFile(String fileName) {
-        filePath = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/" + fileName;
+        EnsembleSelection ensembleSelection = new EnsembleSelection();
+        //classifiers.add(ensembleSelection);
     }
 
 
-    protected ArrayList<ClassifierRating> sortAndPrintClassifierRatings(ArrayList<ClassifierRating> classifierRatings) throws Exception {
-        classifierRatings = sortClassifierRatings(classifierRatings);
 
-        // Display Statistics
-        for (ClassifierRating classifierRating : classifierRatings)
-            System.out.println(classifierRating);
+    protected Statistics sortAndPrintStatistics(Statistics statistics) throws Exception {
+        statistics.sortByAccuracy();
 
-        return classifierRatings;
+        statistics.print();
+
+        return statistics;
     }
 
-    protected ArrayList<ClassifierRating> getClassifierRatings(Instances data) throws Exception {
-        ArrayList<ClassifierRating> classifierRatings = new ArrayList<>();
+    protected Statistics getClassifierRatings(Instances data) throws Exception {
+        Statistics statistics = new Statistics();
         for (Classifier classifier : classifiers) {
             ClassifierRating classifierRating = testClassifier(classifier, data);
-            classifierRatings.add(classifierRating);
+            statistics.add(classifierRating);
         }
-        return classifierRatings;
+        return statistics;
+    }
+
+    protected Statistics getClassifierRatings(Instances train, Instances test) throws Exception {
+        Statistics statistics = new Statistics();
+        for (Classifier classifier : classifiers) {
+            ClassifierRating classifierRating = testClassifier(classifier, train, test);
+            statistics.add(classifierRating);
+        }
+        return statistics;
+    }
+
+    @NonNull
+    protected ClassifierRating testClassifier(Classifier classifier, Instances train, Instances test) throws Exception {
+        double correctPctSum = 0;
+        long trainTimeSum = 0;
+        long testTimeSum = 0;
+        Evaluation lastEvaluation = null;
+        for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
+            // Training
+            timer.reset();
+            classifier = wekaHelper.train(train, classifier);
+            // mean training time per instance
+            trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
+
+            // Testing
+            timer.reset();
+            wekaHelper.test(test, classifier);
+            // mean testing time per instance
+            testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
+
+            // Evaluation
+            lastEvaluation = wekaHelper.evaluate(train, test, classifier);
+            correctPctSum += lastEvaluation.pctCorrect();
+        }
+        double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
+        double meanTestTime = testTimeSum / NUMBER_OF_TEST_ROUNDS;
+        double meanAccuracy = correctPctSum / NUMBER_OF_TEST_ROUNDS;
+
+        return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime, lastEvaluation);
     }
 
     @NonNull
@@ -216,29 +275,14 @@ public class AbstractTest {
         return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime, lastEvaluation);
     }
 
-    protected ArrayList<ClassifierRating> sortClassifierRatings(ArrayList<ClassifierRating> classifierRatings) {
-        // Sort by Accuracy
-        // Only possible in Java 8
-        //classifierRatings.sort(Comparator.comparing(ClassifierRating::getMeanAccuracy));
-        Collections.sort(classifierRatings, new Comparator<ClassifierRating>() {
-            public int compare(ClassifierRating o1, ClassifierRating o2) {
-                if (o1.getMeanAccuracy() == o2.getMeanAccuracy())
-                    return 0;
-                return o1.getMeanAccuracy() > o2.getMeanAccuracy() ? -1 : 1;
-            }
-        });
-        //Collections.reverse(classifierRatings);
-        return classifierRatings;
-    }
-
     protected void testWithAndWithout(Instances with, Instances without) throws Exception {
         // Without
-        ArrayList<ClassifierRating> ratingsWithout = getClassifierRatings(with);
+        Statistics ratingsWithout = getClassifierRatings(with);
         // With
-        ArrayList<ClassifierRating> ratingsWith = getClassifierRatings(without);
+        Statistics ratingsWith = getClassifierRatings(without);
 
         // Test each Classifier
-        for (int i = 0; i < ratingsWith.size(); i++) {
+        for (int i = 0; i < ratingsWith.getList().size(); i++) {
             ClassifierRating ratingWith = ratingsWith.get(i);
             ClassifierRating ratingWithout = ratingsWithout.get(i);
             assertTrue(ratingWith.getName().equals(ratingWithout.getName()));
@@ -246,10 +290,10 @@ public class AbstractTest {
         }
 
         System.out.println("\n\n==========\nWithout:\n==========");
-        ratingsWithout = sortAndPrintClassifierRatings(ratingsWithout);
+        ratingsWithout = sortAndPrintStatistics(ratingsWithout);
 
         System.out.println("\n\n==========\nWith:\n==========");
-        ratingsWith = sortAndPrintClassifierRatings(ratingsWith);
+        ratingsWith = sortAndPrintStatistics(ratingsWith);
 
         // Test sorted ClassifierRatings
         ClassifierRating bestWith = ratingsWith.get(0);

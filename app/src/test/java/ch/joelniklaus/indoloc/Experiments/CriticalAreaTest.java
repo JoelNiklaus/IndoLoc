@@ -3,10 +3,8 @@ package ch.joelniklaus.indoloc.Experiments;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 import ch.joelniklaus.indoloc.AbstractTest;
-import ch.joelniklaus.indoloc.helpers.ClassifierRating;
+import ch.joelniklaus.indoloc.helpers.Statistics;
 import weka.core.Instances;
 
 
@@ -19,21 +17,24 @@ public class CriticalAreaTest extends AbstractTest {
 
     @Before
     public void setUp() throws Exception {
-        setFile("critical_area.arff");
         super.setUp();
     }
 
     @Test
     public void testCriticalArea() throws Exception {
-        ArrayList<ClassifierRating> classifierRatings = getClassifierRatings(data);
-        sortAndPrintClassifierRatings(classifierRatings);
+        Instances data = loadFile("critical_area");
+
+        Statistics statistics = getClassifierRatings(data);
+        sortAndPrintStatistics(statistics);
     }
 
     @Test
     public void testCriticalAreaWithoutDuplicates() throws Exception {
+        Instances data = loadFile("critical_area");
+
         data = wekaHelper.removeDuplicates(data);
-        ArrayList<ClassifierRating> classifierRatings = getClassifierRatings(data);
-        sortAndPrintClassifierRatings(classifierRatings);
+        Statistics statistics = getClassifierRatings(data);
+        sortAndPrintStatistics(statistics);
     }
 
     /**
@@ -43,6 +44,8 @@ public class CriticalAreaTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
+        Instances data = loadFile("critical_area");
+
         Instances with = wekaHelper.removeDuplicates(data);
         Instances without = wekaHelper.removeAttributes(data, "12-20");
         without = wekaHelper.removeAttributes(without, "2-3");
