@@ -1,5 +1,6 @@
 package ch.joelniklaus.indoloc.UnitTests;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 public class WekaHelperUnitTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
-        setFile("critical_area.arff");
+        setFile("test/duplicates.arff");
         super.setUp();
     }
 
@@ -53,11 +54,19 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     @Test
     public void testRemoveDuplicates() throws Exception {
-        Instances newData = wekaHelper.removeDuplicates(data);
-        assertTrue(data.numAttributes() == newData.numAttributes());
-        assertTrue(data.numInstances() >= newData.numInstances());
+        Instances oldData = SerializationUtils.clone(data);
+        assertTrue(data.numInstances() == 9);
+        data = wekaHelper.removeDuplicates(data);
+        assertTrue(oldData.numInstances() == 9);
+        assertTrue(data.numInstances() == 5);
+
+        assertTrue(oldData.numAttributes() == data.numAttributes());
+
+        System.out.println(data.toString());
+        System.out.println(oldData.toString());
+
         // Every instance of the small set should be in the large set
-        for (int i = 0; i < newData.numInstances(); i++)
-            assertTrue(data.contains(newData.instance(i)));
+        for (int i = 0; i < data.numInstances(); i++)
+            assertTrue(oldData.contains(data.instance(i)));
     }
 }

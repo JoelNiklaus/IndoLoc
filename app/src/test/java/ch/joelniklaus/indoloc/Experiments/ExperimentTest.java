@@ -18,6 +18,7 @@ public class ExperimentTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
         setFile("experiment.arff");
+        setFile("cds_floor2.arff");
         super.setUp();
     }
 
@@ -38,7 +39,7 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void testMagneticFieldValuesImprovement() throws Exception {
         Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(data, "2-3");
+        Instances without = wekaHelper.removeAttributes(with, "2-3");
 
         testWithAndWithout(with, without);
     }
@@ -51,7 +52,7 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void testMeanImprovement() throws Exception {
         Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "12");
+        Instances without = WekaHelper.removeAttributes(with, "12");
 
         testWithAndWithout(with, without);
     }
@@ -64,7 +65,7 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void testVariancesImprovement() throws Exception {
         Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "13-20");
+        Instances without = WekaHelper.removeAttributes(with, "13-20");
 
         testWithAndWithout(with, without);
     }
@@ -77,7 +78,7 @@ public class ExperimentTest extends AbstractTest {
     @Test
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
         Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "12-20");
+        Instances without = WekaHelper.removeAttributes(with, "12-20");
         without = WekaHelper.removeAttributes(without, "2-3");
 
         testWithAndWithout(with, without);

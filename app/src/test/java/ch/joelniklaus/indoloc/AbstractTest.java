@@ -25,6 +25,7 @@ import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -55,9 +56,12 @@ public class AbstractTest {
 
         data = fileHelper.loadArff(filePath);
 
+        int numInstances = data.numInstances();
         RemovePercentage remove = wekaHelper.getRemovePercentage(data);
         train = wekaHelper.getTrainingSet(data, remove);
         test = wekaHelper.getTestingSet(data, remove);
+
+        assertEquals(data.numInstances(), numInstances);
 
         // Train Classifiers
         for (int i = 0; i < classifiers.size(); i++)
@@ -229,9 +233,9 @@ public class AbstractTest {
 
     protected void testWithAndWithout(Instances with, Instances without) throws Exception {
         // Without
-        ArrayList<ClassifierRating> ratingsWithout = getClassifierRatings(data);
+        ArrayList<ClassifierRating> ratingsWithout = getClassifierRatings(with);
         // With
-        ArrayList<ClassifierRating> ratingsWith = getClassifierRatings(data);
+        ArrayList<ClassifierRating> ratingsWith = getClassifierRatings(without);
 
         // Test each Classifier
         for (int i = 0; i < ratingsWith.size(); i++) {

@@ -15,7 +15,7 @@ public class ClassifierRating {
     private double meanAccuracy;
     private Evaluation evaluation;
 
-    public ClassifierRating(String name, double meanAccuracy, double meanTestTime, double meanTrainTime, Evaluation lastEvaluation) {
+    public ClassifierRating(String name, double meanAccuracy, double meanTestTime, double meanTrainTime, Evaluation evaluation) {
         this.name = name;
         this.meanAccuracy = meanAccuracy;
         this.meanTestTime = meanTestTime;

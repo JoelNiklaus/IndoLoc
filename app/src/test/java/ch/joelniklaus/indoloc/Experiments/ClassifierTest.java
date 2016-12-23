@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.helpers.ClassifierRating;
@@ -29,6 +30,9 @@ public class ClassifierTest extends AbstractTest {
     public void testAllClassifiers() throws Exception {
         ArrayList<ClassifierRating> classifierRatings = getClassifierRatings(data);
         sortAndPrintClassifierRatings(classifierRatings);
+
+        for (double[] row : classifierRatings.get(6).getEvaluation().confusionMatrix())
+            System.out.println(Arrays.toString(row));
     }
 
     @Test
