@@ -1,4 +1,4 @@
-package ch.joelniklaus.indoloc.helpers;
+package ch.joelniklaus.indoloc.statistics;
 
 import java.util.ArrayList;
 import java.util.Collections;

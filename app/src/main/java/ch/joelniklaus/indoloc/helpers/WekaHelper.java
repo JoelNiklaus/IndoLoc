@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -50,11 +52,8 @@ public class WekaHelper {
     }
 
     public Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
-        RemovePercentage remove = getRemovePercentage(data);
-
-        Instances train = getTrainingSet(data, remove);
-
-        Instances test = getTestingSet(data, remove);
+        Instances train = getTrainingSet(data);
+        Instances test = getTestingSet(data);
 
         classifier.buildClassifier(train);
 
@@ -84,11 +83,9 @@ public class WekaHelper {
 
     public Evaluation evaluateForView(Instances data) throws Exception {
         timer.reset();
-        RemovePercentage remove = getRemovePercentage(data);
 
-        Instances train = getTrainingSet(data, remove);
-
-        Instances test = getTestingSet(data, remove);
+        Instances train = getTrainingSet(data);
+        Instances test = getTestingSet(data);
 
         classifier.buildClassifier(train);
 
@@ -128,11 +125,9 @@ public class WekaHelper {
      */
     public Instances trainForView(Instances data) throws Exception {
         timer.reset();
-        RemovePercentage remove = getRemovePercentage(data);
 
-        Instances train = getTrainingSet(data, remove);
-
-        Instances test = getTestingSet(data, remove);
+        Instances train = getTrainingSet(data);
+        Instances test = getTestingSet(data);
 
         buildClassifier(train);
 
@@ -141,19 +136,23 @@ public class WekaHelper {
     }
 
     @NonNull
-    public Instances getTestingSet(Instances data, RemovePercentage remove) throws Exception {
+    public Instances getTestingSet(Instances data) throws Exception {
+        Instances clone = SerializationUtils.clone(data);
+        RemovePercentage remove = randomizeAndGetRemovePercentage(clone);
         String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
         remove.setOptions(optionsTest);
-        Instances test = Filter.useFilter(data, remove);
+        Instances test = Filter.useFilter(clone, remove);
         test.setClassIndex(0);
         return test;
     }
 
     @NonNull
-    public Instances getTrainingSet(Instances data, RemovePercentage remove) throws Exception {
+    public Instances getTrainingSet(Instances data) throws Exception {
+        Instances clone = SerializationUtils.clone(data);
+        RemovePercentage remove = randomizeAndGetRemovePercentage(clone);
         String[] optionsTrain = {"-P", TRAINING_SET_PERCENTAGE, "-V"};
         remove.setOptions(optionsTrain);
-        Instances train = Filter.useFilter(data, remove);
+        Instances train = Filter.useFilter(clone, remove);
         train.setClassIndex(0);
         return train;
     }
@@ -166,7 +165,7 @@ public class WekaHelper {
      * @throws Exception
      */
     @NonNull
-    public RemovePercentage getRemovePercentage(Instances data) throws Exception {
+    public RemovePercentage randomizeAndGetRemovePercentage(Instances data) throws Exception {
         // Randomizing
         data.randomize(new Random());
 

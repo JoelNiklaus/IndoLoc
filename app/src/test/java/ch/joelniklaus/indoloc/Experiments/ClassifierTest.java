@@ -1,10 +1,10 @@
-package ch.joelniklaus.indoloc.Experiments;
+package ch.joelniklaus.indoloc.experiments;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
-import ch.joelniklaus.indoloc.helpers.Statistics;
+import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.core.Instances;
 
 
@@ -30,8 +30,8 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSet() throws Exception {
-        Instances train = loadFile("train");
-        Instances test = loadFile("test");
+        Instances train = loadFile("experiments/train");
+        Instances test = loadFile("experiments/test");
 
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
@@ -39,8 +39,8 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSetMerged() throws Exception {
-        Instances train = loadFile("train");
-        Instances test = loadFile("test");
+        Instances train = loadFile("experiments/train");
+        Instances test = loadFile("experiments/test");
 
         Instances data = merge(train, test);
 

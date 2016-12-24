@@ -1,10 +1,12 @@
-package ch.joelniklaus.indoloc.UnitTests;
+package ch.joelniklaus.indoloc.unitTests;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import weka.core.Instance;
+import weka.core.InstanceComparator;
 import weka.core.Instances;
 
 import static org.junit.Assert.assertFalse;
@@ -17,14 +19,52 @@ import static org.junit.Assert.assertTrue;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class WekaHelperUnitTest extends AbstractTest {
+
+    private InstanceComparator comparator = new InstanceComparator();
+
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
     }
 
     @Test
+    public void testRemovePercentage() throws Exception {
+        Instances data = loadFile("unittests/remove");
+        for (int round = 0; round < 1; round++) {
+            Instances train = wekaHelper.getTrainingSet(data);
+            Instances test = wekaHelper.getTestingSet(data);
+
+            assertTrue(train.numInstances() < data.numInstances());
+
+            assertTrue(test.numInstances() < data.numInstances());
+            assertTrue(test.numInstances() < train.numInstances());
+
+            System.out.println(data.toString());
+            System.out.println(test.toString());
+            System.out.println(train.toString());
+
+            for (int i = 0; i < test.numInstances(); i++)
+                assertFalse(dataContainsInstance(train, test.instance(i)));
+            for (int i = 0; i < test.numInstances(); i++)
+                assertTrue(dataContainsInstance(data, test.instance(i)));
+            for (int i = 0; i < train.numInstances(); i++)
+                assertTrue(dataContainsInstance(data, train.instance(i)));
+
+
+        }
+    }
+
+    private boolean dataContainsInstance(Instances data, Instance instance) {
+        for (int i = 0; i < data.numInstances(); i++)
+            if (comparator.compare(instance, data.instance(i)) == 0)
+                return true;
+        return false;
+    }
+
+    @Test
     public void testRemoveOneAttribute() throws Exception {
-        Instances data = loadFile("test/duplicates");
+        Instances data = loadFile("unittests/duplicates");
 
         // Remove third Attribute (index 2)
         Instances newData = wekaHelper.removeAttributes(data, "3");
@@ -40,7 +80,7 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     @Test
     public void testRemoveMultipleAttributes() throws Exception {
-        Instances data = loadFile("test/duplicates");
+        Instances data = loadFile("unittests/duplicates");
 
         // Remove third to fifth Attribute (indices 2 to 4)
         Instances newData = wekaHelper.removeAttributes(data, "3-5");
@@ -57,7 +97,7 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     @Test
     public void testRemoveDuplicates() throws Exception {
-        Instances data = loadFile("test/duplicates");
+        Instances data = loadFile("unittests/duplicates");
 
         Instances oldData = SerializationUtils.clone(data);
         assertTrue(data.numInstances() == 9);

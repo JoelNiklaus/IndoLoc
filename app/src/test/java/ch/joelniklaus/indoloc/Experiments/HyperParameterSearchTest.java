@@ -1,4 +1,4 @@
-package ch.joelniklaus.indoloc.Experiments;
+package ch.joelniklaus.indoloc.experiments;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class HyperParameterSearchTest extends AbstractTest {
 
     @Test
     public void testCVParameterSelection() throws Exception {
-        Instances train = loadFile("train");
+        Instances train = loadFile("experiments/train");
 
         J48 classifier = new J48();
         CVParameterSelection cvParameterSelection = new CVParameterSelection();

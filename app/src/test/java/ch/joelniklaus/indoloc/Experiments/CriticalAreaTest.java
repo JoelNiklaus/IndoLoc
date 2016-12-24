@@ -1,10 +1,10 @@
-package ch.joelniklaus.indoloc.Experiments;
+package ch.joelniklaus.indoloc.experiments;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
-import ch.joelniklaus.indoloc.helpers.Statistics;
+import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.core.Instances;
 
 
@@ -21,8 +21,18 @@ public class CriticalAreaTest extends AbstractTest {
     }
 
     @Test
+    public void testCriticalAreaDifferentCollections() throws Exception {
+        Instances train = loadFile("experiments/critical_train");
+        Instances test = loadFile("experiments/critical_test");
+
+
+        Statistics statistics = getClassifierRatings(train, test);
+        sortAndPrintStatistics(statistics);
+    }
+
+    @Test
     public void testCriticalArea() throws Exception {
-        Instances data = loadFile("critical_area");
+        Instances data = loadFile("experiments/critical_area");
 
         Statistics statistics = getClassifierRatings(data);
         sortAndPrintStatistics(statistics);
@@ -30,7 +40,7 @@ public class CriticalAreaTest extends AbstractTest {
 
     @Test
     public void testCriticalAreaWithoutDuplicates() throws Exception {
-        Instances data = loadFile("critical_area");
+        Instances data = loadFile("experiments/critical_area");
 
         data = wekaHelper.removeDuplicates(data);
         Statistics statistics = getClassifierRatings(data);
@@ -44,7 +54,7 @@ public class CriticalAreaTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
-        Instances data = loadFile("critical_area");
+        Instances data = loadFile("experiments/critical_area");
 
         Instances with = wekaHelper.removeDuplicates(data);
         Instances without = wekaHelper.removeAttributes(data, "12-20");

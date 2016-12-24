@@ -6,9 +6,9 @@ import org.junit.Before;
 
 import java.util.ArrayList;
 
-import ch.joelniklaus.indoloc.helpers.ClassifierRating;
-import ch.joelniklaus.indoloc.helpers.Statistics;
+import ch.joelniklaus.indoloc.statistics.ClassifierRating;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
+import ch.joelniklaus.indoloc.statistics.Statistics;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.Classifier;
@@ -31,7 +31,6 @@ import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
-import weka.filters.unsupervised.instance.RemovePercentage;
 
 import static org.junit.Assert.assertTrue;
 
@@ -62,7 +61,7 @@ public class AbstractTest {
         data = fileHelper.loadArff(filePath);
 
         int numInstances = data.numInstances();
-        RemovePercentage remove = wekaHelper.getRemovePercentage(data);
+        RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
         train = wekaHelper.getTrainingSet(data, remove);
         test = wekaHelper.getTestingSet(data, remove);
 
@@ -248,9 +247,9 @@ public class AbstractTest {
         Evaluation lastEvaluation = null;
         for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             // Generate new Training and Testing set
-            RemovePercentage remove = wekaHelper.getRemovePercentage(data);
-            Instances train = wekaHelper.getTrainingSet(data, remove);
-            Instances test = wekaHelper.getTestingSet(data, remove);
+            //RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
+            Instances train = wekaHelper.getTrainingSet(data);
+            Instances test = wekaHelper.getTestingSet(data);
 
             // Training
             timer.reset();
