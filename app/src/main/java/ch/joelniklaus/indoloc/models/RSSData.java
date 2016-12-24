@@ -9,13 +9,26 @@ import java.util.List;
 /**
  * Created by joelniklaus on 11.11.16.
  */
-public class RSSData implements Serializable{
+public class RSSData implements Serializable {
 
     private ArrayList<Integer> values;
 
     private double mean;
 
     private ArrayList<Double> variances;
+
+    public static RSSData createRSSDataTest(ArrayList<Integer> values) {
+        RSSData rssData = new RSSData();
+        rssData.setValues(values);
+        double mean = mean(values);
+        rssData.setMean(mean);
+        rssData.setVariances(variances(mean, values));
+        return rssData;
+    }
+
+    public RSSData() {
+
+    }
 
     public RSSData(ArrayList<Integer> values) {
         this.values = computeRelativeRSSValues(values);
@@ -58,8 +71,8 @@ public class RSSData implements Serializable{
         return values;
     }
 
-    private ArrayList<Double> variances(double mean, ArrayList<Integer> values) {
-        variances = new ArrayList<>();
+    private static ArrayList<Double> variances(double mean, ArrayList<Integer> values) {
+        ArrayList<Double> variances = new ArrayList<>();
         for (int i = 0; i < values.size(); i++)
             variances.add(i, mean - values.get(i));
         return variances;

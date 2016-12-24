@@ -52,18 +52,11 @@ public class WekaHelper {
     }
 
     public Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
-        Instances train = getTrainingSet(data);
-        Instances test = getTestingSet(data);
-
-        classifier.buildClassifier(train);
-
-        Evaluation evaluation = new Evaluation(train);
-        evaluation.evaluateModel(classifier, test);
-
-        return evaluation;
+        return evaluate(getTrainingSet(data), getTestingSet(data), classifier);
     }
 
     public Evaluation evaluate(Instances train, Instances test, Classifier classifier) throws Exception {
+        classifier.buildClassifier(train);
         Evaluation evaluation = new Evaluation(train);
         evaluation.evaluateModel(classifier, test);
 
@@ -84,13 +77,7 @@ public class WekaHelper {
     public Evaluation evaluateForView(Instances data) throws Exception {
         timer.reset();
 
-        Instances train = getTrainingSet(data);
-        Instances test = getTestingSet(data);
-
-        classifier.buildClassifier(train);
-
-        Evaluation evaluation = new Evaluation(train);
-        evaluation.evaluateModel(classifier, test);
+        Evaluation evaluation = evaluate(data, classifier);
 
         alert(evaluation.toSummaryString("Time: " + timer.timeElapsed() + "ms\n\nResults\n======\n", false));
 
@@ -268,7 +255,7 @@ public class WekaHelper {
         return data;
     }
 
-    public static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) {
+    private static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) {
         double[] instanceValues = null;
         for (DataPoint dataPoint : dataPoints) {
             instanceValues = new double[data.numAttributes()];
@@ -305,7 +292,7 @@ public class WekaHelper {
     }
 
     @NonNull
-    public static ArrayList<Attribute> buildAttributes(ArrayList<DataPoint> dataPoints) {
+    private static ArrayList<Attribute> buildAttributes(ArrayList<DataPoint> dataPoints) {
         ArrayList<String> rooms = getRooms(dataPoints);
 
         // rooms + number of rss + number of sensors
@@ -336,7 +323,7 @@ public class WekaHelper {
     }
 
     @NonNull
-    public static ArrayList<String> getRooms(ArrayList<DataPoint> dataPoints) {
+    private static ArrayList<String> getRooms(ArrayList<DataPoint> dataPoints) {
         ArrayList<String> rooms = new ArrayList<String>();
 
         for (DataPoint dataPoint : dataPoints)
@@ -346,11 +333,11 @@ public class WekaHelper {
     }
 
 
-    public void alert(String message) {
+    private void alert(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static void assertion(boolean condition) {
+    private static void assertion(boolean condition) {
         if (BuildConfig.DEBUG && !condition) throw new AssertionError();
     }
 }

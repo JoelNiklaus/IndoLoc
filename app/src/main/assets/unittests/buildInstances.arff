@@ -1,0 +1,29 @@
+@relation TestInstances
+
+@attribute room {stube,kueche,badgross,badklein,gang}
+@attribute magneticY numeric
+@attribute magneticZ numeric
+@attribute rssValue0 numeric
+@attribute rssValue1 numeric
+@attribute rssValue2 numeric
+@attribute rssValue3 numeric
+@attribute rssValue4 numeric
+@attribute rssValue5 numeric
+@attribute rssValue6 numeric
+@attribute rssValue7 numeric
+@attribute mean numeric
+@attribute rssVariance0 numeric
+@attribute rssVariance1 numeric
+@attribute rssVariance2 numeric
+@attribute rssVariance3 numeric
+@attribute rssVariance4 numeric
+@attribute rssVariance5 numeric
+@attribute rssVariance6 numeric
+@attribute rssVariance7 numeric
+
+@data
+stube,17.8,-39.8,0,23,39,39,39,39,39,39,32.125,32.125,9.125,-6.875,-6.875,-6.875,-6.875,-6.875,-6.875
+kueche,8.1,-38.7,0,10,31,31,31,31,31,31,24.5,24.5,14.5,-6.5,-6.5,-6.5,-6.5,-6.5,-6.5
+badgross,4.4,-42.3,0,16,16,23,23,23,14,14,16.125,16.125,0.125,0.125,-6.875,-6.875,-6.875,2.125,2.125
+badklein,5.5,-44.1,0,20,33,33,33,33,33,33,27.25,27.25,7.25,-5.75,-5.75,-5.75,-5.75,-5.75,-5.75
+gang,11.2,-39.1,0,11,34,34,34,34,34,34,26.875,26.875,15.875,-7.125,-7.125,-7.125,-7.125,-7.125,-7.125

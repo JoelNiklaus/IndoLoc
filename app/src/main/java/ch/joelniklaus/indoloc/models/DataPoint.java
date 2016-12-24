@@ -13,10 +13,10 @@ public class DataPoint implements Serializable {
 
     private SensorData sensorData;
 
-    public DataPoint(String room, RSSData rssData, SensorData sensorData)  {
+    public DataPoint(String room, SensorData sensorData, RSSData rssData)  {
         this.room = room;
-        this.rssData = rssData;
         this.sensorData = sensorData;
+        this.rssData = rssData;
     }
 
     public String getRoom() {

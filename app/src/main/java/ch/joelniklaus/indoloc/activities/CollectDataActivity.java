@@ -79,7 +79,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         if(currentDataPoint!= null)
          previousDataPoint = SerializationUtils.clone(currentDataPoint);
 
-        currentDataPoint = new DataPoint(roomEditText.getText().toString(), wifiHelper.readWifiData(getIntent()), sensorHelper.readSensorData(event));
+        currentDataPoint = new DataPoint(roomEditText.getText().toString(), sensorHelper.readSensorData(event), wifiHelper.readWifiData(getIntent()));
 
         // Only collect different DataPoints
         if(!currentDataPoint.equals(previousDataPoint))
