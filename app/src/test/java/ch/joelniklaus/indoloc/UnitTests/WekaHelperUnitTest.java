@@ -9,13 +9,19 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.RSSData;
 import ch.joelniklaus.indoloc.models.SensorData;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.InstanceComparator;
 import weka.core.Instances;
+import weka.filters.unsupervised.instance.RemovePercentage;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -29,10 +35,70 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     private InstanceComparator comparator = new InstanceComparator();
 
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
+    }
+
+    @Test
+    public void testTestCVTrainCV() throws Exception {
+        Instances data = loadFile("experiments/experiment_new");
+        data.randomize(new java.util.Random());    // randomize instance order before splitting dataset
+        Instances trainData = data.trainCV(2, 0);
+        Instances testData = data.testCV(2, 0);
+        /**
+         * 		 * build classifier model on training split
+         *                 */
+        Classifier classy = new J48();
+        classy.buildClassifier(trainData);
+        /**
+         * 		 * evaluate classifier model on test split
+         *                 */
+        Evaluation eval = new Evaluation(trainData);
+        eval.evaluateModel(classy, trainData);
+        System.out.println("1-NN accuracy on training data:\n" + eval.pctCorrect() / 100);
+        eval.evaluateModel(classy, testData);
+        System.out.println("1-NN accuracy on separate test data:\n" + eval.pctCorrect() / 100);
+    }
+
+
+    @Test
+    public void testGetTestingSetAndGetTrainingSet() throws Exception {
+        Instances data = loadFile("unittests/remove");
+
+        RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
+        Instances train = wekaHelper.getTrainingSet(data, remove);
+        Instances test = wekaHelper.getTestingSet(data, remove);
+
+        assertTrue(test.numInstances() < data.numInstances());
+        assertTrue(test.numInstances() < train.numInstances());
+        assertTrue(train.numInstances() < data.numInstances());
+
+        assertTrue(test.numAttributes() == train.numAttributes());
+        assertTrue(train.numAttributes() == data.numAttributes());
+        assertTrue(data.numAttributes() == test.numAttributes());
+
+
+        assertTrue(test.numInstances() <= (100 - Integer.parseInt(WekaHelper.TRAINING_SET_PERCENTAGE)) / 100.0 * data.numInstances() + 1);
+        assertTrue(train.numInstances() <= Integer.parseInt(WekaHelper.TRAINING_SET_PERCENTAGE) / 100.0 * data.numInstances() + 1);
+
+        assertEquals(test.numInstances() + train.numInstances(), data.numInstances());
+
+        // Every instance in the testing set has to be in the data set
+        for (int i = 0; i < test.numInstances(); i++)
+            assertTrue(dataContainsInstance(data, test.instance(i)));
+
+        // Every instance in the training set has to be in the data set
+        for (int i = 0; i < train.numInstances(); i++)
+            assertTrue(dataContainsInstance(data, train.instance(i)));
+
+        // No instance which is in the training set is in the testing set
+        for (int i = 0; i < train.numInstances(); i++)
+            assertFalse(dataContainsInstance(test, train.instance(i)));
+
+        // No instance which is in the testing set is in the training set
+        for (int i = 0; i < test.numInstances(); i++)
+            assertFalse(dataContainsInstance(train, test.instance(i)));
     }
 
     @Test
@@ -152,6 +218,6 @@ public class WekaHelperUnitTest extends AbstractTest {
 
         // Every instance of the small set should be in the large set
         for (int i = 0; i < data.numInstances(); i++)
-            assertTrue(oldData.contains(data.instance(i)));
+            assertTrue(dataContainsInstance(oldData, data.instance(i)));
     }
 }

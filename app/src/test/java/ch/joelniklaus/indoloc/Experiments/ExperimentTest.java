@@ -20,6 +20,9 @@ public class ExperimentTest extends AbstractTest {
         super.setUp();
     }
 
+
+
+
     /* Attribute Indices:
      * 1 -> Class Attribute: Room
      * 2 - 3 -> Magnetic Field
@@ -36,7 +39,7 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesImprovement() throws Exception {
-        Instances data = loadFile("experiments/cds_floor2");
+        Instances data = loadFile("experiments/experiment_new");
 
         Instances with = wekaHelper.removeDuplicates(data);
         Instances without = wekaHelper.removeAttributes(with, "2-3");
@@ -51,7 +54,7 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMeanImprovement() throws Exception {
-        Instances data = loadFile("experiments/cds_floor2");
+        Instances data = loadFile("experiments/experiment_new");
 
         Instances with = WekaHelper.removeDuplicates(data);
         Instances without = WekaHelper.removeAttributes(with, "12");
@@ -66,7 +69,7 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testVariancesImprovement() throws Exception {
-        Instances data = loadFile("experiments/cds_floor2");
+        Instances data = loadFile("experiments/experiment_new");
 
         Instances with = WekaHelper.removeDuplicates(data);
         Instances without = WekaHelper.removeAttributes(with, "13-20");
@@ -81,7 +84,7 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
-        Instances data = loadFile("experiments/cds_floor2");
+        Instances data = loadFile("experiments/experiment_new");
 
         Instances with = WekaHelper.removeDuplicates(data);
         Instances without = WekaHelper.removeAttributes(with, "12-20");

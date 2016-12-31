@@ -6,11 +6,11 @@ import org.junit.Before;
 
 import java.util.ArrayList;
 
-import ch.joelniklaus.indoloc.statistics.ClassifierRating;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
-import ch.joelniklaus.indoloc.statistics.Statistics;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
+import ch.joelniklaus.indoloc.statistics.ClassifierRating;
+import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.BayesNet;
@@ -31,6 +31,7 @@ import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
+import weka.filters.unsupervised.instance.RemovePercentage;
 
 import static org.junit.Assert.assertTrue;
 
@@ -170,7 +171,7 @@ public class AbstractTest {
 
         // Dagging
         Dagging dagging = new Dagging();
-        classifiers.add(dagging);
+        //classifiers.add(dagging);
 
         // Grading
         Grading grading = new Grading();
@@ -247,9 +248,9 @@ public class AbstractTest {
         Evaluation lastEvaluation = null;
         for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             // Generate new Training and Testing set
-            //RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
-            Instances train = wekaHelper.getTrainingSet(data);
-            Instances test = wekaHelper.getTestingSet(data);
+            RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
+            Instances train = wekaHelper.getTrainingSet(data, remove);
+            Instances test = wekaHelper.getTestingSet(data, remove);
 
             // Training
             timer.reset();

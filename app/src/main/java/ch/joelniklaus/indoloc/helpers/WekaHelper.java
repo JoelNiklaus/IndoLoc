@@ -4,8 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,6 +23,7 @@ import weka.core.DenseInstance;
 import weka.core.InstanceComparator;
 import weka.core.Instances;
 import weka.filters.Filter;
+import weka.filters.supervised.instance.StratifiedRemoveFolds;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
@@ -52,7 +51,8 @@ public class WekaHelper {
     }
 
     public Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
-        return evaluate(getTrainingSet(data), getTestingSet(data), classifier);
+        RemovePercentage remove = randomizeAndGetRemovePercentage(data);
+        return evaluate(getTrainingSet(data, remove), getTestingSet(data, remove), classifier);
     }
 
     public Evaluation evaluate(Instances train, Instances test, Classifier classifier) throws Exception {
@@ -91,8 +91,8 @@ public class WekaHelper {
             double actualClass = test.instance(i).classValue();
             String actual = "?";
             // class is set
-            if(actualClass > -1)
-                 actual = test.classAttribute().value((int) actualClass);
+            if (actualClass > -1)
+                actual = test.classAttribute().value((int) actualClass);
 
             double predictedClass = classifier.classifyInstance(test.instance(i));
             String predicted = test.classAttribute().value((int) predictedClass);
@@ -113,8 +113,9 @@ public class WekaHelper {
     public Instances trainForView(Instances data) throws Exception {
         timer.reset();
 
-        Instances train = getTrainingSet(data);
-        Instances test = getTestingSet(data);
+        RemovePercentage remove = randomizeAndGetRemovePercentage(data);
+        Instances train = getTrainingSet(data, remove);
+        Instances test = getTestingSet(data, remove);
 
         buildClassifier(train);
 
@@ -122,24 +123,51 @@ public class WekaHelper {
         return test;
     }
 
+    public Instances getTestingSetAlternative(Instances data) throws Exception {
+        data.setClassIndex(0);
+
+        // use StratifiedRemoveFolds to randomly split the data
+        StratifiedRemoveFolds filter = new StratifiedRemoveFolds();
+
+        // set options for creating the subset of data
+        String[] options = new String[6];
+
+        options[0] = "-N";                 // indicate we want to set the number of folds
+        options[1] = Integer.toString(5);  // split the data into five random folds
+        options[2] = "-F";                 // indicate we want to select a specific fold
+        options[3] = Integer.toString(1);  // select the first fold
+        options[4] = "-S";                 // indicate we want to set the random seed
+        options[5] = Integer.toString(1);  // set the random seed to 1
+
+        filter.setOptions(options);        // set the filter options
+        filter.setInputFormat(data);       // prepare the filter for the data format
+        filter.setInvertSelection(false);  // do not invert the selection
+
+        // apply filter for test data here
+        Instances test = Filter.useFilter(data, filter);
+
+        //  prepare and apply filter for training data here
+        filter.setInvertSelection(true);     // invert the selection to get other data
+        Instances train = Filter.useFilter(data, filter);
+
+        return test;
+    }
+
+
     @NonNull
-    public Instances getTestingSet(Instances data) throws Exception {
-        Instances clone = SerializationUtils.clone(data);
-        RemovePercentage remove = randomizeAndGetRemovePercentage(clone);
+    public Instances getTestingSet(Instances data, RemovePercentage remove) throws Exception {
         String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
         remove.setOptions(optionsTest);
-        Instances test = Filter.useFilter(clone, remove);
+        Instances test = Filter.useFilter(data, remove);
         test.setClassIndex(0);
         return test;
     }
 
     @NonNull
-    public Instances getTrainingSet(Instances data) throws Exception {
-        Instances clone = SerializationUtils.clone(data);
-        RemovePercentage remove = randomizeAndGetRemovePercentage(clone);
+    public Instances getTrainingSet(Instances data, RemovePercentage remove) throws Exception {
         String[] optionsTrain = {"-P", TRAINING_SET_PERCENTAGE, "-V"};
         remove.setOptions(optionsTrain);
-        Instances train = Filter.useFilter(clone, remove);
+        Instances train = Filter.useFilter(data, remove);
         train.setClassIndex(0);
         return train;
     }
@@ -163,7 +191,6 @@ public class WekaHelper {
     }
 
     /**
-     *
      * @param data
      * @param attributeIndices one Index: e.g. 1, multiple Indices: eg. 2-5
      * @return
@@ -179,10 +206,10 @@ public class WekaHelper {
 
     public static Instances removeDuplicates(Instances data) throws Exception {
         InstanceComparator comparator = new InstanceComparator();
-        for(int i = 0; i < data.numInstances()-1; i++) {
-            for(int j = i+1; j < data.numInstances(); j++)
-            if (comparator.compare(data.instance(i), data.instance(j)) == 0)
-                data.delete(j);
+        for (int i = 0; i < data.numInstances() - 1; i++) {
+            for (int j = i + 1; j < data.numInstances(); j++)
+                if (comparator.compare(data.instance(i), data.instance(j)) == 0)
+                    data.delete(j);
         }
         return data;
     }
@@ -302,7 +329,7 @@ public class WekaHelper {
         // class: room
         attributes.add(new Attribute("room", rooms));
 
-        assertion( dataPoints.get(0).getRssData().getValues().size() == dataPoints.get(0).getRssData().getVariances().size());
+        assertion(dataPoints.get(0).getRssData().getValues().size() == dataPoints.get(0).getRssData().getVariances().size());
 
         // sensors
         attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
