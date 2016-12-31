@@ -13,12 +13,10 @@ import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.RSSData;
 import ch.joelniklaus.indoloc.models.SensorData;
-import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
-import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.InstanceComparator;
 import weka.core.Instances;
+import weka.filters.supervised.instance.StratifiedRemoveFolds;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
 import static org.junit.Assert.assertEquals;
@@ -41,64 +39,37 @@ public class WekaHelperUnitTest extends AbstractTest {
     }
 
     @Test
-    public void testTestCVTrainCV() throws Exception {
-        Instances data = loadFile("experiments/experiment_new");
-        data.randomize(new java.util.Random());    // randomize instance order before splitting dataset
-        Instances trainData = data.trainCV(2, 0);
-        Instances testData = data.testCV(2, 0);
-        /**
-         * 		 * build classifier model on training split
-         *                 */
-        Classifier classy = new J48();
-        classy.buildClassifier(trainData);
-        /**
-         * 		 * evaluate classifier model on test split
-         *                 */
-        Evaluation eval = new Evaluation(trainData);
-        eval.evaluateModel(classy, trainData);
-        System.out.println("1-NN accuracy on training data:\n" + eval.pctCorrect() / 100);
-        eval.evaluateModel(classy, testData);
-        System.out.println("1-NN accuracy on separate test data:\n" + eval.pctCorrect() / 100);
+    public void testGetTestingSetAndGetTrainingSetStratifiedRemoveFolds() throws Exception {
+        Instances data = loadFile("unittests/remove");
+
+        StratifiedRemoveFolds stratifiedRemoveFolds = wekaHelper.randomizeAndGetStratifiedRemoveFolds(data);
+        Instances train = wekaHelper.getTrainingSet(data, stratifiedRemoveFolds);
+        Instances test = wekaHelper.getTestingSet(data, stratifiedRemoveFolds);
+
+        testTestingAndTrainingSet(data, train, test);
+    }
+
+    @Test
+    public void testGetTestingSetAndGetTrainingSetRemovePercentage() throws Exception {
+        Instances data = loadFile("unittests/remove");
+
+        RemovePercentage removePercentage = wekaHelper.randomizeAndGetRemovePercentage(data);
+        Instances train = wekaHelper.getTrainingSet(data, removePercentage);
+        Instances test = wekaHelper.getTestingSet(data, removePercentage);
+
+        testTestingAndTrainingSet(data, train, test);
     }
 
 
     @Test
-    public void testGetTestingSetAndGetTrainingSet() throws Exception {
+    public void testGetTestingSetAndGetTrainingSetWekaStandard() throws Exception {
         Instances data = loadFile("unittests/remove");
 
-        RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
-        Instances train = wekaHelper.getTrainingSet(data, remove);
-        Instances test = wekaHelper.getTestingSet(data, remove);
+        data.randomize(new java.util.Random());    // randomize instance order before splitting dataset
+        Instances train = data.trainCV(2, 0);
+        Instances test = data.testCV(2, 0);
 
-        assertTrue(test.numInstances() < data.numInstances());
-        assertTrue(test.numInstances() < train.numInstances());
-        assertTrue(train.numInstances() < data.numInstances());
-
-        assertTrue(test.numAttributes() == train.numAttributes());
-        assertTrue(train.numAttributes() == data.numAttributes());
-        assertTrue(data.numAttributes() == test.numAttributes());
-
-
-        assertTrue(test.numInstances() <= (100 - Integer.parseInt(WekaHelper.TRAINING_SET_PERCENTAGE)) / 100.0 * data.numInstances() + 1);
-        assertTrue(train.numInstances() <= Integer.parseInt(WekaHelper.TRAINING_SET_PERCENTAGE) / 100.0 * data.numInstances() + 1);
-
-        assertEquals(test.numInstances() + train.numInstances(), data.numInstances());
-
-        // Every instance in the testing set has to be in the data set
-        for (int i = 0; i < test.numInstances(); i++)
-            assertTrue(dataContainsInstance(data, test.instance(i)));
-
-        // Every instance in the training set has to be in the data set
-        for (int i = 0; i < train.numInstances(); i++)
-            assertTrue(dataContainsInstance(data, train.instance(i)));
-
-        // No instance which is in the training set is in the testing set
-        for (int i = 0; i < train.numInstances(); i++)
-            assertFalse(dataContainsInstance(test, train.instance(i)));
-
-        // No instance which is in the testing set is in the training set
-        for (int i = 0; i < test.numInstances(); i++)
-            assertFalse(dataContainsInstance(train, test.instance(i)));
+        testTestingAndTrainingSet(data, train, test);
     }
 
     @Test
@@ -110,27 +81,6 @@ public class WekaHelperUnitTest extends AbstractTest {
         testInstancesEqual(expected, actual);
     }
 
-    @NonNull
-    private ArrayList<DataPoint> getDataPoints() {
-        ArrayList<DataPoint> dataPoints = new ArrayList<>();
-        Integer[] rss1 = {0, 23, 39, 39, 39, 39, 39, 39};
-        addDataPoint(dataPoints, "stube", new SensorData(17.8, -39.8), rss1);
-        Integer[] rss2 = {0, 10, 31, 31, 31, 31, 31, 31};
-        addDataPoint(dataPoints, "kueche", new SensorData(8.1, -38.7), rss2);
-        Integer[] rss3 = {0, 16, 16, 23, 23, 23, 14, 14};
-        addDataPoint(dataPoints, "badgross", new SensorData(4.4, -42.3), rss3);
-        Integer[] rss4 = {0, 20, 33, 33, 33, 33, 33, 33};
-        addDataPoint(dataPoints, "badklein", new SensorData(5.5, -44.1), rss4);
-        Integer[] rss5 = {0, 11, 34, 34, 34, 34, 34, 34};
-        addDataPoint(dataPoints, "gang", new SensorData(11.2, -39.1), rss5);
-        return dataPoints;
-    }
-
-    private void testInstancesEqual(Instances expected, Instances actual) {
-        assertTrue(actual.equalHeaders(expected));
-        for (int i = 0; i < expected.numInstances(); i++)
-            assertTrue(comparator.compare(expected.instance(i), actual.instance(i)) == 0);
-    }
 
     @Test
     public void testConvertToSingleInstance() throws Exception {
@@ -145,27 +95,6 @@ public class WekaHelperUnitTest extends AbstractTest {
         Instances actual = loadFile("unittests/buildInstances");
         wekaHelper.convertToSingleInstance(actual, dataPoint);
         testInstancesEqual(expected, actual);
-    }
-
-    private void addDataPoint(ArrayList<DataPoint> dataPoints, String room, SensorData sensorData, Integer[] rss) {
-        DataPoint dataPoint = getDataPoint(room, sensorData, rss);
-        dataPoints.add(dataPoint);
-    }
-
-    @NonNull
-    private DataPoint getDataPoint(String room, SensorData sensorData, Integer[] rss) {
-        ArrayList<Integer> rssList = new ArrayList<>();
-        for (Integer rssValue : rss)
-            rssList.add(rssValue);
-        return new DataPoint(room, sensorData, RSSData.createRSSDataTest(rssList));
-    }
-
-
-    private boolean dataContainsInstance(Instances data, Instance instance) {
-        for (int i = 0; i < data.numInstances(); i++)
-            if (comparator.compare(instance, data.instance(i)) == 0)
-                return true;
-        return false;
     }
 
     @Test
@@ -220,4 +149,80 @@ public class WekaHelperUnitTest extends AbstractTest {
         for (int i = 0; i < data.numInstances(); i++)
             assertTrue(dataContainsInstance(oldData, data.instance(i)));
     }
+
+    private void testTestingAndTrainingSet(Instances data, Instances train, Instances test) {
+        assertTrue(test.numInstances() < data.numInstances());
+        assertTrue(test.numInstances() < train.numInstances());
+        assertTrue(train.numInstances() < data.numInstances());
+
+        assertTrue(test.numAttributes() == train.numAttributes());
+        assertTrue(train.numAttributes() == data.numAttributes());
+        assertTrue(data.numAttributes() == test.numAttributes());
+
+
+        assertTrue(test.numInstances() <= (100 - Integer.parseInt(WekaHelper.TRAINING_SET_PERCENTAGE)) / 100.0 * data.numInstances() + 1);
+        assertTrue(train.numInstances() <= Integer.parseInt(WekaHelper.TRAINING_SET_PERCENTAGE) / 100.0 * data.numInstances() + 1);
+
+        assertEquals(test.numInstances() + train.numInstances(), data.numInstances());
+
+        // Every instance in the testing set has to be in the data set
+        for (int i = 0; i < test.numInstances(); i++)
+            assertTrue(dataContainsInstance(data, test.instance(i)));
+
+        // Every instance in the training set has to be in the data set
+        for (int i = 0; i < train.numInstances(); i++)
+            assertTrue(dataContainsInstance(data, train.instance(i)));
+
+        // No instance which is in the training set is in the testing set
+        for (int i = 0; i < train.numInstances(); i++)
+            assertFalse(dataContainsInstance(test, train.instance(i)));
+
+        // No instance which is in the testing set is in the training set
+        for (int i = 0; i < test.numInstances(); i++)
+            assertFalse(dataContainsInstance(train, test.instance(i)));
+    }
+
+    private void addDataPoint(ArrayList<DataPoint> dataPoints, String room, SensorData sensorData, Integer[] rss) {
+        DataPoint dataPoint = getDataPoint(room, sensorData, rss);
+        dataPoints.add(dataPoint);
+    }
+
+    @NonNull
+    private DataPoint getDataPoint(String room, SensorData sensorData, Integer[] rss) {
+        ArrayList<Integer> rssList = new ArrayList<>();
+        for (Integer rssValue : rss)
+            rssList.add(rssValue);
+        return new DataPoint(room, sensorData, RSSData.createRSSDataTest(rssList));
+    }
+
+
+    private boolean dataContainsInstance(Instances data, Instance instance) {
+        for (int i = 0; i < data.numInstances(); i++)
+            if (comparator.compare(instance, data.instance(i)) == 0)
+                return true;
+        return false;
+    }
+
+    @NonNull
+    private ArrayList<DataPoint> getDataPoints() {
+        ArrayList<DataPoint> dataPoints = new ArrayList<>();
+        Integer[] rss1 = {0, 23, 39, 39, 39, 39, 39, 39};
+        addDataPoint(dataPoints, "stube", new SensorData(17.8, -39.8), rss1);
+        Integer[] rss2 = {0, 10, 31, 31, 31, 31, 31, 31};
+        addDataPoint(dataPoints, "kueche", new SensorData(8.1, -38.7), rss2);
+        Integer[] rss3 = {0, 16, 16, 23, 23, 23, 14, 14};
+        addDataPoint(dataPoints, "badgross", new SensorData(4.4, -42.3), rss3);
+        Integer[] rss4 = {0, 20, 33, 33, 33, 33, 33, 33};
+        addDataPoint(dataPoints, "badklein", new SensorData(5.5, -44.1), rss4);
+        Integer[] rss5 = {0, 11, 34, 34, 34, 34, 34, 34};
+        addDataPoint(dataPoints, "gang", new SensorData(11.2, -39.1), rss5);
+        return dataPoints;
+    }
+
+    private void testInstancesEqual(Instances expected, Instances actual) {
+        assertTrue(actual.equalHeaders(expected));
+        for (int i = 0; i < expected.numInstances(); i++)
+            assertTrue(comparator.compare(expected.instance(i), actual.instance(i)) == 0);
+    }
+
 }

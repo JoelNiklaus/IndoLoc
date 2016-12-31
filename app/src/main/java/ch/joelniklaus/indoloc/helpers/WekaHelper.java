@@ -50,12 +50,12 @@ public class WekaHelper {
         this.context = context;
     }
 
-    public Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
+    public static Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
         RemovePercentage remove = randomizeAndGetRemovePercentage(data);
         return evaluate(getTrainingSet(data, remove), getTestingSet(data, remove), classifier);
     }
 
-    public Evaluation evaluate(Instances train, Instances test, Classifier classifier) throws Exception {
+    public static Evaluation evaluate(Instances train, Instances test, Classifier classifier) throws Exception {
         classifier.buildClassifier(train);
         Evaluation evaluation = new Evaluation(train);
         evaluation.evaluateModel(classifier, test);
@@ -64,12 +64,12 @@ public class WekaHelper {
     }
 
 
-    public void test(Instances test, Classifier classifier) throws Exception {
+    public static void test(Instances test, Classifier classifier) throws Exception {
         for (int i = 0; i < test.numInstances(); i++)
             classifier.classifyInstance(test.instance(i));
     }
 
-    public Classifier train(Instances train, Classifier classifier) throws Exception {
+    public static Classifier train(Instances train, Classifier classifier) throws Exception {
         classifier.buildClassifier(train);
         return classifier;
     }
@@ -123,11 +123,12 @@ public class WekaHelper {
         return test;
     }
 
-    public Instances getTestingSetAlternative(Instances data) throws Exception {
+    @NonNull
+    public static StratifiedRemoveFolds randomizeAndGetStratifiedRemoveFolds(Instances data) throws Exception {
         data.setClassIndex(0);
 
         // use StratifiedRemoveFolds to randomly split the data
-        StratifiedRemoveFolds filter = new StratifiedRemoveFolds();
+        StratifiedRemoveFolds stratifiedRemoveFolds = new StratifiedRemoveFolds();
 
         // set options for creating the subset of data
         String[] options = new String[6];
@@ -139,35 +140,43 @@ public class WekaHelper {
         options[4] = "-S";                 // indicate we want to set the random seed
         options[5] = Integer.toString(1);  // set the random seed to 1
 
-        filter.setOptions(options);        // set the filter options
-        filter.setInputFormat(data);       // prepare the filter for the data format
-        filter.setInvertSelection(false);  // do not invert the selection
+        stratifiedRemoveFolds.setOptions(options);        // set the filter options
+        stratifiedRemoveFolds.setInputFormat(data);       // prepare the filter for the data format
+        stratifiedRemoveFolds.setInvertSelection(false);  // do not invert the selection
 
-        // apply filter for test data here
-        Instances test = Filter.useFilter(data, filter);
-
-        //  prepare and apply filter for training data here
-        filter.setInvertSelection(true);     // invert the selection to get other data
-        Instances train = Filter.useFilter(data, filter);
-
-        return test;
+        return stratifiedRemoveFolds;
     }
 
-
     @NonNull
-    public Instances getTestingSet(Instances data, RemovePercentage remove) throws Exception {
-        String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
-        remove.setOptions(optionsTest);
-        Instances test = Filter.useFilter(data, remove);
+    public static Instances getTestingSet(Instances data, StratifiedRemoveFolds stratifiedRemoveFolds) throws Exception {
+        Instances test = Filter.useFilter(data, stratifiedRemoveFolds);
         test.setClassIndex(0);
         return test;
     }
 
     @NonNull
-    public Instances getTrainingSet(Instances data, RemovePercentage remove) throws Exception {
+    public static Instances getTrainingSet(Instances data, StratifiedRemoveFolds stratifiedRemoveFolds) throws Exception {
+        stratifiedRemoveFolds.setInvertSelection(true);     // invert the selection to get other data
+        Instances train = Filter.useFilter(data, stratifiedRemoveFolds);
+        train.setClassIndex(0);
+        return train;
+    }
+
+
+    @NonNull
+    public static Instances getTestingSet(Instances data, RemovePercentage removePercentage) throws Exception {
+        String[] optionsTest = {"-P", TRAINING_SET_PERCENTAGE};
+        removePercentage.setOptions(optionsTest);
+        Instances test = Filter.useFilter(data, removePercentage);
+        test.setClassIndex(0);
+        return test;
+    }
+
+    @NonNull
+    public static Instances getTrainingSet(Instances data, RemovePercentage removePercentage) throws Exception {
         String[] optionsTrain = {"-P", TRAINING_SET_PERCENTAGE, "-V"};
-        remove.setOptions(optionsTrain);
-        Instances train = Filter.useFilter(data, remove);
+        removePercentage.setOptions(optionsTrain);
+        Instances train = Filter.useFilter(data, removePercentage);
         train.setClassIndex(0);
         return train;
     }
@@ -180,14 +189,15 @@ public class WekaHelper {
      * @throws Exception
      */
     @NonNull
-    public RemovePercentage randomizeAndGetRemovePercentage(Instances data) throws Exception {
+    public static RemovePercentage randomizeAndGetRemovePercentage(Instances data) throws Exception {
+        data.setClassIndex(0);
         // Randomizing
         data.randomize(new Random());
 
         // Filtering
-        RemovePercentage remove = new RemovePercentage();
-        remove.setInputFormat(data);
-        return remove;
+        RemovePercentage removePercentage = new RemovePercentage();
+        removePercentage.setInputFormat(data);
+        return removePercentage;
     }
 
     /**

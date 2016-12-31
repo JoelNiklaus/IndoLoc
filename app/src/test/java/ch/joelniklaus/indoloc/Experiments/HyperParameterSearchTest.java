@@ -23,8 +23,6 @@ public class HyperParameterSearchTest extends AbstractTest {
         super.setUp();
     }
 
-
-
     @Test
     public void testAutoWeka() throws Exception {
         /*
