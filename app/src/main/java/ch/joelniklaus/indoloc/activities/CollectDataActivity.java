@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 
 import org.apache.commons.lang3.SerializationUtils;
+
 import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.R;
@@ -27,16 +28,19 @@ import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
-    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
-    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue;
-    private Button startButton;
+    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText, predictText;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictValue;
+    private Button startButton, liveTestButton;
     private EditText roomEditText;
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
     private DataPoint currentDataPoint;
+    private String prediction = "";
+
+    private Instances test = null;
 
     private int scanNumber = 0;
-    private boolean registering = false;
+    private boolean registering = false, predicting = false;
 
     private FileHelper fileHelper = new FileHelper(this);
     private SensorHelper sensorHelper = new SensorHelper(this);
@@ -76,20 +80,23 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     @Override
     public void onSensorChanged(SensorEvent event) {
         DataPoint previousDataPoint = null;
-        if(currentDataPoint!= null)
-         previousDataPoint = SerializationUtils.clone(currentDataPoint);
+        if (currentDataPoint != null)
+            previousDataPoint = SerializationUtils.clone(currentDataPoint);
 
         currentDataPoint = new DataPoint(roomEditText.getText().toString(), sensorHelper.readSensorData(event), wifiHelper.readWifiData(getIntent()));
 
         // Only collect different DataPoints
-        if(!currentDataPoint.equals(previousDataPoint))
+        if (!currentDataPoint.equals(previousDataPoint)) {
             saveDataPoint();
+            predict();
+        }
 
         setTextViewValues();
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {}
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
 
     private void setUpTextViews() {
         scanText = (TextView) findViewById(R.id.txtScanV);
@@ -136,7 +143,12 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         magneticZText.setText("MagneticZ");
         magneticZValue = (TextView) findViewById(R.id.txtmagneticZ);
 
+        predictText = (TextView) findViewById(R.id.txtPredictV);
+        predictText.setText("Predicted Room");
+        predictValue = (TextView) findViewById(R.id.txtPredict);
+
         startButton = (Button) findViewById(R.id.btnStart);
+        liveTestButton = (Button) findViewById(R.id.btnLiveTest);
         roomEditText = (EditText) findViewById(R.id.editRoom);
     }
 
@@ -154,6 +166,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         rss6Value.setText(rssData.getValues().get(5).toString());
         rss7Value.setText(rssData.getValues().get(6).toString());
         rss8Value.setText(rssData.getValues().get(7).toString());
+
+        predictValue.setText(prediction);
     }
 
     public void start(View view) {
@@ -182,16 +196,39 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
+    public void predict() {
+        if (predicting) {
+            try {
+                Instances data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
+
+                prediction = wekaHelper.testForView(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+                alert(e.getMessage());
+            }
+        }
+    }
+
     public void liveTestModel(View v) {
+        if(test == null) {
+            alert("Please train your model first");
+        }
+
+        String label = liveTestButton.getText().toString();
         try {
-            Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
+            if (label.equals("START LIVE TEST")) {
+                liveTestButton.setText("STOP LIVE TEST");
 
-            Instances data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
+                // Start predicting
+                predicting = true;
+            } else {
+                liveTestButton.setText("START LIVE TEST");
 
-            wekaHelper.testForView(data);
+                // Stop predicting
+                predicting = false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            alert(e.getMessage());
         }
     }
 
@@ -210,7 +247,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         try {
             Instances data = fileHelper.loadArffFromExternalStorage("data.arff");
 
-            Instances test = wekaHelper.trainForView(data);
+            test = wekaHelper.trainForView(data);
 
             fileHelper.saveArffToExternalStorage(test, "test.arff");
         } catch (Exception e) {

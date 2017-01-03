@@ -84,9 +84,9 @@ public class WekaHelper {
         return evaluation;
     }
 
-    public void testForView(Instances test) throws Exception {
+    public String testForView(Instances test) throws Exception {
         timer.reset();
-        String results = "";
+        String results = "", predicted = "";
         for (int i = 0; i < test.numInstances(); i++) {
             double actualClass = test.instance(i).classValue();
             String actual = "?";
@@ -95,11 +95,13 @@ public class WekaHelper {
                 actual = test.classAttribute().value((int) actualClass);
 
             double predictedClass = classifier.classifyInstance(test.instance(i));
-            String predicted = test.classAttribute().value((int) predictedClass);
+             predicted = test.classAttribute().value((int) predictedClass);
 
             results += "Predicted: " + predicted + "-> Actual: " + actual + "\n";
         }
-        alert("Time: " + timer.timeElapsed() + "ms\n\n" + results);
+        //alert("Time: " + timer.timeElapsed() + "ms\n\n" + results);
+
+        return predicted;
     }
 
     /**
@@ -226,7 +228,7 @@ public class WekaHelper {
 
     // Change Model to be trained here!
     private void buildClassifier(Instances train) throws Exception {
-        trainRF();
+        trainBagging();
         classifier.buildClassifier(train);
     }
 

@@ -64,7 +64,7 @@ public class WifiHelper {
                 ScanResult scanResult = scanResults.get(i);
                 int level = scanResult.level;
 
-
+ /* CDS-
                 switch (scanResult.BSSID) {
                     case "38:10:d5:0e:1f:25":
                         rssList.set(0, level);
@@ -84,8 +84,8 @@ public class WifiHelper {
                         rssList.set(7, level);
                 }
 
+*/
 
- /* CDS-
                 switch (scanResult.SSID) {
                     case "ap1":
                         rssList.set(0, level);
@@ -104,7 +104,7 @@ public class WifiHelper {
                     case "eduroam":
                         rssList.set(7, level);
                 }
-*/
+
 
                 //rss1Value.setText(rss1Value.getText() + "\nName: " + scanResult.SSID + "\nMAC:" + scanResult.BSSID);
             }

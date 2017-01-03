@@ -309,7 +309,26 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:onClick="liveTestModel"
-                android:text="Live Test Model" />
+                android:text="START LIVE TEST" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted Room:" />
+
+            <TextView
+                android:id="@+id/txtPredict"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
         </TableRow>
 
     </TableLayout>

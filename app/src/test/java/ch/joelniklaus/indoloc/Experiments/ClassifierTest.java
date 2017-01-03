@@ -6,6 +6,7 @@ import org.junit.Test;
 import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.core.Instances;
+import weka.filters.unsupervised.instance.RemovePercentage;
 
 
 /**
@@ -21,8 +22,27 @@ public class ClassifierTest extends AbstractTest {
     }
 
     @Test
+    public void testDifferentlyCollectedTrainAndTestSetAmountOfModelData() throws Exception {
+        Instances train = loadFile("cds/train");
+        RemovePercentage removePercentage = wekaHelper.randomizeAndGetRemovePercentage(train);
+        Instances train30Reduced = wekaHelper.getTrainingSet(train, removePercentage);
+        Instances train70Reduced = wekaHelper.getTestingSet(train, removePercentage);
+        Instances test = loadFile("cds/test");
+
+        System.out.println("===== Full Dataset =====");
+        sortAndPrintStatistics(getClassifierRatings(train, test));
+
+        System.out.println("===== 30% Reduced =====");
+        sortAndPrintStatistics(getClassifierRatings(train30Reduced, test));
+
+        System.out.println("===== 70% Reduced =====");
+        sortAndPrintStatistics(getClassifierRatings(train70Reduced, test));
+
+    }
+
+    @Test
     public void testTrainAndTestSetOfSameCollectionDifferentDivision() throws Exception {
-        Instances data = loadFile("experiments/experiment_new");
+        Instances data = loadFile("cds/train");
 
         data.randomize(new java.util.Random());
         Instances train = data.trainCV(2, 0);
@@ -34,7 +54,7 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testTrainAndTestSetOfSameCollection() throws Exception {
-        Instances data = loadFile("experiments/experiment_new");
+        Instances data = loadFile("cds/train");
 
         Statistics statistics = getClassifierRatings(data);
         sortAndPrintStatistics(statistics);
@@ -42,8 +62,8 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSet() throws Exception {
-        Instances train = loadFile("experiments/train");
-        Instances test = loadFile("experiments/test");
+        Instances train = loadFile("cds/train");
+        Instances test = loadFile("cds/test");
 
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
@@ -51,8 +71,8 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSetMerged() throws Exception {
-        Instances train = loadFile("experiments/train");
-        Instances test = loadFile("experiments/test");
+        Instances train = loadFile("cds/train");
+        Instances test = loadFile("cds/test");
 
         Instances data = merge(train, test);
 
