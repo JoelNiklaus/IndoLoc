@@ -31,6 +31,12 @@ public class Statistics {
 
     public void printConfusionMatrices() {
         for (ClassifierRating classifierRating : classifierRatingList) {
+            try {
+                System.out.println(classifierRating.getEvaluation().toMatrixString(classifierRating.getName()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            /*
             double[][] matrix = classifierRating.getEvaluation().confusionMatrix();
 
             System.out.println("\n\n" + classifierRating.getName() + ": ");
@@ -45,6 +51,7 @@ public class Statistics {
                 System.out.println();
             }
             System.out.println("+==========================================+\n");
+            */
         }
     }
 

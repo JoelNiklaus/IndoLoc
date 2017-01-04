@@ -125,6 +125,47 @@ public class WekaHelper {
         return test;
     }
 
+    // Change Model to be trained here!
+    private void buildClassifier(Instances train) throws Exception {
+        trainBagging();
+        classifier.buildClassifier(train);
+    }
+
+    // K-Nearest Neighbour
+    private void trainKNN() {
+        classifier = new IBk();
+    }
+
+    // Support Vector Machine
+    private void trainSVM() {
+        classifier = new LibSVM();
+    }
+
+    // Naive Bayes
+    private void trainNB() {
+        classifier = new NaiveBayes();
+    }
+
+    // Logistic Regression
+    private void trainLR() {
+        classifier = new Logistic();
+    }
+
+    // Bagging
+    private void trainBagging() {
+        classifier = new Bagging();
+    }
+
+    // Boosting
+    private void trainBoosting() {
+        classifier = new LogitBoost();
+    }
+
+    // Random Forest
+    private void trainRF() {
+        classifier = new RandomForest();
+    }
+
     @NonNull
     public static StratifiedRemoveFolds randomizeAndGetStratifiedRemoveFolds(Instances data) throws Exception {
         data.setClassIndex(0);
@@ -220,51 +261,12 @@ public class WekaHelper {
         InstanceComparator comparator = new InstanceComparator();
         for (int i = 0; i < data.numInstances() - 1; i++) {
             for (int j = i + 1; j < data.numInstances(); j++)
-                if (comparator.compare(data.instance(i), data.instance(j)) == 0)
+                if (comparator.compare(data.instance(i), data.instance(j)) == 0) {
                     data.delete(j);
+                    j--;
+                }
         }
         return data;
-    }
-
-    // Change Model to be trained here!
-    private void buildClassifier(Instances train) throws Exception {
-        trainBagging();
-        classifier.buildClassifier(train);
-    }
-
-    // K-Nearest Neighbour
-    private void trainKNN() {
-        classifier = new IBk();
-    }
-
-    // Support Vector Machine
-    private void trainSVM() {
-        classifier = new LibSVM();
-    }
-
-    // Naive Bayes
-    private void trainNB() {
-        classifier = new NaiveBayes();
-    }
-
-    // Logistic Regression
-    private void trainLR() {
-        classifier = new Logistic();
-    }
-
-    // Bagging
-    private void trainBagging() {
-        classifier = new Bagging();
-    }
-
-    // Boosting
-    private void trainBoosting() {
-        classifier = new LogitBoost();
-    }
-
-    // Random Forest
-    private void trainRF() {
-        classifier = new RandomForest();
     }
 
     @NonNull

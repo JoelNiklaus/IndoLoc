@@ -7,7 +7,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
+import weka.classifiers.Classifier;
 import weka.core.Instances;
+import weka.core.SerializationHelper;
 import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils;
 
@@ -27,6 +29,14 @@ public class FileHelper {
 
     public FileHelper(Context context) {
         this.context = context;
+    }
+
+    public void saveModel(Classifier classifier, String fileName) throws Exception {
+        SerializationHelper.write(fileName, classifier);
+    }
+
+    public Classifier loadModel(String fileName) throws Exception {
+        return (Classifier) SerializationHelper.read(fileName);
     }
 
     public void saveArffToExternalStorage(Instances data, String fileName) throws IOException {
