@@ -7,27 +7,27 @@ import java.io.Serializable;
  */
 public class SensorData implements Serializable {
 
-    private double magneticY, magneticZ;
+    private int magneticY, magneticZ;
 
 
-    public SensorData(double magneticY, double magneticZ) {
+    public SensorData(int magneticY, int magneticZ) {
         this.magneticY = magneticY;
         this.magneticZ = magneticZ;
     }
 
-    public double getMagneticY() {
+    public int getMagneticY() {
         return magneticY;
     }
 
-    public void setMagneticY(double magneticY) {
+    public void setMagneticY(int magneticY) {
         this.magneticY = magneticY;
     }
 
-    public double getMagneticZ() {
+    public int getMagneticZ() {
         return magneticZ;
     }
 
-    public void setMagneticZ(double magneticZ) {
+    public void setMagneticZ(int magneticZ) {
         this.magneticZ = magneticZ;
     }
 
@@ -38,19 +38,15 @@ public class SensorData implements Serializable {
 
         SensorData that = (SensorData) o;
 
-        if (Double.compare(that.magneticY, magneticY) != 0) return false;
-        return Double.compare(that.magneticZ, magneticZ) == 0;
+        if (magneticY != that.magneticY) return false;
+        return magneticZ == that.magneticZ;
 
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(magneticY);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(magneticZ);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = magneticY;
+        result = 31 * result + magneticZ;
         return result;
     }
 

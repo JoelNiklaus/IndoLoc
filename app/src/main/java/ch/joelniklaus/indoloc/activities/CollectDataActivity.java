@@ -176,8 +176,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private void setTextViewValues() {
         SensorData sensorData = currentDataPoint.getSensorData();
-        magneticYValue.setText(Double.toString(sensorData.getMagneticY()));
-        magneticZValue.setText(Double.toString(sensorData.getMagneticZ()));
+        magneticYValue.setText(Integer.toString(sensorData.getMagneticY()));
+        magneticZValue.setText(Integer.toString(sensorData.getMagneticZ()));
 
         RSSData rssData = currentDataPoint.getRssData();
         rss1Value.setText(rssData.getValues().get(0).toString());

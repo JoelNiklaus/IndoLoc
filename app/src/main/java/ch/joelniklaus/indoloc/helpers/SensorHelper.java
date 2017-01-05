@@ -80,20 +80,22 @@ public class SensorHelper {
             magneticFingerprint[2] = R[6] * magnetic[0] + R[7] * magnetic[1] + R[8] * magnetic[2];
 
             // round to 1 decimal place because of sensor resolution
-            magneticFingerprint[0] = round(magneticFingerprint[0]); // x-value: should always be 0
-            magneticFingerprint[1] = round(magneticFingerprint[1]); // y-value
-            magneticFingerprint[2] = round(magneticFingerprint[2]); // z-value
+            magneticFingerprint[0] = round(magneticFingerprint[0], 0); // x-value: should always be 0
+            assert magneticFingerprint[0] == 0.0;
+            magneticFingerprint[1] = round(magneticFingerprint[1], 0); // y-value
+            magneticFingerprint[2] = round(magneticFingerprint[2], 0); // z-value
         }
 
-        return new SensorData(magneticFingerprint[1], magneticFingerprint[2]);
+        return new SensorData((int) magneticFingerprint[1], (int) magneticFingerprint[2]);
     }
 
-    public void alert(String message) {
+    private void alert(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public double round(double number) {
-        return Math.round(10 * number) / 10.0;
+    public double round(double number, int decimalPlaces) {
+        double factor = Math.pow(10, decimalPlaces);
+        return Math.round(factor * number) / factor;
         /*
         BigDecimal bd = new BigDecimal(number);
         bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
