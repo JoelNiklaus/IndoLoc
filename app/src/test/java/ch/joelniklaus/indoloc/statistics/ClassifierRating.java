@@ -71,7 +71,7 @@ public class ClassifierRating {
                 + fixedLengthString("Train Time: " + meanTrainTime + " µs", 25);
     }
 
-    public static String fixedLengthString(String string, int length) {
+    private static String fixedLengthString(String string, int length) {
         return String.format("%1$" + length + "s", string);
     }
 }

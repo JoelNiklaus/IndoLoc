@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.core.Instances;
 
@@ -14,11 +15,6 @@ import weka.core.Instances;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class CriticalAreaTest extends AbstractTest {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     @Test
     public void testCriticalAreaDifferentCollections() throws Exception {
@@ -42,7 +38,7 @@ public class CriticalAreaTest extends AbstractTest {
     public void testCriticalAreaWithoutDuplicates() throws Exception {
         Instances data = loadFile("experiments/critical_area");
 
-        data = wekaHelper.removeDuplicates(data);
+        data = WekaHelper.removeDuplicates(data);
         Statistics statistics = getClassifierRatings(data);
         sortAndPrintStatistics(statistics);
     }
@@ -56,9 +52,9 @@ public class CriticalAreaTest extends AbstractTest {
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
         Instances data = loadFile("experiments/critical_area");
 
-        Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(data, "12-20");
-        without = wekaHelper.removeAttributes(without, "2-3");
+        Instances with = WekaHelper.removeDuplicates(data);
+        Instances without = WekaHelper.removeAttributes(data, "12-20");
+        without = WekaHelper.removeAttributes(without, "2-3");
 
         testWithAndWithout(with, without);
     }

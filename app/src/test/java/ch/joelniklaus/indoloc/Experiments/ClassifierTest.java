@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.core.Instances;
 import weka.filters.unsupervised.instance.RemovePercentage;
@@ -16,17 +17,12 @@ import weka.filters.unsupervised.instance.RemovePercentage;
  */
 public class ClassifierTest extends AbstractTest {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     @Test
     public void testDifferentlyCollectedTrainAndTestSetAmountOfModelData() throws Exception {
         Instances train = loadFile("cds/train");
-        RemovePercentage removePercentage = wekaHelper.randomizeAndGetRemovePercentage(train);
-        Instances train30Reduced = wekaHelper.getTrainingSet(train, removePercentage);
-        Instances train70Reduced = wekaHelper.getTestingSet(train, removePercentage);
+        RemovePercentage removePercentage = WekaHelper.randomizeAndGetRemovePercentage(train);
+        Instances train30Reduced = WekaHelper.getTrainingSet(train, removePercentage);
+        Instances train70Reduced = WekaHelper.getTestingSet(train, removePercentage);
         Instances test = loadFile("cds/test");
 
         System.out.println("===== Full Dataset =====");

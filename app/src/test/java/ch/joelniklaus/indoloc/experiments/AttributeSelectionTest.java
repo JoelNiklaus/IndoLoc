@@ -1,6 +1,5 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
@@ -22,11 +21,6 @@ import weka.filters.Filter;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class AttributeSelectionTest extends AbstractTest {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     /**
      * uses the meta-classifier

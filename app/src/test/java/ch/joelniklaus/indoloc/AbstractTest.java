@@ -44,12 +44,12 @@ public class AbstractTest {
 
     protected final int NUMBER_OF_TEST_ROUNDS = 5;
 
-    protected Timer timer = new Timer();
+    protected final Timer timer = new Timer();
 
-    protected WekaHelper wekaHelper = new WekaHelper();
-    protected FileHelper fileHelper = new FileHelper();
+    protected final WekaHelper wekaHelper = new WekaHelper();
+    protected final FileHelper fileHelper = new FileHelper();
 
-    protected ArrayList<Classifier> classifiers = new ArrayList<Classifier>();
+    protected final ArrayList<Classifier> classifiers = new ArrayList<>();
 
     public static final String ASSETS_PATH = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/";
     public static final String ENDING = ".arff";
@@ -181,7 +181,7 @@ public class AbstractTest {
 
 
 
-    protected Statistics sortAndPrintStatistics(Statistics statistics) throws Exception {
+    protected Statistics sortAndPrintStatistics(Statistics statistics) {
         statistics.sortByAccuracy();
 
         statistics.print();
@@ -216,18 +216,18 @@ public class AbstractTest {
         for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             // Training
             timer.reset();
-            classifier = wekaHelper.train(train, classifier);
+            classifier = WekaHelper.train(train, classifier);
             // mean training time per instance
             trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
 
             // Testing
             timer.reset();
-            wekaHelper.test(test, classifier);
+            WekaHelper.test(test, classifier);
             // mean testing time per instance
             testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
 
             // Evaluation
-            lastEvaluation = wekaHelper.evaluate(train, test, classifier);
+            lastEvaluation = WekaHelper.evaluate(train, test, classifier);
             correctPctSum += lastEvaluation.pctCorrect();
         }
         double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
@@ -245,24 +245,24 @@ public class AbstractTest {
         Evaluation lastEvaluation = null;
         for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             // Generate new Training and Testing set
-            RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
-            Instances train = wekaHelper.getTrainingSet(data, remove);
-            Instances test = wekaHelper.getTestingSet(data, remove);
+            RemovePercentage remove = WekaHelper.randomizeAndGetRemovePercentage(data);
+            Instances train = WekaHelper.getTrainingSet(data, remove);
+            Instances test = WekaHelper.getTestingSet(data, remove);
 
             // Training
             timer.reset();
-            classifier = wekaHelper.train(train, classifier);
+            classifier = WekaHelper.train(train, classifier);
             // mean training time per instance
             trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
 
             // Testing
             timer.reset();
-            wekaHelper.test(test, classifier);
+            WekaHelper.test(test, classifier);
             // mean testing time per instance
             testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
 
             // Evaluation
-            lastEvaluation = wekaHelper.evaluate(train, test, classifier);
+            lastEvaluation = WekaHelper.evaluate(train, test, classifier);
             correctPctSum += lastEvaluation.pctCorrect();
         }
         double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
@@ -290,7 +290,7 @@ public class AbstractTest {
         withAndWithout(ratingsWith, ratingsWithout);
     }
 
-    private void withAndWithout(Statistics ratingsWith, Statistics ratingsWithout) throws Exception {
+    private void withAndWithout(Statistics ratingsWith, Statistics ratingsWithout) {
         // Test each Classifier
         for (int i = 0; i < ratingsWith.getList().size(); i++) {
             ClassifierRating ratingWith = ratingsWith.get(i);

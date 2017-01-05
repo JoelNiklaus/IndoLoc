@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.core.Instances;
 
 
@@ -13,11 +14,6 @@ import weka.core.Instances;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class WithoutCriticalAreaTest extends AbstractTest {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     /* Attribute Indices:
      * 1 -> Class Attribute: Room
@@ -37,8 +33,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
     public void testMagneticFieldValuesImprovement() throws Exception {
         Instances data = loadFile("experiments/without_critical_new");
 
-        Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(data, "2-3");
+        Instances with = WekaHelper.removeDuplicates(data);
+        Instances without = WekaHelper.removeAttributes(data, "2-3");
 
         testWithAndWithout(with, without);
     }
@@ -52,8 +48,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
     public void testMeanImprovement() throws Exception {
         Instances data = loadFile("experiments/without_critical_new");
 
-        Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(data, "12");
+        Instances with = WekaHelper.removeDuplicates(data);
+        Instances without = WekaHelper.removeAttributes(data, "12");
 
         testWithAndWithout(with, without);
     }
@@ -67,8 +63,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
     public void testVariancesImprovement() throws Exception {
         Instances data = loadFile("experiments/without_critical_new");
 
-        Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(data, "13-20");
+        Instances with = WekaHelper.removeDuplicates(data);
+        Instances without = WekaHelper.removeAttributes(data, "13-20");
 
         testWithAndWithout(with, without);
     }
@@ -82,9 +78,9 @@ public class WithoutCriticalAreaTest extends AbstractTest {
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
         Instances data = loadFile("experiments/without_critical_new");
 
-        Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(data, "12-20");
-        without = wekaHelper.removeAttributes(without, "2-3");
+        Instances with = WekaHelper.removeDuplicates(data);
+        Instances without = WekaHelper.removeAttributes(data, "12-20");
+        without = WekaHelper.removeAttributes(without, "2-3");
 
         testWithAndWithout(with, without);
     }

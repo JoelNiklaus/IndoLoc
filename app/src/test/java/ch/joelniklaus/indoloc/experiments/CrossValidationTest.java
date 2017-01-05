@@ -25,11 +25,6 @@ import weka.filters.supervised.attribute.AddClassification;
  */
 public class CrossValidationTest extends AbstractTest {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     /**
      * Performs a single run of cross-validation.
      *

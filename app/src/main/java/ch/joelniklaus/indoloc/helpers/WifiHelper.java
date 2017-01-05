@@ -19,12 +19,12 @@ import static android.content.Context.WIFI_SERVICE;
  */
 public class WifiHelper {
 
-    private Context context;
+    private final Context context;
 
     private WifiReceiver wifiReceiver;
     private WifiManager wifiManager;
 
-    private ArrayList<Integer> rssList = new ArrayList<Integer>(NUMBER_OF_ACCESS_POINTS);
+    private ArrayList<Integer> rssList = new ArrayList<>(NUMBER_OF_ACCESS_POINTS);
     public static final int NUMBER_OF_ACCESS_POINTS = 8;
 
     public WifiHelper(Context context) {
@@ -55,7 +55,7 @@ public class WifiHelper {
 
         public void onReceive(Context c, Intent intent) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
-            rssList = new ArrayList<Integer>(NUMBER_OF_ACCESS_POINTS);
+            rssList = new ArrayList<>(NUMBER_OF_ACCESS_POINTS);
             for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
                 rssList.add(i, 1);
 

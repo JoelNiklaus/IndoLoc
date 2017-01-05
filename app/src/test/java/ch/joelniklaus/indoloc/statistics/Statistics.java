@@ -9,7 +9,7 @@ import java.util.Comparator;
  */
 
 public class Statistics {
-    private ArrayList<ClassifierRating> classifierRatingList = new ArrayList<>();
+    private final ArrayList<ClassifierRating> classifierRatingList = new ArrayList<>();
 
     public void print() {
         printStatistics();

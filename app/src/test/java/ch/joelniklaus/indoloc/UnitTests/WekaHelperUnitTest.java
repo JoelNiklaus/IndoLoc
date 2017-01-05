@@ -3,12 +3,12 @@ package ch.joelniklaus.indoloc.unitTests;
 import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.RSSData;
 import ch.joelniklaus.indoloc.models.SensorData;
@@ -30,20 +30,15 @@ import static org.junit.Assert.assertTrue;
  */
 public class WekaHelperUnitTest extends AbstractTest {
 
-    private InstanceComparator comparator = new InstanceComparator();
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
+    private final InstanceComparator comparator = new InstanceComparator();
 
     @Test
     public void testGetTestingSetAndGetTrainingSetStratifiedRemoveFolds() throws Exception {
         Instances data = loadFile("unittests/remove");
 
-        StratifiedRemoveFolds stratifiedRemoveFolds = wekaHelper.randomizeAndGetStratifiedRemoveFolds(data);
-        Instances train = wekaHelper.getTrainingSet(data, stratifiedRemoveFolds);
-        Instances test = wekaHelper.getTestingSet(data, stratifiedRemoveFolds);
+        StratifiedRemoveFolds stratifiedRemoveFolds = WekaHelper.randomizeAndGetStratifiedRemoveFolds(data);
+        Instances train = WekaHelper.getTrainingSet(data, stratifiedRemoveFolds);
+        Instances test = WekaHelper.getTestingSet(data, stratifiedRemoveFolds);
 
         testTrainingAndTestingSet(data, train, test);
     }
@@ -52,9 +47,9 @@ public class WekaHelperUnitTest extends AbstractTest {
     public void testGetTestingSetAndGetTrainingSetRemovePercentage() throws Exception {
         Instances data = loadFile("unittests/remove");
 
-        RemovePercentage removePercentage = wekaHelper.randomizeAndGetRemovePercentage(data);
-        Instances train = wekaHelper.getTrainingSet(data, removePercentage);
-        Instances test = wekaHelper.getTestingSet(data, removePercentage);
+        RemovePercentage removePercentage = WekaHelper.randomizeAndGetRemovePercentage(data);
+        Instances train = WekaHelper.getTrainingSet(data, removePercentage);
+        Instances test = WekaHelper.getTestingSet(data, removePercentage);
 
         testTrainingAndTestingSet(data, train, test);
     }
@@ -75,7 +70,7 @@ public class WekaHelperUnitTest extends AbstractTest {
     public void testBuildInstances() throws Exception {
         ArrayList<DataPoint> dataPoints = getDataPoints();
 
-        Instances expected = wekaHelper.buildInstances(dataPoints);
+        Instances expected = WekaHelper.buildInstances(dataPoints);
         Instances actual = loadFile("unittests/buildInstances");
         testInstancesEqual(expected, actual);
     }
@@ -86,13 +81,13 @@ public class WekaHelperUnitTest extends AbstractTest {
         ArrayList<DataPoint> dataPoints = getDataPoints();
         DataPoint dataPoint = dataPoints.get(3);
 
-        Instances expected = wekaHelper.buildInstances(dataPoints);
+        Instances expected = WekaHelper.buildInstances(dataPoints);
         expected.delete(0);
         expected.delete(0);
         expected.delete(0);
         expected.delete(1);
         Instances actual = loadFile("unittests/buildInstances");
-        wekaHelper.convertToSingleInstance(actual, dataPoint);
+        WekaHelper.convertToSingleInstance(actual, dataPoint);
         testInstancesEqual(expected, actual);
     }
 
@@ -101,7 +96,7 @@ public class WekaHelperUnitTest extends AbstractTest {
         Instances data = loadFile("unittests/duplicates");
 
         // Remove third Attribute (index 2)
-        Instances newData = wekaHelper.removeAttributes(data, "3");
+        Instances newData = WekaHelper.removeAttributes(data, "3");
         assertNotEquals(data, newData);
         assertTrue(data.numAttributes() == newData.numAttributes() + 1);
         assertTrue(data.attribute(0).equals(newData.attribute(0)));
@@ -117,7 +112,7 @@ public class WekaHelperUnitTest extends AbstractTest {
         Instances data = loadFile("unittests/duplicates");
 
         // Remove third to fifth Attribute (indices 2 to 4)
-        Instances newData = wekaHelper.removeAttributes(data, "3-5");
+        Instances newData = WekaHelper.removeAttributes(data, "3-5");
         assertNotEquals(data, newData);
         assertTrue(data.numAttributes() == newData.numAttributes() + 3);
         assertTrue(data.attribute(0).equals(newData.attribute(0)));
@@ -135,7 +130,7 @@ public class WekaHelperUnitTest extends AbstractTest {
 
         Instances oldData = SerializationUtils.clone(data);
         assertEquals(9,data.numInstances());
-        data = wekaHelper.removeDuplicates(data);
+        data = WekaHelper.removeDuplicates(data);
         assertEquals(9,oldData.numInstances());
         assertEquals(4,data.numInstances());
 
@@ -209,15 +204,15 @@ public class WekaHelperUnitTest extends AbstractTest {
     private ArrayList<DataPoint> getDataPoints() {
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
         Integer[] rss1 = {0, 23, 39, 39, 39, 39, 39, 39};
-        addDataPoint(dataPoints, "stube", new SensorData(17.8, -39.8), rss1);
+        addDataPoint(dataPoints, "stube", new SensorData(17, -39), rss1);
         Integer[] rss2 = {0, 10, 31, 31, 31, 31, 31, 31};
-        addDataPoint(dataPoints, "kueche", new SensorData(8.1, -38.7), rss2);
+        addDataPoint(dataPoints, "kueche", new SensorData(8, -38), rss2);
         Integer[] rss3 = {0, 16, 16, 23, 23, 23, 14, 14};
-        addDataPoint(dataPoints, "badgross", new SensorData(4.4, -42.3), rss3);
+        addDataPoint(dataPoints, "badgross", new SensorData(4, -42), rss3);
         Integer[] rss4 = {0, 20, 33, 33, 33, 33, 33, 33};
-        addDataPoint(dataPoints, "badklein", new SensorData(5.5, -44.1), rss4);
+        addDataPoint(dataPoints, "badklein", new SensorData(5, -44), rss4);
         Integer[] rss5 = {0, 11, 34, 34, 34, 34, 34, 34};
-        addDataPoint(dataPoints, "gang", new SensorData(11.2, -39.1), rss5);
+        addDataPoint(dataPoints, "gang", new SensorData(11, -39), rss5);
         return dataPoints;
     }
 

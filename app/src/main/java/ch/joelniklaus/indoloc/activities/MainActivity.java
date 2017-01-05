@@ -13,8 +13,8 @@ import weka.core.Instances;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FileHelper fileHelper = new FileHelper(this);
-    private WekaHelper wekaHelper = new WekaHelper(this);
+    private final FileHelper fileHelper = new FileHelper(this);
+    private final WekaHelper wekaHelper = new WekaHelper(this);
 
 
     @Override
@@ -23,11 +23,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void goToCollectData(View v) {
+    public void goToCollectData(View view) {
         startActivity(new Intent(MainActivity.this, CollectDataActivity.class));
     }
 
-    public void evaluateModel(View v) {
+    public void evaluateModel(View view) {
         try {
             Instances data = fileHelper.loadArffFromAssets("data.arff");
 
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void testModel(View v) {
+    public void testModel(View view) {
         try {
             Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
 
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void trainModel(View v) {
+    public void trainModel(View view) {
         try {
             Instances data = fileHelper.loadArffFromAssets("data.arff");
 

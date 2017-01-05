@@ -39,10 +39,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private Button startButton, liveTestButton;
     private EditText roomEditText;
 
-    private ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
+    private ArrayList<DataPoint> dataPoints = new ArrayList<>();
     private DataPoint currentDataPoint;
-    private ArrayList<String> predictions = new ArrayList<>(NUMBER_OF_CLASSIFIERS);
-    private ArrayList<Classifier> classifiers = new ArrayList<>(NUMBER_OF_CLASSIFIERS);
+    private final ArrayList<String> predictions = new ArrayList<>(NUMBER_OF_CLASSIFIERS);
+    private final ArrayList<Classifier> classifiers = new ArrayList<>(NUMBER_OF_CLASSIFIERS);
 
     private Instances test = null;
 
@@ -52,9 +52,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private static final int NUMBER_OF_CLASSIFIERS = 6;
 
-    private FileHelper fileHelper = new FileHelper(this);
-    private SensorHelper sensorHelper = new SensorHelper(this);
-    private WifiHelper wifiHelper = new WifiHelper(this);
+    private final FileHelper fileHelper = new FileHelper(this);
+    private final SensorHelper sensorHelper = new SensorHelper(this);
+    private final WifiHelper wifiHelper = new WifiHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,7 +237,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
-    public void startLiveTest(View v) {
+    public void startLiveTest(View view) {
         String label = liveTestButton.getText().toString();
         try {
             if (label.equals("START LIVE TEST")) {
@@ -315,26 +315,28 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
     */
 
-    public void createTrainFile(View v) {
+    public void createTrainFile(View view) {
         String filePath = "train.arff";
         createArffFile(filePath);
-        this.dataPoints = new ArrayList<DataPoint>();
+        this.dataPoints = new ArrayList<>();
         this.scanNumber = 0;
         alert("Saved data points to " + filePath);
     }
 
-    public void createTestFile(View v) {
+    public void createTestFile(View view) {
         String filePath = "test.arff";
         createArffFile(filePath);
-        this.dataPoints = new ArrayList<DataPoint>();
+        this.dataPoints = new ArrayList<>();
         this.scanNumber = 0;
         alert("Saved data points to " + filePath);
     }
 
     private void createArffFile(String filePath) {
-        Instances data = WekaHelper.buildInstances(dataPoints);
-
+        if (dataPoints.isEmpty())
+            alert("Please collect some Datapoints first!");
         try {
+            Instances data = WekaHelper.buildInstances(dataPoints);
+
             fileHelper.saveArffToInternalStorage(data, filePath);
             fileHelper.saveArffToExternalStorage(data, filePath);
         } catch (Exception e) {

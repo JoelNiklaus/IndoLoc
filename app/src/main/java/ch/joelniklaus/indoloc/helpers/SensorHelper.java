@@ -15,14 +15,14 @@ import ch.joelniklaus.indoloc.models.SensorData;
 
 public class SensorHelper {
 
-    private Context context;
+    private final Context context;
 
     private SensorManager sensorManager;
     private Sensor ambientTemperatureSensor, lightSensor, pressureSensor, relativeHumiditySensor, magnetometer, accelerometer;
     private double ambientTemperature, light, pressure, relativeHumidity;
-    private float[] magnetic = new float[3], gravity = new float[3];
-    private double[] magneticFingerprint = new double[3];
-    private final float alpha = (float) 0.8;
+    private final float[] magnetic = new float[3];
+    private final float[] gravity = new float[3];
+    private final double[] magneticFingerprint = new double[3];
 
 
     public SensorHelper(Context context) {
@@ -30,7 +30,7 @@ public class SensorHelper {
     }
 
     public void setUp() {
-        sensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
         if (sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null) {
             magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -57,6 +57,7 @@ public class SensorHelper {
     }
 
     public SensorData readSensorData(SensorEvent event) {
+        float alpha = (float) 0.8;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             //take the values
             gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
@@ -81,7 +82,7 @@ public class SensorHelper {
 
             // round to 1 decimal place because of sensor resolution
             magneticFingerprint[0] = round(magneticFingerprint[0], 0); // x-value: should always be 0
-            assert magneticFingerprint[0] == 0.0;
+            if (magneticFingerprint[0] != 0.0) throw new AssertionError();
             magneticFingerprint[1] = round(magneticFingerprint[1], 0); // y-value
             magneticFingerprint[2] = round(magneticFingerprint[2], 0); // z-value
         }

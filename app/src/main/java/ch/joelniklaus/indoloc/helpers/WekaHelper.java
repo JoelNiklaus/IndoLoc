@@ -36,7 +36,7 @@ public class WekaHelper {
 
     private Classifier classifier;
 
-    private Timer timer = new Timer();
+    private final Timer timer = new Timer();
 
 
     public static final String TRAINING_SET_PERCENTAGE = "70";
@@ -266,7 +266,7 @@ public class WekaHelper {
         return Filter.useFilter(data, remove);
     }
 
-    public static Instances removeDuplicates(Instances data) throws Exception {
+    public static Instances removeDuplicates(Instances data) {
         InstanceComparator comparator = new InstanceComparator();
         for (int i = 0; i < data.numInstances() - 1; i++) {
             for (int j = i + 1; j < data.numInstances(); j++)
@@ -283,7 +283,7 @@ public class WekaHelper {
         instances.delete();
         instances.setClassIndex(0);
 
-        ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
+        ArrayList<DataPoint> dataPoints = new ArrayList<>();
         dataPoints.add(dataPoint);
         addInstances(dataPoints, instances);
 
@@ -306,7 +306,7 @@ public class WekaHelper {
     }
 
     private static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) {
-        double[] instanceValues = null;
+        double[] instanceValues;
         for (DataPoint dataPoint : dataPoints) {
             instanceValues = new double[data.numAttributes()];
             int index = 0;
@@ -347,7 +347,7 @@ public class WekaHelper {
 
         // rooms + number of rss + number of sensors
         //int numberOfAttributes = 1 + CollectDataActivity.NUMBER_OF_ACCESS_POINTS + CollectDataActivity.NUMBER_OF_SENSORS;
-        ArrayList<Attribute> attributes = new ArrayList<Attribute>();
+        ArrayList<Attribute> attributes = new ArrayList<>();
 
         // class: room
         attributes.add(new Attribute("room", rooms));
@@ -374,7 +374,7 @@ public class WekaHelper {
 
     @NonNull
     private static ArrayList<String> getRooms(ArrayList<DataPoint> dataPoints) {
-        ArrayList<String> rooms = new ArrayList<String>();
+        ArrayList<String> rooms = new ArrayList<>();
 
         for (DataPoint dataPoint : dataPoints)
             if (!rooms.contains(dataPoint.getRoom()))

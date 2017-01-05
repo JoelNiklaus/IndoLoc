@@ -15,11 +15,6 @@ import weka.core.Instances;
  */
 public class ExperimentTest extends AbstractTest {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     /* Attribute Indices:
      * 1 -> Class Attribute: Room
      * 2 - 3 -> Magnetic Field
@@ -38,8 +33,8 @@ public class ExperimentTest extends AbstractTest {
     public void testMagneticFieldValuesImprovement() throws Exception {
         Instances data = loadFile("experiments/experiment_new");
 
-        Instances with = wekaHelper.removeDuplicates(data);
-        Instances without = wekaHelper.removeAttributes(with, "2-3");
+        Instances with = WekaHelper.removeDuplicates(data);
+        Instances without = WekaHelper.removeAttributes(with, "2-3");
 
         testWithAndWithout(with, without);
     }
@@ -55,11 +50,11 @@ public class ExperimentTest extends AbstractTest {
         Instances train = loadFile("cds/train");
         Instances test = loadFile("cds/test");
 
-        Instances withTrain = wekaHelper.removeDuplicates(train);
-        Instances withoutTrain = wekaHelper.removeAttributes(withTrain, "2-3");
+        Instances withTrain = WekaHelper.removeDuplicates(train);
+        Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "2-3");
 
-        Instances withTest = wekaHelper.removeDuplicates(test);
-        Instances withoutTest = wekaHelper.removeAttributes(withTest, "2-3");
+        Instances withTest = WekaHelper.removeDuplicates(test);
+        Instances withoutTest = WekaHelper.removeAttributes(withTest, "2-3");
 
         testWithAndWithout(withTrain, withTest, withoutTrain, withoutTest);
     }
@@ -90,11 +85,11 @@ public class ExperimentTest extends AbstractTest {
         Instances train = loadFile("experiments/train");
         Instances test = loadFile("experiments/test");
 
-        Instances withTrain = wekaHelper.removeDuplicates(train);
-        Instances withoutTrain = wekaHelper.removeAttributes(withTrain, "12");
+        Instances withTrain = WekaHelper.removeDuplicates(train);
+        Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "12");
 
-        Instances withTest = wekaHelper.removeDuplicates(test);
-        Instances withoutTest = wekaHelper.removeAttributes(withTest, "12");
+        Instances withTest = WekaHelper.removeDuplicates(test);
+        Instances withoutTest = WekaHelper.removeAttributes(withTest, "12");
 
         testWithAndWithout(withTrain, withTest, withoutTrain, withoutTest);
     }
@@ -125,11 +120,11 @@ public class ExperimentTest extends AbstractTest {
         Instances train = loadFile("experiments/train");
         Instances test = loadFile("experiments/test");
 
-        Instances withTrain = wekaHelper.removeDuplicates(train);
-        Instances withoutTrain = wekaHelper.removeAttributes(withTrain, "13-20");
+        Instances withTrain = WekaHelper.removeDuplicates(train);
+        Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "13-20");
 
-        Instances withTest = wekaHelper.removeDuplicates(test);
-        Instances withoutTest = wekaHelper.removeAttributes(withTest, "13-20");
+        Instances withTest = WekaHelper.removeDuplicates(test);
+        Instances withoutTest = WekaHelper.removeAttributes(withTest, "13-20");
 
         testWithAndWithout(withTrain, withTest, withoutTrain, withoutTest);
     }
@@ -161,13 +156,13 @@ public class ExperimentTest extends AbstractTest {
         Instances train = loadFile("cds/train");
         Instances test = loadFile("cds/test");
 
-        Instances withTrain = wekaHelper.removeDuplicates(train);
-        Instances withoutTrain = wekaHelper.removeAttributes(withTrain, "12-20");
-        withoutTrain = wekaHelper.removeAttributes(withoutTrain, "2-3");
+        Instances withTrain = WekaHelper.removeDuplicates(train);
+        Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "12-20");
+        withoutTrain = WekaHelper.removeAttributes(withoutTrain, "2-3");
 
-        Instances withTest = wekaHelper.removeDuplicates(test);
-        Instances withoutTest = wekaHelper.removeAttributes(withTest, "12-20");
-        withoutTest = wekaHelper.removeAttributes(withoutTest, "2-3");
+        Instances withTest = WekaHelper.removeDuplicates(test);
+        Instances withoutTest = WekaHelper.removeAttributes(withTest, "12-20");
+        withoutTest = WekaHelper.removeAttributes(withoutTest, "2-3");
 
 
         testWithAndWithout(withTrain, withTest, withoutTrain, withoutTest);
