@@ -128,8 +128,6 @@ public class AbstractTest {
         Trees
         ============================== */
 
-        // Ensemble methods
-
         // J48 Tree
         J48 j48 = new J48();
         classifiers.add(j48);

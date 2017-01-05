@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.CollectDataActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CollectDataActivity"
+            android:name=".activities.MainActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -10,6 +10,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ch.joelniklaus.indoloc.activities.CollectDataActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <TableLayout
         android:layout_width="wrap_content"
@@ -219,7 +222,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:text="Pressure:" />
+                android:text="MagneticY:" />
 
             <TextView
                 android:id="@+id/txtmagneticY"
@@ -238,7 +241,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:text="Light:" />
+                android:text="MagneticZ:" />
 
             <TextView
                 android:id="@+id/txtmagneticZ"
@@ -254,76 +257,55 @@
         <TableRow>
 
             <Button
-                android:id="@+id/btnStart"
+                android:id="@+id/btnStartCollecting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/chronometer"
                 android:layout_centerHorizontal="true"
-                android:onClick="start"
-                android:text="START" />
-
-        </TableRow>
-
-        <TableRow>
+                android:onClick="startCollecting"
+                android:text="START COLLECTING" />
 
             <Button
-                android:id="@+id/btnCreate"
+                android:id="@+id/btnStartLiveTest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:onClick="createFile"
-                android:text="Create File" />
-            <Button
-                android:id="@+id/btnRead"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:onClick="readFile"
-                android:text="Read File" />
-        </TableRow>
-
-        <TableRow>
-
-            <Button
-                android:id="@+id/btnTrain"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:onClick="trainModel"
-                android:text="Train Model (SD Card)" />
-
-        </TableRow>
-
-        <TableRow>
-
-            <Button
-                android:id="@+id/btnTest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:onClick="testModel"
-                android:text="Test Model" />
-            <Button
-                android:id="@+id/btnLiveTest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:onClick="liveTestModel"
+                android:onClick="startLiveTest"
                 android:text="START LIVE TEST" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/btnCreateTrain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="createTrainFile"
+                android:text="Create Train" />
+            <Button
+                android:id="@+id/btnCreateTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="createTestFile"
+                android:text="Create Test" />
+
         </TableRow>
 
         <TableRow>
 
             <TextView
-                android:id="@+id/txtPredictV"
+                android:id="@+id/txtPredictNBV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:text="Predicted Room:" />
+                android:text="Predicted Naive Bayes: " />
 
             <TextView
-                android:id="@+id/txtPredict"
+                android:id="@+id/txtPredictNB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -331,6 +313,128 @@
                 android:text="Live Test not yet started" />
         </TableRow>
 
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictKNNV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted K-Nearest Neighbour: " />
+
+            <TextView
+                android:id="@+id/txtPredictKNN"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictSVMV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted Support Vector Machine: " />
+
+            <TextView
+                android:id="@+id/txtPredictSVM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictRFV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted Random Forest: " />
+
+            <TextView
+                android:id="@+id/txtPredictRF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictBaggingV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted Bagging: " />
+
+            <TextView
+                android:id="@+id/txtPredictBagging"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictBoostingV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted Boosting: " />
+
+            <TextView
+                android:id="@+id/txtPredictBoosting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
+        </TableRow>
+
+        <!--
+<Button
+    android:id="@+id/btnRead"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:onClick="readFile"
+    android:text="Read File" />
+
+    <Button
+    android:id="@+id/btnTrain"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:onClick="trainModels"
+    android:text="Train Models (SD Card)" />
+
+    <Button
+    android:id="@+id/btnTest"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:onClick="testModel"
+    android:text="Test Model" />
+-->
+
     </TableLayout>
 
+    </ScrollView>
 </RelativeLayout>

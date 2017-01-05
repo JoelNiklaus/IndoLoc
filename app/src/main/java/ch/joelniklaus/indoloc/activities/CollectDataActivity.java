@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.ArrayList;
@@ -24,28 +23,38 @@ import ch.joelniklaus.indoloc.helpers.WifiHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.RSSData;
 import ch.joelniklaus.indoloc.models.SensorData;
+import weka.classifiers.Classifier;
+import weka.classifiers.bayes.NaiveBayes;
+import weka.classifiers.functions.LibSVM;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.meta.Bagging;
+import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
-    private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText, predictText;
-    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictValue;
+    //private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue,predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue;
     private Button startButton, liveTestButton;
     private EditText roomEditText;
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
     private DataPoint currentDataPoint;
-    private String prediction = "";
+    private ArrayList<String> predictions = new ArrayList<>(NUMBER_OF_CLASSIFIERS);
+    private ArrayList<Classifier> classifiers = new ArrayList<>(NUMBER_OF_CLASSIFIERS);
 
     private Instances test = null;
+
 
     private int scanNumber = 0;
     private boolean registering = false, predicting = false;
 
+    private static final int NUMBER_OF_CLASSIFIERS = 6;
+
     private FileHelper fileHelper = new FileHelper(this);
     private SensorHelper sensorHelper = new SensorHelper(this);
     private WifiHelper wifiHelper = new WifiHelper(this);
-    private WekaHelper wekaHelper = new WekaHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +66,16 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         wifiHelper.setUp();
 
         setUpTextViews();
+
+        for (int i = 0; i < NUMBER_OF_CLASSIFIERS; i++)
+            predictions.add("NO PREDICTION YET");
+
+        classifiers.add(new NaiveBayes());
+        classifiers.add(new IBk());
+        classifiers.add(new LibSVM());
+        classifiers.add(new RandomForest());
+        classifiers.add(new Bagging());
+        classifiers.add(new LogitBoost());
     }
 
     @Override
@@ -99,56 +118,59 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
     private void setUpTextViews() {
-        scanText = (TextView) findViewById(R.id.txtScanV);
-        scanText.setText("Scan Number");
+        //scanText = (TextView) findViewById(R.id.txtScanV);
+        //scanText.setText("Scan Number");
         scanValue = (TextView) findViewById(R.id.txtScan);
 
-        rss1Text = (TextView) findViewById(R.id.txtRSS1V);
-        rss1Text.setText("My Passwort is Monkey");
+        //rss1Text = (TextView) findViewById(R.id.txtRSS1V);
+        //rss1Text.setText("My Passwort is Monkey");
         rss1Value = (TextView) findViewById(R.id.txtRSS1);
 
-        rss2Text = (TextView) findViewById(R.id.txtRSS2V);
-        rss2Text.setText("Chris Breezy");
+        //rss2Text = (TextView) findViewById(R.id.txtRSS2V);
+        //rss2Text.setText("Chris Breezy");
         rss2Value = (TextView) findViewById(R.id.txtRSS2);
 
-        rss3Text = (TextView) findViewById(R.id.txtRSS3V);
-        rss3Text.setText("Core-Guest");
+        //rss3Text = (TextView) findViewById(R.id.txtRSS3V);
+        //rss3Text.setText("Core-Guest");
         rss3Value = (TextView) findViewById(R.id.txtRSS3);
 
-        rss4Text = (TextView) findViewById(R.id.txtRSS4V);
-        rss4Text.setText("ADCH-Guest");
+        //rss4Text = (TextView) findViewById(R.id.txtRSS4V);
+        //rss4Text.setText("ADCH-Guest");
         rss4Value = (TextView) findViewById(R.id.txtRSS4);
 
-        rss5Text = (TextView) findViewById(R.id.txtRSS5V);
-        rss5Text.setText("UPC503960977");
+        //rss5Text = (TextView) findViewById(R.id.txtRSS5V);
+        //rss5Text.setText("UPC503960977");
         rss5Value = (TextView) findViewById(R.id.txtRSS5);
 
-        rss6Text = (TextView) findViewById(R.id.txtRSS6V);
-        rss6Text.setText("UPC731B685");
+        //rss6Text = (TextView) findViewById(R.id.txtRSS6V);
+        //rss6Text.setText("UPC731B685");
         rss6Value = (TextView) findViewById(R.id.txtRSS6);
 
-        rss7Text = (TextView) findViewById(R.id.txtRSS7V);
-        rss7Text.setText("UPC2058401");
+        //rss7Text = (TextView) findViewById(R.id.txtRSS7V);
+        //rss7Text.setText("UPC2058401");
         rss7Value = (TextView) findViewById(R.id.txtRSS7);
 
-        rss8Text = (TextView) findViewById(R.id.txtRSS8V);
-        rss8Text.setText("UPC248577407");
+        //rss8Text = (TextView) findViewById(R.id.txtRSS8V);
+        //rss8Text.setText("UPC248577407");
         rss8Value = (TextView) findViewById(R.id.txtRSS8);
 
-        magneticYText = (TextView) findViewById(R.id.txtmagneticYV);
-        magneticYText.setText("MagneticY");
+        //magneticYText = (TextView) findViewById(R.id.txtmagneticYV);
+        //magneticYText.setText("MagneticY");
         magneticYValue = (TextView) findViewById(R.id.txtmagneticY);
 
-        magneticZText = (TextView) findViewById(R.id.txtmagneticZV);
-        magneticZText.setText("MagneticZ");
+        //magneticZText = (TextView) findViewById(R.id.txtmagneticZV);
+        //magneticZText.setText("MagneticZ");
         magneticZValue = (TextView) findViewById(R.id.txtmagneticZ);
 
-        predictText = (TextView) findViewById(R.id.txtPredictV);
-        predictText.setText("Predicted Room");
-        predictValue = (TextView) findViewById(R.id.txtPredict);
+        predictNBValue = (TextView) findViewById(R.id.txtPredictNB);
+        predictKNNValue = (TextView) findViewById(R.id.txtPredictKNN);
+        predictSVMValue = (TextView) findViewById(R.id.txtPredictSVM);
+        predictRFValue = (TextView) findViewById(R.id.txtPredictRF);
+        predictBaggingValue = (TextView) findViewById(R.id.txtPredictBagging);
+        predictBoostingValue = (TextView) findViewById(R.id.txtPredictBoosting);
 
-        startButton = (Button) findViewById(R.id.btnStart);
-        liveTestButton = (Button) findViewById(R.id.btnLiveTest);
+        startButton = (Button) findViewById(R.id.btnStartCollecting);
+        liveTestButton = (Button) findViewById(R.id.btnStartLiveTest);
         roomEditText = (EditText) findViewById(R.id.editRoom);
     }
 
@@ -167,20 +189,25 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         rss7Value.setText(rssData.getValues().get(6).toString());
         rss8Value.setText(rssData.getValues().get(7).toString());
 
-        predictValue.setText(prediction);
+        predictNBValue.setText(predictions.get(0));
+        predictKNNValue.setText(predictions.get(1));
+        predictSVMValue.setText(predictions.get(2));
+        predictRFValue.setText(predictions.get(3));
+        predictBaggingValue.setText(predictions.get(4));
+        predictBoostingValue.setText(predictions.get(5));
     }
 
-    public void start(View view) {
+    public void startCollecting(View view) {
         String label = startButton.getText().toString();
         try {
             // reset scan Number
             scanNumber = 0;
-            if (label.equals("START")) {
-                startButton.setText("STOP");
+            if (label.equals("START COLLECTING")) {
+                startButton.setText("STOP COLLECTING");
                 // Start registering
                 registering = true;
             } else {
-                startButton.setText("START");
+                startButton.setText("START COLLECTING");
                 // Stop registering
                 registering = false;
             }
@@ -201,7 +228,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             try {
                 Instances data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
 
-                prediction = wekaHelper.testForView(data);
+                for (int i = 0; i < NUMBER_OF_CLASSIFIERS; i++)
+                    predictions.set(i, WekaHelper.predictInstance(classifiers.get(i), data));
             } catch (Exception e) {
                 e.printStackTrace();
                 alert(e.getMessage());
@@ -209,14 +237,19 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
-    public void liveTestModel(View v) {
-        if(test == null) {
-            alert("Please train your model first");
-        }
-
+    public void startLiveTest(View v) {
         String label = liveTestButton.getText().toString();
         try {
             if (label.equals("START LIVE TEST")) {
+
+                // Build Classifiers
+                alert("Training Models ...");
+                Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
+                for (Classifier classifier : classifiers)
+                    classifier.buildClassifier(train);
+                test = WekaHelper.convertToSingleInstance(train, currentDataPoint);
+                alert("Models successfully trained!");
+
                 liveTestButton.setText("STOP LIVE TEST");
 
                 // Start predicting
@@ -229,6 +262,21 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             }
         } catch (Exception e) {
             e.printStackTrace();
+            alert(e.getMessage());
+        }
+    }
+
+    /*
+    public void trainModels(View v) {
+        try {
+            Instances data = fileHelper.loadArffFromExternalStorage("train.arff");
+
+            test = wekaHelper.trainForView(data);
+
+            //fileHelper.saveArffToExternalStorage(test, "test.arff");
+        } catch (Exception e) {
+            e.printStackTrace();
+            alert(e.getMessage());
         }
     }
 
@@ -243,18 +291,17 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
-    public void trainModel(View v) {
+    public void evaluateModel(View v) {
         try {
-            Instances data = fileHelper.loadArffFromExternalStorage("data.arff");
+            Instances data = fileHelper.loadArffFromAssets("data.arff");
 
-            test = wekaHelper.trainForView(data);
-
-            fileHelper.saveArffToExternalStorage(test, "test.arff");
+            wekaHelper.evaluateForView(data);
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
         }
     }
+
 
     public void readFile(View v) {
         String filePath = "data.arff";
@@ -266,11 +313,21 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             e.printStackTrace();
         }
     }
+    */
 
-    public void createFile(View v) {
-        String filePath = "data.arff";
+    public void createTrainFile(View v) {
+        String filePath = "train.arff";
         createArffFile(filePath);
         this.dataPoints = new ArrayList<DataPoint>();
+        this.scanNumber = 0;
+        alert("Saved data points to " + filePath);
+    }
+
+    public void createTestFile(View v) {
+        String filePath = "test.arff";
+        createArffFile(filePath);
+        this.dataPoints = new ArrayList<DataPoint>();
+        this.scanNumber = 0;
         alert("Saved data points to " + filePath);
     }
 
