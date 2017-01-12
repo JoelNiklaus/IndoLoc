@@ -409,6 +409,25 @@
                 android:text="Live Test not yet started" />
         </TableRow>
 
+        <TableRow>
+
+            <TextView
+                android:id="@+id/txtPredictMLPV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Predicted Multilayer Perceptron: " />
+
+            <TextView
+                android:id="@+id/txtPredictMLP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:text="Live Test not yet started" />
+        </TableRow>
+
         <!--
 <Button
     android:id="@+id/btnRead"

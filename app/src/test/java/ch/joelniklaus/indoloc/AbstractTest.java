@@ -17,6 +17,7 @@ import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
 import weka.classifiers.meta.AdaBoostM1;
@@ -42,7 +43,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractTest {
 
-    protected final int NUMBER_OF_TEST_ROUNDS = 5;
+    protected final int NUMBER_OF_TEST_ROUNDS = 1;
 
     protected final Timer timer = new Timer();
 
@@ -105,7 +106,7 @@ public class AbstractTest {
         iBk.setOptions(iBkOptions);
         classifiers.add(iBk);
 
-        // KStar (Auto Weka Suggestion 5 min)
+        // KStar (Auto Weka Suggestion 5 min) -> very slow in testing
         String[] kStarOptions = {"-B", "59", "-M", "m"};
         KStar kStar = new KStar();
         kStar.setOptions(kStarOptions);
@@ -117,9 +118,9 @@ public class AbstractTest {
 
         // Naive Bayes
         NaiveBayes naiveBayes = new NaiveBayes();
-        //classifiers.add(naiveBayes);
+        classifiers.add(naiveBayes);
 
-        // Bayes Net
+        // Bayes Net (descretizing data)
         BayesNet bayesNet = new BayesNet();
         //classifiers.add(bayesNet);
 
@@ -154,31 +155,44 @@ public class AbstractTest {
         Bagging bagging = new Bagging();
         classifiers.add(bagging);
 
-        // Voting
+        // Voting -> very bad
         Vote vote = new Vote();
-        classifiers.add(vote);
+        //classifiers.add(vote);
 
-        // Stacking
+        // Stacking -> very bad
         Stacking stacking = new Stacking();
-        classifiers.add(stacking);
+        //classifiers.add(stacking);
 
-        // Decorate
+        // Decorate -> very slow in training
         Decorate decorate = new Decorate();
         //classifiers.add(decorate);
 
         // Dagging
         Dagging dagging = new Dagging();
-        //classifiers.add(dagging);
+        classifiers.add(dagging);
 
-        // Grading
+        // Grading -> very bad
         Grading grading = new Grading();
-        classifiers.add(grading);
+        //classifiers.add(grading);
 
-        // Ensemble Selection
+        // Ensemble Selection -> some warnings
         EnsembleSelection ensembleSelection = new EnsembleSelection();
         //classifiers.add(ensembleSelection);
-    }
 
+        /* ==============================
+        Neural Network
+        ============================== */
+
+        // Multilayer Perceptron -> relatively slow in training
+        MultilayerPerceptron mlp = new MultilayerPerceptron();
+        //Setting Parameters
+        mlp.setLearningRate(0.1);
+        mlp.setMomentum(0.2);
+        mlp.setTrainingTime(2000);
+        mlp.setHiddenLayers("3");
+        classifiers.add(mlp);
+
+    }
 
 
     protected Statistics sortAndPrintStatistics(Statistics statistics) {

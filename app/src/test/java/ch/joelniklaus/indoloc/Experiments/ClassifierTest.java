@@ -1,6 +1,5 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
@@ -58,8 +57,8 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSet() throws Exception {
-        Instances train = loadFile("cds/train");
-        Instances test = loadFile("cds/test");
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Instances test = loadFile("eigerstrasse/test_extended");
 
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);

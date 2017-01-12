@@ -1,6 +1,6 @@
 @relation TestInstances
 
-@attribute room {wc,301,302,304,306,307,gang}
+@attribute room {wc, gang}
 @attribute magneticY numeric
 @attribute magneticZ numeric
 @attribute rssValue0 numeric

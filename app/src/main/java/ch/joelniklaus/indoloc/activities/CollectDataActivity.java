@@ -26,6 +26,7 @@ import ch.joelniklaus.indoloc.models.SensorData;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.LibSVM;
+import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.LogitBoost;
@@ -35,7 +36,7 @@ import weka.core.Instances;
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
     //private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
-    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue,predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue,predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue,predictMLPValue;
     private Button startButton, liveTestButton;
     private EditText roomEditText;
 
@@ -50,7 +51,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private int scanNumber = 0;
     private boolean registering = false, predicting = false;
 
-    private static final int NUMBER_OF_CLASSIFIERS = 6;
+    private static final int NUMBER_OF_CLASSIFIERS = 7;
 
     private final FileHelper fileHelper = new FileHelper(this);
     private final SensorHelper sensorHelper = new SensorHelper(this);
@@ -76,6 +77,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         classifiers.add(new RandomForest());
         classifiers.add(new Bagging());
         classifiers.add(new LogitBoost());
+        classifiers.add(new MultilayerPerceptron());
     }
 
     @Override
@@ -168,6 +170,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         predictRFValue = (TextView) findViewById(R.id.txtPredictRF);
         predictBaggingValue = (TextView) findViewById(R.id.txtPredictBagging);
         predictBoostingValue = (TextView) findViewById(R.id.txtPredictBoosting);
+        predictMLPValue = (TextView) findViewById(R.id.txtPredictMLP);
 
         startButton = (Button) findViewById(R.id.btnStartCollecting);
         liveTestButton = (Button) findViewById(R.id.btnStartLiveTest);
@@ -195,6 +198,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         predictRFValue.setText(predictions.get(3));
         predictBaggingValue.setText(predictions.get(4));
         predictBoostingValue.setText(predictions.get(5));
+        predictMLPValue.setText(predictions.get(6));
     }
 
     public void startCollecting(View view) {

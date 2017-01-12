@@ -129,10 +129,10 @@ public class WekaHelperUnitTest extends AbstractTest {
         Instances data = loadFile("unittests/duplicates");
 
         Instances oldData = SerializationUtils.clone(data);
-        assertEquals(9,data.numInstances());
+        assertEquals(9, data.numInstances());
         data = WekaHelper.removeDuplicates(data);
-        assertEquals(9,oldData.numInstances());
-        assertEquals(4,data.numInstances());
+        assertEquals(9, oldData.numInstances());
+        assertEquals(4, data.numInstances());
 
         assertTrue(oldData.numAttributes() == data.numAttributes());
 
@@ -142,6 +142,31 @@ public class WekaHelperUnitTest extends AbstractTest {
         // Every instance of the small set should be in the large set
         for (int i = 0; i < data.numInstances(); i++)
             assertTrue(dataContainsInstance(oldData, data.instance(i)));
+    }
+
+    @Test
+    public void testRemoveAllOfSpecificClass() throws Exception {
+        Instances data = loadFile("unittests/duplicates");
+
+        Instances oldData = SerializationUtils.clone(data);
+        assertEquals(9, data.numInstances());
+        data = WekaHelper.removeAllOfSpecificClass(data, 1);
+
+        System.out.println(data.toString());
+        System.out.println(oldData.toString());
+
+        assertEquals(9, oldData.numInstances());
+        assertEquals(4, data.numInstances());
+
+        assertTrue(oldData.numAttributes() == data.numAttributes());
+
+        // Every instance of the small set should be in the large set
+        for (int i = 0; i < data.numInstances(); i++)
+            assertTrue(dataContainsInstance(oldData, data.instance(i)));
+
+        // No instance has class value 1
+        for (int i = 0; i < data.numInstances(); i++)
+            assertTrue((int) data.instance(i).classValue() != 1);
     }
 
     private void testTrainingAndTestingSet(Instances data, Instances train, Instances test) {

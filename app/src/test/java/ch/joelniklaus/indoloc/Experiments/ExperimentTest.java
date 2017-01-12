@@ -1,6 +1,5 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
@@ -47,8 +46,8 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesImprovementSeparate() throws Exception {
-        Instances train = loadFile("cds/train");
-        Instances test = loadFile("cds/test");
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Instances test = loadFile("eigerstrasse/test_extended");
 
         Instances withTrain = WekaHelper.removeDuplicates(train);
         Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "2-3");
@@ -82,8 +81,8 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMeanImprovementSeparate() throws Exception {
-        Instances train = loadFile("experiments/train");
-        Instances test = loadFile("experiments/test");
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Instances test = loadFile("eigerstrasse/test_extended");
 
         Instances withTrain = WekaHelper.removeDuplicates(train);
         Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "12");
@@ -117,8 +116,8 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testVariancesImprovementSeparate() throws Exception {
-        Instances train = loadFile("experiments/train");
-        Instances test = loadFile("experiments/test");
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Instances test = loadFile("eigerstrasse/test_extended");
 
         Instances withTrain = WekaHelper.removeDuplicates(train);
         Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "13-20");
@@ -153,8 +152,8 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesMeanVariancesImprovementSeparate() throws Exception {
-        Instances train = loadFile("cds/train");
-        Instances test = loadFile("cds/test");
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Instances test = loadFile("eigerstrasse/test_extended");
 
         Instances withTrain = WekaHelper.removeDuplicates(train);
         Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "12-20");

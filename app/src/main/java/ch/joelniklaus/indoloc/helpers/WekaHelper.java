@@ -26,6 +26,7 @@ import weka.filters.Filter;
 import weka.filters.supervised.instance.StratifiedRemoveFolds;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
+import weka.filters.unsupervised.instance.RemoveWithValues;
 
 // Weka version = 3.7.3
 // weka_old.jar
@@ -265,6 +266,31 @@ public class WekaHelper {
         remove.setOptions(options);
         return Filter.useFilter(data, remove);
     }
+
+    /**
+     * @param data
+     * @param classValuesIndices the class values to be removed
+     * @return
+     * @throws Exception
+     */
+    public static Instances removeAllOfSpecificClassFilter(Instances data, String classValuesIndices) throws Exception {
+        String[] options = {"-C", data.classIndex() + "", "-L", classValuesIndices};
+        RemoveWithValues removeWithValues = new RemoveWithValues();
+        removeWithValues.setInputFormat(data);
+        removeWithValues.setOptions(options);
+        return Filter.useFilter(data, removeWithValues);
+    }
+
+    // does not remove value in header
+    public static Instances removeAllOfSpecificClass(Instances data, int classIndex) throws Exception {
+        for(int i = 0; i < data.numInstances(); i++)
+            if ((int) data.get(i).classValue() == classIndex) {
+                data.delete(i);
+                i--;
+            }
+        return data;
+    }
+
 
     public static Instances removeDuplicates(Instances data) {
         InstanceComparator comparator = new InstanceComparator();
