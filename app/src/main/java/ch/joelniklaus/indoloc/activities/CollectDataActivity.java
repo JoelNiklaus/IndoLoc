@@ -36,9 +36,9 @@ import weka.core.Instances;
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
     //private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
-    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue,predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue,predictMLPValue;
+    private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue, predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue, predictMLPValue;
     private Button startButton, liveTestButton;
-    private EditText roomEditText;
+    private EditText roomEditText;//, landmarkEditText;
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<>();
     private DataPoint currentDataPoint;
@@ -47,15 +47,16 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     private Instances test = null;
 
-
     private int scanNumber = 0;
     private boolean registering = false, predicting = false;
+    private int magneticYBaseValue, magneticZBaseValue;
 
     private static final int NUMBER_OF_CLASSIFIERS = 7;
 
     private final FileHelper fileHelper = new FileHelper(this);
     private final SensorHelper sensorHelper = new SensorHelper(this);
     private final WifiHelper wifiHelper = new WifiHelper(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +105,19 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         if (currentDataPoint != null)
             previousDataPoint = SerializationUtils.clone(currentDataPoint);
 
-        currentDataPoint = new DataPoint(roomEditText.getText().toString(), sensorHelper.readSensorData(event), wifiHelper.readWifiData(getIntent()));
+        int[] magneticValues = sensorHelper.readSensorData(event);
+
+        // At start of each collection phase save magnetic base value
+        if (dataPoints.isEmpty()) {
+            magneticYBaseValue = magneticValues[0];
+            magneticZBaseValue = magneticValues[1];
+        }
+
+        String room = roomEditText.getText().toString();
+        //String landmark = landmarkEditText.getText().toString();
+        RSSData rssData = wifiHelper.readWifiData(getIntent());
+        SensorData sensorData = new SensorData(magneticYBaseValue - magneticValues[0], magneticZBaseValue - magneticValues[1]);
+        currentDataPoint = new DataPoint(room, sensorData, rssData);
 
         // Only collect different DataPoints
         if (!currentDataPoint.equals(previousDataPoint)) {
@@ -174,7 +187,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         startButton = (Button) findViewById(R.id.btnStartCollecting);
         liveTestButton = (Button) findViewById(R.id.btnStartLiveTest);
+
         roomEditText = (EditText) findViewById(R.id.editRoom);
+        //landmarkEditText = (EditText) findViewById(R.id.editLandmark);
     }
 
     private void setTextViewValues() {
@@ -208,6 +223,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             scanNumber = 0;
             if (label.equals("START COLLECTING")) {
                 startButton.setText("STOP COLLECTING");
+
                 // Start registering
                 registering = true;
             } else {
@@ -338,15 +354,16 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private void createArffFile(String filePath) {
         if (dataPoints.isEmpty())
             alert("Please collect some Datapoints first!");
-        try {
-            Instances data = WekaHelper.buildInstances(dataPoints);
+        else
+            try {
+                Instances data = WekaHelper.buildInstances(dataPoints);
 
-            fileHelper.saveArffToInternalStorage(data, filePath);
-            fileHelper.saveArffToExternalStorage(data, filePath);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+                fileHelper.saveArffToInternalStorage(data, filePath);
+                fileHelper.saveArffToExternalStorage(data, filePath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
     }
 
     public void alert(String message) {

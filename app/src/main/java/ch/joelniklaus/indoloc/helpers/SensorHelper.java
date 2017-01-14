@@ -7,8 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.Toast;
 
-import ch.joelniklaus.indoloc.models.SensorData;
-
 /**
  * Created by joelniklaus on 13.11.16.
  */
@@ -56,7 +54,7 @@ public class SensorHelper {
         sensorManager.unregisterListener((SensorEventListener) context);
     }
 
-    public SensorData readSensorData(SensorEvent event) {
+    public int[] readSensorData(SensorEvent event) {
         float alpha = (float) 0.8;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             //take the values
@@ -87,7 +85,8 @@ public class SensorHelper {
             magneticFingerprint[2] = round(magneticFingerprint[2], 0); // z-value
         }
 
-        return new SensorData((int) magneticFingerprint[1], (int) magneticFingerprint[2]);
+        int[] magneticField = {(int) magneticFingerprint[1], (int) magneticFingerprint[2]};
+        return magneticField;
     }
 
     private void alert(String message) {

@@ -353,15 +353,17 @@ public class WekaHelper {
                 index++;
             }
 
+            /*
             // rss mean
             instanceValues[index] = dataPoint.getRssData().getMean();
             index++;
 
-            // rss values
+            // rss variances
             for (int i = 0; i < dataPoint.getRssData().getVariances().size(); i++) {
                 instanceValues[index] = dataPoint.getRssData().getVariances().get(i);
                 index++;
             }
+            */
 
             data.add(new DenseInstance(1.0, instanceValues));
         }
@@ -378,7 +380,7 @@ public class WekaHelper {
         // class: room
         attributes.add(new Attribute("room", rooms));
 
-        assertion(dataPoints.get(0).getRssData().getValues().size() == dataPoints.get(0).getRssData().getVariances().size());
+        //assertion(dataPoints.get(0).getRssData().getValues().size() == dataPoints.get(0).getRssData().getVariances().size());
 
         // sensors
         attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
@@ -388,12 +390,14 @@ public class WekaHelper {
         for (int i = 0; i < dataPoints.get(0).getRssData().getValues().size(); i++)
             attributes.add(new Attribute("rssValue" + i, Attribute.NUMERIC));
 
+        /*
         // rss mean
         attributes.add(new Attribute("mean", Attribute.NUMERIC));
 
         // rss variances
         for (int i = 0; i < dataPoints.get(0).getRssData().getVariances().size(); i++)
             attributes.add(new Attribute("rssVariance" + i, Attribute.NUMERIC));
+        */
 
         return attributes;
     }

@@ -6,12 +6,14 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.RSSData;
 import ch.joelniklaus.indoloc.models.SensorData;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.InstanceComparator;
 import weka.core.Instances;
@@ -51,9 +53,15 @@ public class WekaHelperUnitTest extends AbstractTest {
         Instances train = WekaHelper.getTrainingSet(data, removePercentage);
         Instances test = WekaHelper.getTestingSet(data, removePercentage);
 
+        RandomForest rf = new RandomForest();
+        rf.buildClassifier(train);
+        System.out.println(test.firstInstance());
+        System.out.println(Arrays.toString(rf.distributionForInstance(test.firstInstance())));
+        System.out.println(test.lastInstance());
+        System.out.println(Arrays.toString(rf.distributionForInstance(test.lastInstance())));
+
         testTrainingAndTestingSet(data, train, test);
     }
-
 
     @Test
     public void testGetTestingSetAndGetTrainingSetWekaStandard() throws Exception {
@@ -167,6 +175,44 @@ public class WekaHelperUnitTest extends AbstractTest {
         // No instance has class value 1
         for (int i = 0; i < data.numInstances(); i++)
             assertTrue((int) data.instance(i).classValue() != 1);
+    }
+
+    @Test
+    public void testDistributionForInstance() throws Exception {
+        Instances data = loadFile("unittests/remove");
+
+        RemovePercentage removePercentage = WekaHelper.randomizeAndGetRemovePercentage(data);
+        Instances train = WekaHelper.getTrainingSet(data, removePercentage);
+        Instances test = WekaHelper.getTestingSet(data, removePercentage);
+
+        RandomForest rf = new RandomForest();
+        rf.buildClassifier(train);
+        System.out.println(test.firstInstance());
+        System.out.println(Arrays.toString(rf.distributionForInstance(test.firstInstance())));
+        System.out.println(test.lastInstance());
+        System.out.println(Arrays.toString(rf.distributionForInstance(test.lastInstance())));
+    }
+
+    @Test
+    public void testClassificationDifference() throws Exception {
+        Instances data = loadFile("unittests/remove");
+
+        RemovePercentage removePercentage = WekaHelper.randomizeAndGetRemovePercentage(data);
+        Instances train = WekaHelper.getTrainingSet(data, removePercentage);
+        Instances test = WekaHelper.getTestingSet(data, removePercentage);
+
+        Instance instance = test.firstInstance();
+
+        RandomForest rf = new RandomForest();
+        rf.buildClassifier(train);
+
+        double expected = rf.classifyInstance(instance);
+
+        for (int i = 0; i < 100; i++) {
+            double actual = rf.classifyInstance(instance);
+            assertEquals(expected, actual, 0.001);
+            System.out.println(actual);
+        }
     }
 
     private void testTrainingAndTestingSet(Instances data, Instances train, Instances test) {
