@@ -18,6 +18,7 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
 import weka.classifiers.functions.MultilayerPerceptron;
+import weka.classifiers.functions.SMO;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
 import weka.classifiers.meta.AdaBoostM1;
@@ -95,6 +96,10 @@ public class AbstractTest {
         // Support Vector Machine
         Classifier libSVM = new LibSVM();
         classifiers.add(libSVM);
+
+        // Sequential Minimal Optimization
+        Classifier smo = new SMO();
+        classifiers.add(smo);
 
         /* ==============================
         Lazy

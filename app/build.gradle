@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        /*
+        /* used to enable java 8
         jackOptions {
             enabled true
         }
@@ -38,49 +38,62 @@ android {
         exclude 'weka/gui/**'
         exclude 'weka/classifiers/bayes/net/icons/**'
         exclude 'weka/experiment/**'
+        exclude 'weka/core/json/Parser.cup'
+        exclude 'weka/core/json/Scanner.jflex'
         exclude 'weka/core/logging/**'
         exclude 'weka/core/Copyright.props'
         exclude 'weka/core/Capabilities.props'
         exclude 'weka/core/version.txt'
+        exclude 'weka/core/expressionlanguage/parser/Parser.cup'
+        exclude 'weka/core/expressionlanguage/parser/Scanner.jflex'
+        exclude 'weka/PluginManager.props'
+        exclude 'weka/knowledgeflow/**'
+        exclude 'META-INF/LICENSE'
     }
 
 }
 
 /*
-repositories {
-    mavenCentral()
-    maven { url "https://jitpack.io" }
+allprojects{
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
 }
 */
 
+
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(include: ['*.jar'], dir: 'libs') // Weka version 3.7.3
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
-    testCompile 'junit:junit:4.12'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
     // Weka
     //compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0' // maybe not compatible: problem with arff saver
-    //compile project(':weka') // 3.7.3
+
+    // weka-dev-3.9.1 probably causing problems with autoweka
 
     // Classifiers
-    compile group: 'nz.ac.waikato.cms.weka', name: 'LibSVM', version: '1.0.10'
-    compile group: 'nz.ac.waikato.cms.weka', name: 'grading', version: '1.0.1'
-    compile group: 'nz.ac.waikato.cms.weka', name: 'dagging', version: '1.0.2'
-    compile group: 'nz.ac.waikato.cms.weka', name: 'decorate', version: '1.0.2'
-    compile group: 'nz.ac.waikato.cms.weka', name: 'ensembleLibrary', version: '1.0.4'
+    compile group: 'nz.ac.waikato.cms.weka', name: 'LibSVM', version: '1.0.10' // depending on weka-dev-3.9.1
+    compile group: 'nz.ac.waikato.cms.weka', name: 'dagging', version: '1.0.2' // depending on weka-dev-3.9.1
+    compile group: 'nz.ac.waikato.cms.weka', name: 'ensembleLibrary', version: '1.0.4' // depending on weka-dev-3.9.1
+    compile group: 'nz.ac.waikato.cms.weka', name: 'grading', version: '1.0.1' // depending on weka-dev-3.9.1-tests
+    compile group: 'nz.ac.waikato.cms.weka', name: 'decorate', version: '1.0.2' // depending on weka-dev-3.9.1-tests
 
+
+    // Only used in tests
+    testCompile 'junit:junit:4.12'
 
     // HyperParameterSearch
     // Auto-Weka
-    //compile project(':autoweka')
-    //compile 'com.github.automl:autoweka:v2.2'
+    testCompile fileTree(include: ['*.jar'], dir: 'libs/autoweka')
     // MultiSearch
-    compile 'com.github.fracpete:multisearch-weka-package:2016.6.7'
+    testCompile 'com.github.fracpete:multisearch-weka-package:2016.6.7' // depending on weka-dev-3.9.1
     // GridSearch
-    compile group: 'nz.ac.waikato.cms.weka', name: 'gridSearch', version: '1.0.9'
+    testCompile group: 'nz.ac.waikato.cms.weka', name: 'gridSearch', version: '1.0.9' // depending on weka-dev-3.9.1
 }

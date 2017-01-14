@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
@@ -21,20 +22,6 @@ public class HyperParameterSearchTest extends AbstractTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-    }
-
-    @Test
-    public void testAutoWeka() throws Exception {
-        /*
-        AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
-        autoweka.setTimeLimit(1); // in minutes
-        autoweka.setMemLimit(1024); // in MB
-        autoweka.setDebug(true);
-        autoweka.setSeed(123);
-        autoweka.setnBestConfigs(3);
-        autoweka.buildClassifier(train);
-        System.out.println(autoweka.getnBestConfigs());
-        */
     }
 
     @Test
@@ -63,4 +50,17 @@ public class HyperParameterSearchTest extends AbstractTest {
         new MultiSearch();
     }
 
+    @Test
+    public void testAutoWeka() throws Exception {
+        Instances train = loadFile("eigerstrasse/train_extended");
+
+        AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
+        autoweka.setTimeLimit(1); // in minutes
+        autoweka.setMemLimit(1024); // in MB
+        autoweka.setDebug(true);
+        autoweka.setSeed(123);
+        autoweka.setnBestConfigs(3);
+        autoweka.buildClassifier(train);
+        System.out.println(autoweka.getnBestConfigs());
+    }
 }
