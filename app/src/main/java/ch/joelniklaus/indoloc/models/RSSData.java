@@ -31,8 +31,8 @@ public class RSSData implements Serializable {
     }
 
     public RSSData(ArrayList<Integer> values) {
-        this.values = computeRelativeRSSValues(values); // should solve hardware differences
-        /*this.values = values;
+        this.values = values;
+        /*this.values = computeRelativeRSSValues(values); // should solve hardware differences
         this.mean = mean(values);
         this.variances = variances(mean, values);*/
     }

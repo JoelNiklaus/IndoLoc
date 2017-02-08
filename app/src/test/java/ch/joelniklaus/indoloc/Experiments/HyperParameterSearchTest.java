@@ -3,8 +3,11 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import ch.joelniklaus.indoloc.AbstractTest;
 import weka.classifiers.meta.AutoWEKAClassifier;
+import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.CVParameterSelection;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
@@ -26,9 +29,9 @@ public class HyperParameterSearchTest extends AbstractTest {
 
     @Test
     public void testCVParameterSelection() throws Exception {
-        Instances train = loadFile("experiments/train");
-
+        Instances train = loadFile("eigerstrasse/train_extended");
         J48 classifier = new J48();
+
         CVParameterSelection cvParameterSelection = new CVParameterSelection();
         cvParameterSelection.setClassifier(classifier);
         cvParameterSelection.buildClassifier(train);
@@ -38,16 +41,37 @@ public class HyperParameterSearchTest extends AbstractTest {
         classifier.setOptions(classifierOptions);
         classifier.buildClassifier(train);
         System.out.println(Utils.joinOptions(classifierOptions));
+        System.out.println(classifier.getClass().getSimpleName() +" with Parameters: "+ Arrays.toString(classifier.getOptions()));
     }
 
     @Test
     public void testGridSearch() throws Exception {
-        new GridSearch();
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Bagging classifier = new Bagging();
+
+        GridSearch gridSearch = new GridSearch();
+        gridSearch.buildClassifier(train);
+
+        System.out.println(classifier.getClass().getSimpleName() +" with Parameters: "+ Arrays.toString(classifier.getOptions()));
+
     }
 
     @Test
     public void testMultiSearch() throws Exception {
-        new MultiSearch();
+        Instances train = loadFile("eigerstrasse/train_extended");
+        Bagging classifier = new Bagging();
+
+        String[] options = {"-D", "-W", classifier.getClass().getName()};
+
+        MultiSearch multiSearch = new MultiSearch();
+        multiSearch.setOptions(options);
+        multiSearch.setClassifier(classifier);
+
+        multiSearch.buildClassifier(train);
+        System.out.println(multiSearch.getBestClassifier().toString());
+
+        System.out.println(classifier.getClass().getSimpleName() +" with Parameters: "+ Arrays.toString(classifier.getOptions()));
+
     }
 
     @Test
@@ -55,7 +79,7 @@ public class HyperParameterSearchTest extends AbstractTest {
         Instances train = loadFile("eigerstrasse/train_extended");
 
         AutoWEKAClassifier autoweka = new AutoWEKAClassifier();
-        autoweka.setTimeLimit(1); // in minutes
+        autoweka.setTimeLimit(10); // in minutes
         autoweka.setMemLimit(1024); // in MB
         autoweka.setDebug(true);
         autoweka.setSeed(123);

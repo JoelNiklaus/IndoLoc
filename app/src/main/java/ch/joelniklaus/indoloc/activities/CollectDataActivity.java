@@ -107,16 +107,19 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         int[] magneticValues = sensorHelper.readSensorData(event);
 
+
+        /*
         // At start of each collection phase save magnetic base value
         if (dataPoints.isEmpty()) {
             magneticYBaseValue = magneticValues[0];
             magneticZBaseValue = magneticValues[1];
         }
+        */
 
         String room = roomEditText.getText().toString();
         //String landmark = landmarkEditText.getText().toString();
         RSSData rssData = wifiHelper.readWifiData(getIntent());
-        SensorData sensorData = new SensorData(magneticYBaseValue - magneticValues[0], magneticZBaseValue - magneticValues[1]);
+        SensorData sensorData = new SensorData(magneticValues[0], magneticValues[1]);
         currentDataPoint = new DataPoint(room, sensorData, rssData);
 
         // Only collect different DataPoints
@@ -262,12 +265,16 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         try {
             if (label.equals("START LIVE TEST")) {
 
+                Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
+                test = WekaHelper.convertToSingleInstance(train, currentDataPoint);
+
                 // Build Classifiers
                 alert("Training Models ...");
-                Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
-                for (Classifier classifier : classifiers)
+                for (Classifier classifier : classifiers) {
+                    alert("Training "+classifier.getClass().getSimpleName()+" ...");
                     classifier.buildClassifier(train);
-                test = WekaHelper.convertToSingleInstance(train, currentDataPoint);
+                    alert(classifier.getClass().getSimpleName() + " successfully trained!");
+                }
                 alert("Models successfully trained!");
 
                 liveTestButton.setText("STOP LIVE TEST");

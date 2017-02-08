@@ -106,25 +106,47 @@ public class WifiHelper {
                 }
 */
 
- /* Rickenbach*/
+ /* Rickenbach
                 switch (scanResult.SSID) {
                     case "jxx-10375":
                         rssList.set(0, level);
                     case "Phone not found":
                         rssList.set(1, level);
-                    case "ap3":
+                    case "2":
                         rssList.set(2, level);
-                    case "ap4":
+                    case "3":
                         rssList.set(3, level);
-                    case "ap5":
+                    case "4":
                         rssList.set(4, level);
-                    case "APL1":
+                    case "5":
                         rssList.set(5, level);
-                    case "public-unibe":
+                    case "6":
                         rssList.set(6, level);
-                    case "eduroam":
+                    case "7":
                         rssList.set(7, level);
                 }
+*/
+
+                 /* Exeter*/
+                switch (scanResult.SSID) {
+                    case "Studentcom":
+                        rssList.set(0, level);
+                    case "eduroam":
+                        rssList.set(1, level);
+                    case "Phone not found":
+                        rssList.set(2, level);
+                    case "Exeter":
+                        rssList.set(3, level);
+                    case "BTWifi-X":
+                        rssList.set(4, level);
+                    case "VM5449112":
+                        rssList.set(5, level);
+                    case "stagecoach-wifi":
+                        rssList.set(6, level);
+                    case "7":
+                        rssList.set(7, level);
+                }
+
 
 
                 //rss1Value.setText(rss1Value.getText() + "\nName: " + scanResult.SSID + "\nMAC:" + scanResult.BSSID);

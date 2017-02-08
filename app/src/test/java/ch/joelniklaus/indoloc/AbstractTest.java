@@ -28,6 +28,7 @@ import weka.classifiers.meta.Decorate;
 import weka.classifiers.meta.EnsembleSelection;
 import weka.classifiers.meta.Grading;
 import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.meta.RandomSubSpace;
 import weka.classifiers.meta.Stacking;
 import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
@@ -184,6 +185,12 @@ public class AbstractTest {
         EnsembleSelection ensembleSelection = new EnsembleSelection();
         //classifiers.add(ensembleSelection);
 
+        // Random Sub Space (Auto Weka Suggestion 10 min)
+        RandomSubSpace randomSubSpace = new RandomSubSpace();
+        String[] options = {"-I", "14", "-P", "0.620718940248979", "-S", "1", "-W", "weka.classifiers.trees.RandomForest", "--", "-I", "2", "-K", "11", "-depth", "0"};
+        randomSubSpace.setOptions(options);
+        classifiers.add(randomSubSpace);
+
         /* ==============================
         Neural Network
         ============================== */
@@ -196,7 +203,6 @@ public class AbstractTest {
         mlp.setTrainingTime(2000);
         mlp.setHiddenLayers("3");
         classifiers.add(mlp);
-
     }
 
 

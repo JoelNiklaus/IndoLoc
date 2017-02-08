@@ -57,8 +57,8 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSet() throws Exception {
-        Instances train = loadFile("eigerstrasse/train_extended");
-        Instances test = loadFile("eigerstrasse/test_extended");
+        Instances train = loadFile("exeter/train");
+        Instances test = loadFile("exeter/test");
 
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
