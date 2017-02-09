@@ -127,7 +127,7 @@ public class WifiHelper {
                 }
 */
 
-                 /* Exeter*/
+                 /* Exeter James Owen Court
                 switch (scanResult.SSID) {
                     case "Studentcom":
                         rssList.set(0, level);
@@ -146,10 +146,27 @@ public class WifiHelper {
                     case "7":
                         rssList.set(7, level);
                 }
+*/
+                /* Exeter University Campus */
+                switch (scanResult.SSID) {
+                    case "eduroam":
+                        rssList.set(0, level);
+                    case "UoE_Open":
+                        rssList.set(1, level);
+                    case "UoE_Guest":
+                        rssList.set(2, level);
+                    case "3":
+                        rssList.set(3, level);
+                    case "4":
+                        rssList.set(4, level);
+                    case "5":
+                        rssList.set(5, level);
+                    case "6":
+                        rssList.set(6, level);
+                    case "7":
+                        rssList.set(7, level);
+                }
 
-
-
-                //rss1Value.setText(rss1Value.getText() + "\nName: " + scanResult.SSID + "\nMAC:" + scanResult.BSSID);
             }
         }
     }

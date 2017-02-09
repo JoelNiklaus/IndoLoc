@@ -6,7 +6,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 
+import ch.joelniklaus.indoloc.models.DataPoint;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
@@ -31,8 +34,8 @@ public class FileHelper {
         this.context = context;
     }
 
-    public void saveModel(Classifier classifier, String fileName) throws Exception {
-        SerializationHelper.write(fileName, classifier);
+    public void serializeData(Serializable data, String fileName) throws Exception {
+        SerializationHelper.write(fileName, data);
     }
 
     public Classifier loadModel(String fileName) throws Exception {
@@ -87,6 +90,46 @@ public class FileHelper {
         Instances data = new ConverterUtils.DataSource(filePath).getDataSet();
         data.setClassIndex(0);
         return data;
+    }
+
+    public void saveDataPoints(Serializable data) {
+        if (isExternalStorageWritable()) {
+            if (!EXTERNAL_DIRECTORY.exists())
+                EXTERNAL_DIRECTORY.mkdirs();
+            String filePath = EXTERNAL_DIRECTORY + "/dataPoints.tmp";
+            try {
+                SerializationHelper.write(filePath, data);
+                alert("Saved collected DataPoints");
+            } catch (Exception e) {
+                alert("Could not save DataPoints");
+                e.printStackTrace();
+            }
+        } else
+            alert("External Storage is not writable");
+    }
+
+    public ArrayList<DataPoint> loadDataPoints() {
+        if (isExternalStorageReadable()) {
+            String filePath = EXTERNAL_DIRECTORY + "/dataPoints.tmp";
+            if (new File(filePath).exists()) {
+                try {
+                    ArrayList<DataPoint> dataPoints = (ArrayList<DataPoint>) SerializationHelper.read(filePath);
+                    if (dataPoints.isEmpty())
+                        alert("No DataPoints collected yet");
+                    else
+                        alert("Loaded collected DataPoints");
+                    new File(filePath).delete();
+                    return dataPoints;
+                } catch (Exception e) {
+                    alert("Could not load DataPoints");
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            alert("External Storage is not readable");
+        }
+        alert("No DataPoints collected yet");
+        return new ArrayList<>();
     }
 
     /* Checks if external storage is available for read and write */

@@ -69,16 +69,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         setUpTextViews();
 
-        for (int i = 0; i < NUMBER_OF_CLASSIFIERS; i++)
-            predictions.add("NO PREDICTION YET");
-
-        classifiers.add(new NaiveBayes());
-        classifiers.add(new IBk());
-        classifiers.add(new LibSVM());
-        classifiers.add(new RandomForest());
-        classifiers.add(new Bagging());
-        classifiers.add(new LogitBoost());
-        classifiers.add(new MultilayerPerceptron());
+        initPrediction();
     }
 
     @Override
@@ -88,7 +79,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         sensorHelper.registerListeners();
 
         wifiHelper.registerListeners();
+
+        loadDataPoints();
     }
+
 
     @Override
     protected void onPause() {
@@ -97,6 +91,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         sensorHelper.unRegisterListeners();
 
         wifiHelper.unRegisterListeners();
+
+        saveDataPoints();
     }
 
     @Override
@@ -219,6 +215,30 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         predictMLPValue.setText(predictions.get(6));
     }
 
+    private void initPrediction() {
+        for (int i = 0; i < NUMBER_OF_CLASSIFIERS; i++)
+            predictions.add("NO PREDICTION YET");
+
+        classifiers.add(new NaiveBayes());
+        classifiers.add(new IBk());
+        classifiers.add(new LibSVM());
+        classifiers.add(new RandomForest());
+        classifiers.add(new Bagging());
+        classifiers.add(new LogitBoost());
+        classifiers.add(new MultilayerPerceptron());
+    }
+
+    private void saveDataPoints() {
+        if (!dataPoints.isEmpty()) {
+            fileHelper.saveDataPoints(dataPoints);
+            createArffFile("temp.arff");
+        }
+    }
+
+    private void loadDataPoints() {
+        dataPoints = fileHelper.loadDataPoints();
+    }
+
     public void startCollecting(View view) {
         String label = startButton.getText().toString();
         try {
@@ -271,7 +291,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                 // Build Classifiers
                 alert("Training Models ...");
                 for (Classifier classifier : classifiers) {
-                    alert("Training "+classifier.getClass().getSimpleName()+" ...");
+                    alert("Training " + classifier.getClass().getSimpleName() + " ...");
                     classifier.buildClassifier(train);
                     alert(classifier.getClass().getSimpleName() + " successfully trained!");
                 }
@@ -345,31 +365,29 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void createTrainFile(View view) {
         String filePath = "train.arff";
         createArffFile(filePath);
-        this.dataPoints = new ArrayList<>();
-        this.scanNumber = 0;
-        alert("Saved data points to " + filePath);
     }
 
     public void createTestFile(View view) {
         String filePath = "test.arff";
         createArffFile(filePath);
-        this.dataPoints = new ArrayList<>();
-        this.scanNumber = 0;
-        alert("Saved data points to " + filePath);
     }
 
     private void createArffFile(String filePath) {
-        if (dataPoints.isEmpty())
+        if (dataPoints.isEmpty()) {
             alert("Please collect some Datapoints first!");
-        else
+        } else
             try {
                 Instances data = WekaHelper.buildInstances(dataPoints);
 
                 fileHelper.saveArffToInternalStorage(data, filePath);
                 fileHelper.saveArffToExternalStorage(data, filePath);
+
+                this.dataPoints = new ArrayList<>();
+                this.scanNumber = 0;
+                alert("Saved data points to " + filePath);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                alert(e.getMessage());
             }
     }
 
