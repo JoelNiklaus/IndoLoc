@@ -35,7 +35,7 @@ public class WifiHelper {
         wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
         wifiReceiver = new WifiReceiver();
         for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
-            rssList.add(i, 1);
+            rssList.add(i, 0);
     }
 
     public void registerListeners() {
@@ -49,6 +49,7 @@ public class WifiHelper {
     public RSSData readWifiData(Intent intent) {
         wifiManager.startScan();
         wifiReceiver.onReceive(context, intent);
+        //System.out.println(Arrays.toString(rssList.toArray()));
         return new RSSData(rssList);
     }
 
@@ -149,7 +150,6 @@ public class WifiHelper {
                         break;
                 }
 */
-                //System.out.println(Arrays.toString(rssList.toArray()));
                  /* Exeter James Owen Court*/
                 switch (scanResult.BSSID) {
                     case "00:c0:49:d8:db:e6": // University of Exeter
