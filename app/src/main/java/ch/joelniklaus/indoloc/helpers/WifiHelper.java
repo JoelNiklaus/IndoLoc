@@ -34,6 +34,8 @@ public class WifiHelper {
     public void setUp() {
         wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
         wifiReceiver = new WifiReceiver();
+        for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
+            rssList.add(i, 1);
     }
 
     public void registerListeners() {
@@ -55,11 +57,8 @@ public class WifiHelper {
 
         public void onReceive(Context c, Intent intent) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
-            rssList = new ArrayList<>(NUMBER_OF_ACCESS_POINTS);
-            for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
-                rssList.add(i, 1);
 
-            // search by MAC address
+            // search by MAC address or Network Name
             for (int i = 0; i < scanResults.size(); i++) {
                 ScanResult scanResult = scanResults.get(i);
                 int level = scanResult.level;
@@ -68,20 +67,28 @@ public class WifiHelper {
                 switch (scanResult.BSSID) {
                     case "38:10:d5:0e:1f:25":
                         rssList.set(0, level);
+                        break;
                     case "b4:ee:b4:60:fa:60":
                         rssList.set(1, level);
+                        break;
                     case "0e:18:d6:97:0c:8e":
                         rssList.set(2, level);
+                        break;
                     case "82:2a:a8:17:34:b3":
                         rssList.set(3, level);
+                        break;
                     case "14:49:e0:c9:ef:80":
                         rssList.set(4, level);
+                        break;
                     case "56:67:51:ea.91:85":
                         rssList.set(5, level);
+                        break;
                     case "c4:27:95:89:f3:5a":
                         rssList.set(6, level);
+                        break;
                     case "14:49:e0:c9:ef:88":
                         rssList.set(7, level);
+                        break;
                 }
  */
 
@@ -89,20 +96,28 @@ public class WifiHelper {
                 switch (scanResult.SSID) {
                     case "ap1":
                         rssList.set(0, level);
+                        break;
                     case "ap2":
                         rssList.set(1, level);
+                        break;
                     case "ap3":
                         rssList.set(2, level);
+                        break;
                     case "ap4":
                         rssList.set(3, level);
+                        break;
                     case "ap5":
                         rssList.set(4, level);
+                        break;
                     case "APL1":
                         rssList.set(5, level);
+                        break;
                     case "public-unibe":
                         rssList.set(6, level);
+                        break;
                     case "eduroam":
                         rssList.set(7, level);
+                        break;
                 }
 */
 
@@ -110,63 +125,97 @@ public class WifiHelper {
                 switch (scanResult.SSID) {
                     case "jxx-10375":
                         rssList.set(0, level);
+                        break;
                     case "Phone not found":
                         rssList.set(1, level);
+                        break;
                     case "2":
                         rssList.set(2, level);
+                        break;
                     case "3":
                         rssList.set(3, level);
+                        break;
                     case "4":
                         rssList.set(4, level);
+                        break;
                     case "5":
                         rssList.set(5, level);
+                        break;
                     case "6":
                         rssList.set(6, level);
+                        break;
                     case "7":
                         rssList.set(7, level);
+                        break;
                 }
 */
-
-                 /* Exeter James Owen Court
-                switch (scanResult.SSID) {
-                    case "Studentcom":
+                //System.out.println(Arrays.toString(rssList.toArray()));
+                 /* Exeter James Owen Court*/
+                switch (scanResult.BSSID) {
+                    case "00:c0:49:d8:db:e6": // University of Exeter
                         rssList.set(0, level);
-                    case "eduroam":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "00:18:e7:c7:cb:88": // Graphene Centre
                         rssList.set(1, level);
-                    case "Phone not found":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "04:da:d2:9c:a9:d2": // eduroam
                         rssList.set(2, level);
-                    case "Exeter":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "b4:e9:b0:a6:40:52": // eduroam
                         rssList.set(3, level);
-                    case "BTWifi-X":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "04:da:d2:9d:0a:c0": // Studentcom
                         rssList.set(4, level);
-                    case "VM5449112":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "04:da:d2:9d:0a:cf": // Studentcom
                         rssList.set(5, level);
-                    case "stagecoach-wifi":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "b4:e9:b0:a6:40:50": // Studentcom
                         rssList.set(6, level);
-                    case "7":
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+                    case "04:da:d2:9c:a9:d0": // Studentcom
                         rssList.set(7, level);
+                        //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
+                        break;
+
                 }
-*/
-                /* Exeter University Campus */
+
+                /* Exeter University Campus
+
                 switch (scanResult.SSID) {
                     case "eduroam":
                         rssList.set(0, level);
+                        break;
                     case "UoE_Open":
                         rssList.set(1, level);
+                        break;
                     case "UoE_Guest":
                         rssList.set(2, level);
+                        break;
                     case "3":
                         rssList.set(3, level);
+                        break;
                     case "4":
                         rssList.set(4, level);
+                        break;
                     case "5":
                         rssList.set(5, level);
+                        break;
                     case "6":
                         rssList.set(6, level);
+                        break;
                     case "7":
                         rssList.set(7, level);
+                        break;
                 }
-
+                */
             }
         }
     }
