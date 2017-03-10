@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.Environment;
 import android.widget.Toast;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +15,6 @@ import ch.joelniklaus.indoloc.models.DataPoint;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
-import weka.core.converters.ArffSaver;
 import weka.core.converters.ConverterUtils;
 
 /**
@@ -80,10 +81,17 @@ public class FileHelper {
     }
 
     private void saveArff(Instances data, File file) throws IOException {
+        /* ArffSaver apparently does not work in new version of gradle, android studio or whatever
         ArffSaver saver = new ArffSaver();
         saver.setInstances(data);
         saver.setFile(file);
         saver.writeBatch();
+        */
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
+        writer.write(data.toString());
+        writer.flush();
+        writer.close();
     }
 
     public Instances loadArff(String filePath) throws Exception {

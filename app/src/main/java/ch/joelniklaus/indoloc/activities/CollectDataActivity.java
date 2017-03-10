@@ -379,7 +379,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             try {
                 Instances data = WekaHelper.buildInstances(dataPoints);
 
-                fileHelper.saveArffToInternalStorage(data, filePath);
+                //fileHelper.saveArffToInternalStorage(data, filePath);
                 fileHelper.saveArffToExternalStorage(data, filePath);
 
                 this.dataPoints = new ArrayList<>();
