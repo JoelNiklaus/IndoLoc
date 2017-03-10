@@ -14,6 +14,11 @@ import weka.core.Instances;
  */
 public class ExperimentTest extends AbstractTest {
 
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
+
     /* Attribute Indices:
      * 1 -> Class Attribute: Room
      * 2 - 3 -> Magnetic Field

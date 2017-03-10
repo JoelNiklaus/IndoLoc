@@ -16,6 +16,11 @@ import weka.filters.unsupervised.instance.RemovePercentage;
  */
 public class ClassifierTest extends AbstractTest {
 
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
+
     @Test
     public void testDifferentlyCollectedTrainAndTestSetAmountOfModelData() throws Exception {
         Instances train = loadFile("cds/train");

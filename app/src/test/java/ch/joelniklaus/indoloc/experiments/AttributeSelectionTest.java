@@ -22,6 +22,11 @@ import weka.filters.Filter;
  */
 public class AttributeSelectionTest extends AbstractTest {
 
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
+
     /**
      * uses the meta-classifier
      */
@@ -80,5 +85,6 @@ public class AttributeSelectionTest extends AbstractTest {
         int[] indices = attsel.selectedAttributes();
         System.out.println("selected attribute indices (starting with 0):\n" + Utils.arrayToString(indices));
     }
+
 
 }

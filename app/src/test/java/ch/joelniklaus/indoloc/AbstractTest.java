@@ -43,22 +43,26 @@ import static org.junit.Assert.assertTrue;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class AbstractTest {
+public abstract class AbstractTest {
 
-    protected final int NUMBER_OF_TEST_ROUNDS = 1;
+    protected final int NUMBER_OF_TEST_ROUNDS = 2;
 
     protected final Timer timer = new Timer();
 
-    protected final WekaHelper wekaHelper = new WekaHelper();
     protected final FileHelper fileHelper = new FileHelper();
 
     protected final ArrayList<Classifier> classifiers = new ArrayList<>();
+
+    protected Instances train;
+    protected Instances test;
 
     public static final String ASSETS_PATH = "/Users/joelniklaus/Google Drive/Studium/Bachelor/Informatik/Bachelorarbeit/Code/IndoLoc/app/src/main/assets/";
     public static final String ENDING = ".arff";
 
     @Before
     public void setUp() throws Exception {
+        fetchData();
+
         addClassifiers();
 
         /*
@@ -75,6 +79,13 @@ public class AbstractTest {
         for (int i = 0; i < classifiers.size(); i++)
             trainedClassifiers.add(i, wekaHelper.train(train, classifiers.get(i)));
             */
+    }
+
+    protected abstract void fetchData() throws Exception;
+
+    protected void loadFiles(String trainPath, String testPath) throws Exception{
+        train = loadFile(trainPath);
+        test = loadFile(testPath);
     }
 
     protected Instances loadFile(String fileName) throws Exception {

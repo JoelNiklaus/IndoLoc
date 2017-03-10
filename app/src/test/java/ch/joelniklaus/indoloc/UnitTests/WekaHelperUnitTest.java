@@ -34,6 +34,11 @@ public class WekaHelperUnitTest extends AbstractTest {
 
     private final InstanceComparator comparator = new InstanceComparator();
 
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
+
     @Test
     public void testGetTestingSetAndGetTrainingSetStratifiedRemoveFolds() throws Exception {
         Instances data = loadFile("unittests/remove");

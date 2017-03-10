@@ -3,7 +3,6 @@ package ch.joelniklaus.indoloc.experiments;
 import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
@@ -24,6 +23,11 @@ import weka.filters.supervised.attribute.AddClassification;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class CrossValidationTest extends AbstractTest {
+
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
 
     /**
      * Performs a single run of cross-validation.
@@ -75,7 +79,7 @@ public class CrossValidationTest extends AbstractTest {
     @Test
     public void testCrossValidationSingleRunVariant() throws Exception {
         RandomForest cls = new RandomForest();
-        Instances data = loadFile("experiments/experiment_new");
+        Instances data = loadFile("exeter/train_living_room");
         int folds = 10;     // the number of folds to generate, >=2
         int seed = 0;       // the seed for randomizing the data
 

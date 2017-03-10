@@ -1,6 +1,5 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -22,9 +21,9 @@ import weka.core.Utils;
  */
 public class HyperParameterSearchTest extends AbstractTest {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
     }
 
     @Test

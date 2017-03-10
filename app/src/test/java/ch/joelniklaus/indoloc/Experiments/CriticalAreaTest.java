@@ -1,6 +1,5 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
@@ -15,6 +14,11 @@ import weka.core.Instances;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class CriticalAreaTest extends AbstractTest {
+
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
 
     @Test
     public void testCriticalAreaDifferentCollections() throws Exception {

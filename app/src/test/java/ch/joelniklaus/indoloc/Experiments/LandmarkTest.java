@@ -7,7 +7,10 @@ import java.util.Arrays;
 import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.classifiers.Classifier;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.meta.Dagging;
 import weka.classifiers.meta.LogitBoost;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -19,13 +22,17 @@ import weka.core.Instances;
  */
 public class LandmarkTest extends AbstractTest {
     public static final String UNDEFINED = "undefined";
-    public static final double BORDER = 0.7;
+    public static final double BORDER = 0.5;
 
+    @Override
+    protected void fetchData() throws Exception {
+        loadFiles("exeter/train_small", "exeter/test_small");
+    }
 
     @Test
     public void testPredictNormally() throws Exception {
-        Instances train = loadFile("exeter/train_direct");
-        Instances test = loadFile("exeter/test_direct");
+        Instances train = loadFile("exeter/train_living_room");
+        Instances test = loadFile("exeter/test_living_room");
 
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
@@ -33,13 +40,24 @@ public class LandmarkTest extends AbstractTest {
 
     @Test
     public void testPredictOnlyWithHighConfidence() throws Exception {
-        Instances train = loadFile("exeter/train_direct");
-        Instances test = loadFile("exeter/test_direct");
+        Instances train = loadFile("exeter/train_large");
+        Instances test = loadFile("exeter/test_large_middle");
 
         LogitBoost logitBoost = new LogitBoost();
         logitBoost.buildClassifier(train);
 
-        System.out.println(relevantClassesAccuracy(test, logitBoost));
+        RandomForest randomForest = new RandomForest();
+        randomForest.buildClassifier(train);
+
+        IBk ibk = new IBk();
+        ibk.buildClassifier(train);
+
+        Dagging dagging = new Dagging();
+        dagging.buildClassifier(train);
+
+
+
+        System.out.println(relevantClassesAccuracy(test, randomForest));
     }
 
     /**
