@@ -21,6 +21,7 @@ import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.KStar;
+import weka.classifiers.lazy.LWL;
 import weka.classifiers.meta.AdaBoostM1;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.meta.Dagging;
@@ -128,6 +129,11 @@ public abstract class AbstractTest {
         KStar kStar = new KStar();
         kStar.setOptions(kStarOptions);
         //classifiers.add(kStar);
+
+        // LWL (Auto Weka Suggestion 30 min)
+        String[] lwlOptions = {"-K", "30", "-A", "weka.core.neighboursearch.LinearNNSearch", "-W", "weka.classifiers.bayes.NaiveBayes", "--"};
+        LWL lwl = new LWL();
+        lwl.setOptions(lwlOptions);
 
         /* ==============================
         Bayes

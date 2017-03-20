@@ -286,6 +286,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             if (label.equals("START LIVE TEST")) {
 
                 Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
+                alert("Creating Test File ... ");
                 test = WekaHelper.convertToSingleInstance(train, currentDataPoint);
 
                 // Build Classifiers
@@ -310,6 +311,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
+            alert("Please enter a room!");
         }
     }
 

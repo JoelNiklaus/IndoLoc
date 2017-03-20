@@ -160,31 +160,32 @@ public class WifiHelper {
                         rssList.set(1, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    case "04:da:d2:9c:a9:d2": // eduroam
+                    case "04:da:d2:9d:0a:c0": // Studentcom
                         rssList.set(2, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    case "b4:e9:b0:a6:40:52": // eduroam
+                    case "04:da:d2:9d:0a:cf": // Studentcom
                         rssList.set(3, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    case "04:da:d2:9d:0a:c0": // Studentcom
+                    /*
+                    case "b4:e9:b0:a6:40:50": // Studentcom
                         rssList.set(4, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    case "04:da:d2:9d:0a:cf": // Studentcom
+                    case "04:da:d2:9c:a9:d0": // Studentcom
                         rssList.set(5, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    case "b4:e9:b0:a6:40:50": // Studentcom
+                    case "04:da:d2:9c:a9:d2": // eduroam
                         rssList.set(6, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    case "04:da:d2:9c:a9:d0": // Studentcom
+                    case "b4:e9:b0:a6:40:52": // eduroam
                         rssList.set(7, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-
+                       */
                 }
 
                 /* Exeter University Campus

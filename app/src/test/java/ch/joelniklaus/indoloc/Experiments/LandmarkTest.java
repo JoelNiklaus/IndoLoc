@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.lazy.IBk;
@@ -31,10 +32,16 @@ public class LandmarkTest extends AbstractTest {
 
     @Test
     public void testPredictNormally() throws Exception {
-        Instances train = loadFile("exeter/train_living_room");
-        Instances test = loadFile("exeter/test_living_room");
+        Instances train = loadFile("exeter/train_landmarks");
+        Instances test = loadFile("exeter/test_landmarks");
 
         Statistics statistics = getClassifierRatings(train, test);
+        sortAndPrintStatistics(statistics);
+
+        WekaHelper.removeAllOfSpecificClass(train, 4);
+        WekaHelper.removeAllOfSpecificClass(test, 4);
+
+        statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
     }
 

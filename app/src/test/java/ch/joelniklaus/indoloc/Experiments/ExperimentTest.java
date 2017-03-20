@@ -16,7 +16,7 @@ public class ExperimentTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+        loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
     }
 
     /* Attribute Indices:
@@ -51,9 +51,6 @@ public class ExperimentTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesImprovementSeparate() throws Exception {
-        Instances train = loadFile("eigerstrasse/train_extended");
-        Instances test = loadFile("eigerstrasse/test_extended");
-
         Instances withTrain = WekaHelper.removeDuplicates(train);
         Instances withoutTrain = WekaHelper.removeAttributes(withTrain, "2-3");
 

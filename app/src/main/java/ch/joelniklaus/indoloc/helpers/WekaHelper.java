@@ -283,7 +283,7 @@ public class WekaHelper {
 
     // does not remove value in header
     public static Instances removeAllOfSpecificClass(Instances data, int classIndex) throws Exception {
-        for(int i = 0; i < data.numInstances(); i++)
+        for (int i = 0; i < data.numInstances(); i++)
             if ((int) data.get(i).classValue() == classIndex) {
                 data.delete(i);
                 i--;
@@ -293,30 +293,44 @@ public class WekaHelper {
 
 
     public static Instances removeDuplicates(Instances data) {
+        Instances newData = new Instances(data);
         InstanceComparator comparator = new InstanceComparator();
-        for (int i = 0; i < data.numInstances() - 1; i++) {
-            for (int j = i + 1; j < data.numInstances(); j++)
-                if (comparator.compare(data.instance(i), data.instance(j)) == 0) {
-                    data.delete(j);
+        for (int i = 0; i < newData.numInstances() - 1; i++) {
+            for (int j = i + 1; j < newData.numInstances(); j++)
+                if (comparator.compare(newData.instance(i), newData.instance(j)) == 0) {
+                    newData.delete(j);
                     j--;
                 }
         }
-        return data;
+        return newData;
+    }
+
+
+    public static Instances getEveryNThInstance(Instances data, int n) {
+        Instances newData = new Instances(data);
+        newData.delete();
+        for (int i = data.numInstances() - 1; i >= 0; i -= n)
+            newData.add(data.instance(i));
+        assertion(newData.numInstances() * n - n <= data.numInstances());
+        return newData;
     }
 
     @NonNull
     public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {
-        instances.delete();
-        instances.setClassIndex(0);
+        Instances newInstances = new Instances(instances);
+        newInstances.delete();
+        newInstances.setClassIndex(0);
+
+        assertion(newInstances.numInstances() == 0);
 
         ArrayList<DataPoint> dataPoints = new ArrayList<>();
         dataPoints.add(dataPoint);
-        addInstances(dataPoints, instances);
+        addInstances(dataPoints, newInstances);
 
-        assertion(instances.numInstances() == 1);
-        assertion(instances.classIndex() == 0);
+        assertion(newInstances.numInstances() == 1);
+        assertion(newInstances.classIndex() == 0);
 
-        return instances;
+        return newInstances;
     }
 
     @NonNull
