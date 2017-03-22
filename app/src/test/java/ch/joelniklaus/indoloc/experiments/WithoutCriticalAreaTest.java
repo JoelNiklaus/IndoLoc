@@ -16,7 +16,7 @@ public class WithoutCriticalAreaTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+        loadFiles("experiments/without_critical_new", "experiments/without_critical_new");
     }
 
     /* Attribute Indices:
@@ -35,10 +35,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesImprovement() throws Exception {
-        Instances data = loadFile("experiments/without_critical_new");
-
-        Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "2-3");
+        Instances with = WekaHelper.removeDuplicates(train);
+        Instances without = WekaHelper.removeAttributes(train, "2-3");
 
         testWithAndWithout(with, without);
     }
@@ -50,10 +48,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
      */
     @Test
     public void testMeanImprovement() throws Exception {
-        Instances data = loadFile("experiments/without_critical_new");
-
-        Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "12");
+        Instances with = WekaHelper.removeDuplicates(train);
+        Instances without = WekaHelper.removeAttributes(train, "12");
 
         testWithAndWithout(with, without);
     }
@@ -65,10 +61,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
      */
     @Test
     public void testVariancesImprovement() throws Exception {
-        Instances data = loadFile("experiments/without_critical_new");
-
-        Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "13-20");
+        Instances with = WekaHelper.removeDuplicates(train);
+        Instances without = WekaHelper.removeAttributes(train, "13-20");
 
         testWithAndWithout(with, without);
     }
@@ -80,10 +74,8 @@ public class WithoutCriticalAreaTest extends AbstractTest {
      */
     @Test
     public void testMagneticFieldValuesMeanVariancesImprovement() throws Exception {
-        Instances data = loadFile("experiments/without_critical_new");
-
-        Instances with = WekaHelper.removeDuplicates(data);
-        Instances without = WekaHelper.removeAttributes(data, "12-20");
+        Instances with = WekaHelper.removeDuplicates(train);
+        Instances without = WekaHelper.removeAttributes(train, "12-20");
         without = WekaHelper.removeAttributes(without, "2-3");
 
         testWithAndWithout(with, without);

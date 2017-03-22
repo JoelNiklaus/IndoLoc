@@ -23,11 +23,9 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSetAmountOfModelData() throws Exception {
-        Instances train = loadFile("cds/train");
         RemovePercentage removePercentage = WekaHelper.randomizeAndGetRemovePercentage(train);
         Instances train30Reduced = WekaHelper.getTrainingSet(train, removePercentage);
         Instances train70Reduced = WekaHelper.getTestingSet(train, removePercentage);
-        Instances test = loadFile("cds/test");
 
         System.out.println("===== Full Dataset =====");
         sortAndPrintStatistics(getClassifierRatings(train, test));
@@ -42,8 +40,7 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testTrainAndTestSetOfSameCollectionDifferentDivision() throws Exception {
-        Instances data = loadFile("cds/train");
-
+        Instances data = train;
         data.randomize(new java.util.Random());
         Instances train = data.trainCV(2, 0);
         Instances test = data.testCV(2, 0);
@@ -54,26 +51,18 @@ public class ClassifierTest extends AbstractTest {
 
     @Test
     public void testTrainAndTestSetOfSameCollection() throws Exception {
-        Instances data = loadFile("cds/train");
-
-        Statistics statistics = getClassifierRatings(data);
+        Statistics statistics = getClassifierRatings(train);
         sortAndPrintStatistics(statistics);
     }
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSet() throws Exception {
-        Instances train = loadFile("exeter/train");
-        Instances test = loadFile("exeter/test");
-
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
     }
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSetMerged() throws Exception {
-        Instances train = loadFile("cds/train");
-        Instances test = loadFile("cds/test");
-
         Instances data = merge(train, test);
 
         Statistics statistics = getClassifierRatings(data);

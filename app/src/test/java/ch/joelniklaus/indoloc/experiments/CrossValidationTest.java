@@ -26,7 +26,7 @@ public class CrossValidationTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+        loadFiles("experiments/experiment_new", "experiments/experiment_new");
     }
 
     /**
@@ -37,12 +37,11 @@ public class CrossValidationTest extends AbstractTest {
     @Test
     public void testCrossValidationSingleRun() throws Exception {
         RandomForest cls = new RandomForest();
-        Instances data = loadFile("experiments/experiment_new");
         int folds = 10;     // the number of folds to generate, >=2
         int seed = 0;       // the seed for randomizing the data
 
         // randomize data
-        Instances randData = randomizeData(data, folds, seed);
+        Instances randData = randomizeData(train, folds, seed);
 
         // perform cross-validation
         Evaluation eval = new Evaluation(randData);
@@ -63,7 +62,7 @@ public class CrossValidationTest extends AbstractTest {
         // output evaluation
         System.out.println();
         System.out.println("=== Setup ===");
-        outputSetup(cls, data, folds, seed);
+        outputSetup(cls, train, folds, seed);
         System.out.println();
         System.out.println(eval.toSummaryString("=== " + folds + "-fold Cross-validation ===", false));
     }
@@ -79,17 +78,16 @@ public class CrossValidationTest extends AbstractTest {
     @Test
     public void testCrossValidationSingleRunVariant() throws Exception {
         RandomForest cls = new RandomForest();
-        Instances data = loadFile("exeter/train_living_room");
         int folds = 10;     // the number of folds to generate, >=2
         int seed = 0;       // the seed for randomizing the data
 
         // randomize data
-        Instances randData = randomizeData(data, folds, seed);
+        Instances randData = randomizeData(train, folds, seed);
 
         // perform cross-validation
         System.out.println();
         System.out.println("=== Setup ===");
-        outputSetup(cls, data, folds, seed);
+        outputSetup(cls, train, folds, seed);
         System.out.println();
         Evaluation evalAll = new Evaluation(randData);
         for (int n = 0; n < folds; n++) {
@@ -126,12 +124,11 @@ public class CrossValidationTest extends AbstractTest {
     @Test
     public void testCrossValidationSingleRunPrediction() throws Exception {
         RandomForest cls = new RandomForest();
-        Instances data = loadFile("experiments/experiment_new");
         int folds = 10;     // the number of folds to generate, >=2
         int seed = 0;       // the seed for randomizing the data
 
         // randomize data
-        Instances randData = randomizeData(data, folds, seed);
+        Instances randData = randomizeData(train, folds, seed);
 
         // perform cross-validation and add predictions
         Instances predictedData = null;
@@ -167,7 +164,7 @@ public class CrossValidationTest extends AbstractTest {
         // output evaluation
         System.out.println();
         System.out.println("=== Setup ===");
-        outputSetup(cls, data, folds, seed);
+        outputSetup(cls, train, folds, seed);
         System.out.println();
         System.out.println(eval.toSummaryString("=== " + folds + "-fold Cross-validation ===", false));
 
@@ -184,7 +181,6 @@ public class CrossValidationTest extends AbstractTest {
     @Test
     public void testCrossValidationMultipleRuns() throws Exception {
         RandomForest cls = new RandomForest();
-        Instances data = loadFile("experiments/experiment_new");
         int folds = 10;     // the number of folds to generate, >=2
         int runs = 5;       // the number of runs
 
@@ -192,7 +188,7 @@ public class CrossValidationTest extends AbstractTest {
         for (int i = 0; i < runs; i++) {
             // randomize data
             int seed = i + 1;
-            Instances randData = randomizeData(data, folds, seed);
+            Instances randData = randomizeData(train, folds, seed);
 
             Evaluation eval = new Evaluation(randData);
             for (int n = 0; n < folds; n++) {
@@ -212,7 +208,7 @@ public class CrossValidationTest extends AbstractTest {
             // output evaluation
             System.out.println();
             System.out.println("=== Setup run " + (i + 1) + " ===");
-            outputSetup(cls, data, folds, seed);
+            outputSetup(cls, train, folds, seed);
             System.out.println();
             System.out.println(eval.toSummaryString("=== " + folds + "-fold Cross-validation run " + (i + 1) + " ===", false));
         }

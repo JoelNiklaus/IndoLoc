@@ -27,14 +27,11 @@ public class LandmarkTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+        loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
     }
 
     @Test
     public void testPredictNormally() throws Exception {
-        Instances train = loadFile("exeter/train_landmarks");
-        Instances test = loadFile("exeter/test_landmarks");
-
         Statistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
 
@@ -47,9 +44,6 @@ public class LandmarkTest extends AbstractTest {
 
     @Test
     public void testPredictOnlyWithHighConfidence() throws Exception {
-        Instances train = loadFile("exeter/train_large");
-        Instances test = loadFile("exeter/test_large_middle");
-
         LogitBoost logitBoost = new LogitBoost();
         logitBoost.buildClassifier(train);
 

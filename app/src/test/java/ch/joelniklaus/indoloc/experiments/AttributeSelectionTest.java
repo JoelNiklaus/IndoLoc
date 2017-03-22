@@ -24,7 +24,7 @@ public class AttributeSelectionTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+        loadFiles("experiments/experiment_new", "experiments/experiment_new");
     }
 
     /**
@@ -32,8 +32,6 @@ public class AttributeSelectionTest extends AbstractTest {
      */
     @Test
     public void useClassifier() throws Exception {
-        Instances data = loadFile("experiments/experiment_new");
-
         System.out.println("\n1. Meta-classfier");
         AttributeSelectedClassifier classifier = new AttributeSelectedClassifier();
         CfsSubsetEval eval = new CfsSubsetEval();
@@ -43,8 +41,8 @@ public class AttributeSelectionTest extends AbstractTest {
         classifier.setClassifier(base);
         classifier.setEvaluator(eval);
         classifier.setSearch(search);
-        Evaluation evaluation = new Evaluation(data);
-        evaluation.crossValidateModel(classifier, data, 10, new Random(1));
+        Evaluation evaluation = new Evaluation(train);
+        evaluation.crossValidateModel(classifier, train, 10, new Random(1));
         System.out.println(evaluation.toSummaryString());
     }
 
@@ -53,8 +51,6 @@ public class AttributeSelectionTest extends AbstractTest {
      */
     @Test
     public  void useFilter() throws Exception {
-        Instances data = loadFile("experiments/experiment_new");
-
         System.out.println("\n2. Filter");
         weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
         CfsSubsetEval eval = new CfsSubsetEval();
@@ -62,8 +58,8 @@ public class AttributeSelectionTest extends AbstractTest {
         search.setSearchBackwards(true);
         filter.setEvaluator(eval);
         filter.setSearch(search);
-        filter.setInputFormat(data);
-        Instances newData = Filter.useFilter(data, filter);
+        filter.setInputFormat(train);
+        Instances newData = Filter.useFilter(train, filter);
         System.out.println(newData);
     }
 
@@ -72,8 +68,6 @@ public class AttributeSelectionTest extends AbstractTest {
      */
     @Test
     public  void useLowLevel() throws Exception {
-        Instances data = loadFile("experiments/experiment_new");
-
         System.out.println("\n3. Low-level");
         AttributeSelection attsel = new AttributeSelection();
         CfsSubsetEval eval = new CfsSubsetEval();
@@ -81,7 +75,7 @@ public class AttributeSelectionTest extends AbstractTest {
         search.setSearchBackwards(true);
         attsel.setEvaluator(eval);
         attsel.setSearch(search);
-        attsel.SelectAttributes(data);
+        attsel.SelectAttributes(train);
         int[] indices = attsel.selectedAttributes();
         System.out.println("selected attribute indices (starting with 0):\n" + Utils.arrayToString(indices));
     }
