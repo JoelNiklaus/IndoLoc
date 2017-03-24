@@ -9,21 +9,31 @@ import ch.joelniklaus.indoloc.BuildConfig;
  * Created by joelniklaus on 04.03.2017
  */
 
-public class Helper {
+public abstract class AbstractHelper {
 
-    public static void alert(Context context, String message) {
-        alertShort(context, message);
+    protected Context context;
+
+    public AbstractHelper() {
+
     }
 
-    public static void alertShort(Context context, String message) {
+    public AbstractHelper(Context context) {
+        this.context = context;
+    }
+
+    protected void alert(String message) {
+        alertShort(message);
+    }
+
+    protected void alertShort(String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static void alertLong(Context context, String message) {
+    protected void alertLong(String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
-    public static void assertion(boolean condition) {
+    protected void assertion(boolean condition) {
         if (BuildConfig.DEBUG && !condition) throw new AssertionError();
     }
 }
