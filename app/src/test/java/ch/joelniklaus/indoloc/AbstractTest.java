@@ -84,8 +84,9 @@ public abstract class AbstractTest {
 
     protected abstract void fetchData() throws Exception;
 
-    protected void loadFiles(String trainPath, String testPath) throws Exception{
+    protected void loadFiles(String trainPath, String testPath) throws Exception {
         train = loadFile(trainPath);
+        train = WekaHelper.removeDuplicates(train);
         test = loadFile(testPath);
     }
 
@@ -217,7 +218,7 @@ public abstract class AbstractTest {
         //Setting Parameters
         mlp.setLearningRate(0.1);
         mlp.setMomentum(0.2);
-        mlp.setTrainingTime(2000);
+        mlp.setTrainingTime(50);
         mlp.setHiddenLayers("3");
         classifiers.add(mlp);
     }
@@ -229,6 +230,12 @@ public abstract class AbstractTest {
         statistics.print();
 
         return statistics;
+    }
+
+    protected ClassifierRating printClassifierRating(ClassifierRating classifierRating) throws Exception {
+        System.out.println(classifierRating.toString() + "\n");
+        System.out.println(classifierRating.getEvaluation().toMatrixString());
+        return classifierRating;
     }
 
     protected Statistics getClassifierRatings(Instances data) throws Exception {

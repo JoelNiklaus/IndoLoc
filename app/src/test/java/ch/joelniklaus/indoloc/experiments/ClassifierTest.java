@@ -4,7 +4,11 @@ import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
+import ch.joelniklaus.indoloc.statistics.ClassifierRating;
 import ch.joelniklaus.indoloc.statistics.Statistics;
+import weka.classifiers.functions.MultilayerPerceptron;
+import weka.classifiers.meta.Dagging;
+import weka.classifiers.meta.Vote;
 import weka.core.Instances;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
@@ -18,7 +22,73 @@ public class ClassifierTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+        loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
+    }
+
+    @Test
+    public void testVoting() throws Exception {
+        Vote vote = new Vote();
+        String[] options = {"-R", "MAJ", // Majority Vote
+                //"-B", "weka.classifiers.bayes.NaiveBayes", // Classifiers
+                //"-B", "weka.classifiers.trees.RandomForest",
+                //   "B", "weka.classifiers.functions.LibSVM",
+                //   "B", "weka.classifiers.lazy.IBk",
+                //  "B", "weka.classifiers.functions.Logistic",
+                // "B", "weka.classifiers.functions.SMO",
+                // "B", "weka.classifiers.meta.Dagging",
+                //  "B", "weka.classifiers.meta.LogitBoost",
+                //   "-B", "weka.classifiers.functions.MultilayerPerceptron", "--", "-L", "0.1", "-M", "0.2", "-N", "50", "-V", "0", "-S", "0", "-E", "20", "-H", "3",
+                //  "-B", "weka.classifiers.functions.MultilayerPerceptron", "--", "-L", "0.1", "-M", "0.2", "-N", "50", "-V", "0", "-S", "0", "-E", "20", "-H", "3",
+                "-B", "weka.classifiers.functions.MultilayerPerceptron", "-L", "0.1", "-M", "0.2", "-N", "50", "-V", "0", "-S", "0", "-E", "20", "-H", "3"
+        };
+        vote.setOptions(options);
+
+        ClassifierRating classifierRating = testClassifier(vote, train, test);
+        printClassifierRating(classifierRating);
+    }
+
+    @Test
+    public void testStacking() throws Exception {
+        Vote vote = new Vote();
+        String[] options = {"-M", "weka.classifiers.functions.Logistic", // Decision Classifier
+                //"-B", "weka.classifiers.bayes.NaiveBayes", // Classifiers
+                "-B", "weka.classifiers.trees.RandomForest",
+                // "B", "weka.classifiers.functions.LibSVM",
+                "B", "weka.classifiers.lazy.IBk",
+                //   "B", "weka.classifiers.functions.Logistic",
+                //  "B", "weka.classifiers.functions.SMO",
+                "B", "weka.classifiers.meta.Dagging",
+                //   "B", "weka.classifiers.meta.LogitBoost",
+                //  "-B", "weka.classifiers.functions.MultilayerPerceptron -L 0.1 -M 0.2 -N 50 -V 0 -S 0 -E 20 -H 3",
+                "-B", "weka.classifiers.functions.MultilayerPerceptron -L 0.1 -M 0.2 -N 50 -V 0 -S 0 -E 20 -H 3",
+                "-B", "weka.classifiers.functions.MultilayerPerceptron -L 0.1 -M 0.2 -N 50 -V 0 -S 0 -E 20 -H 3"
+        };
+        vote.setOptions(options);
+
+        ClassifierRating classifierRating = testClassifier(vote, train, test);
+        printClassifierRating(classifierRating);
+    }
+
+    @Test
+    public void testDagging() throws Exception {
+        train = WekaHelper.removeDuplicates(train);
+
+        MultilayerPerceptron mlp = new MultilayerPerceptron();
+        //Setting Parameters
+        mlp.setLearningRate(0.1);
+        mlp.setMomentum(0.2);
+        mlp.setTrainingTime(50);
+        //mlp.setValidationSetSize(20);
+        mlp.setHiddenLayers("3");
+
+        Dagging dagging = new Dagging();
+        String[] options = {
+                "-W", "weka.classifiers.functions.MultilayerPerceptron", "--", "-L", "0.1", "-M", "0.2", "-N", "50", "-V", "0", "-S", "0", "-E", "20", "-H", "3"
+        };
+        dagging.setOptions(options);
+
+        ClassifierRating classifierRating = testClassifier(mlp, train, test);
+        printClassifierRating(classifierRating);
     }
 
     @Test

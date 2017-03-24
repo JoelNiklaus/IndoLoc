@@ -57,6 +57,11 @@ public class OverfittingTest extends AbstractTest {
         testOneNth(train, test, 10);
     }
 
+    @Test
+    public void testOneTwentieth() throws Exception {
+        testOneNth(train, test, 20);
+    }
+
 
     private void testOneNth(Instances train, Instances test, int n) throws Exception {
         System.out.println(train.numInstances() + " number of instances");

@@ -49,6 +49,7 @@ public class HyperParameterSearchTest extends AbstractTest {
         ClassifierRating classifierRating = testClassifier(mlp, train, test);
         System.out.println(classifierRating.toString());
         System.out.println(classifierRating.getEvaluation().toMatrixString());
+        System.out.println(Arrays.toString(mlp.getOptions()));
     }
 
     /**
