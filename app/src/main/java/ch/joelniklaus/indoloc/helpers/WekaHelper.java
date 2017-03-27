@@ -28,9 +28,11 @@ import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.instance.RemovePercentage;
 import weka.filters.unsupervised.instance.RemoveWithValues;
 
-// Weka version = 3.7.3
-// weka_old.jar
-
+/**
+ * Provides methods which facilitate the handling of the weka library.
+ * <p>
+ * Weka version = 3.7.3 -> weka_old.jar
+ */
 public class WekaHelper {
 
     private Context context;
@@ -51,11 +53,28 @@ public class WekaHelper {
         this.context = context;
     }
 
+    /**
+     * Evaluates a given not yet trained classifier with given data. Splits the data into train and test set.
+     *
+     * @param data
+     * @param classifier
+     * @return
+     * @throws Exception
+     */
     public static Evaluation evaluate(Instances data, Classifier classifier) throws Exception {
         RemovePercentage remove = randomizeAndGetRemovePercentage(data);
         return evaluate(getTrainingSet(data, remove), getTestingSet(data, remove), classifier);
     }
 
+    /**
+     * Evaluates a given not yet trained classifier using a separate train and test set.
+     *
+     * @param train
+     * @param test
+     * @param classifier
+     * @return
+     * @throws Exception
+     */
     public static Evaluation evaluate(Instances train, Instances test, Classifier classifier) throws Exception {
         classifier.buildClassifier(train);
         Evaluation evaluation = new Evaluation(train);
@@ -64,7 +83,13 @@ public class WekaHelper {
         return evaluation;
     }
 
-
+    /**
+     * Classifies every instance in the given test set using the given classifier.
+     *
+     * @param test
+     * @param classifier
+     * @throws Exception
+     */
     public static void test(Instances test, Classifier classifier) throws Exception {
         for (int i = 0; i < test.numInstances(); i++)
             classifier.classifyInstance(test.instance(i));
@@ -292,6 +317,13 @@ public class WekaHelper {
     }
 
 
+    /**
+     * Removes all the exactly duplicate rows in the given instances so that each row is unique.
+     * This often leads to a better result using the classifiers.
+     *
+     * @param data
+     * @return
+     */
     public static Instances removeDuplicates(Instances data) {
         Instances newData = new Instances(data);
         InstanceComparator comparator = new InstanceComparator();
@@ -306,6 +338,13 @@ public class WekaHelper {
     }
 
 
+    /**
+     * Gets every n th instance of a given set of instances. Used to evaluate different dataset sizes.
+     *
+     * @param data
+     * @param n
+     * @return
+     */
     public static Instances getEveryNThInstance(Instances data, int n) {
         Instances newData = new Instances(data);
         newData.delete();
@@ -314,6 +353,29 @@ public class WekaHelper {
         assertion(newData.numInstances() * n - n <= data.numInstances());
         return newData;
     }
+
+    /**
+     * Gets a given percentage of a given set of instances. Used to evaluate different dataset sizes.
+     *
+     * @param data
+     * @param percentage
+     * @return
+     */
+    public static Instances getInstancesPercentage(Instances data, int percentage) throws Exception {
+        Instances newData = new Instances(data);
+        newData.setClassIndex(0);
+        // Randomizing
+        newData.randomize(new Random());
+
+        // Filtering
+        RemovePercentage removePercentage = new RemovePercentage();
+        String[] optionsTest = {"-P", percentage + ""};
+        removePercentage.setOptions(optionsTest);
+        removePercentage.setInputFormat(newData);
+
+        return Filter.useFilter(newData, removePercentage);
+    }
+
 
     @NonNull
     public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {

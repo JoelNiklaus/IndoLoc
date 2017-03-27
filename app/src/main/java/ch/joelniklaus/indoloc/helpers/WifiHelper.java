@@ -15,6 +15,8 @@ import ch.joelniklaus.indoloc.models.RSSData;
 import static android.content.Context.WIFI_SERVICE;
 
 /**
+ * Reads and prepares rss values from specified nearby access points.
+ * <p>
  * Created by joelniklaus on 19.12.16.
  */
 public class WifiHelper {
@@ -31,6 +33,9 @@ public class WifiHelper {
         this.context = context;
     }
 
+    /**
+     * Sets up the wifi manager and the wifi receiver. Has to be called before reading data.
+     */
     public void setUp() {
         wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
         wifiReceiver = new WifiReceiver();
@@ -38,14 +43,26 @@ public class WifiHelper {
             rssList.add(i, 0);
     }
 
+    /**
+     * Registers the receiver. Has to be called before reading data.
+     */
     public void registerListeners() {
         context.registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
 
+    /**
+     * Unregisters the receiver. Should be called after reading data.
+     */
     public void unRegisterListeners() {
         context.unregisterReceiver(wifiReceiver);
     }
 
+    /**
+     * Reads the wifi signals and returns a list with one rss value per access point which has been registered.
+     *
+     * @param intent
+     * @return
+     */
     public RSSData readWifiData(Intent intent) {
         wifiManager.startScan();
         wifiReceiver.onReceive(context, intent);
@@ -53,7 +70,10 @@ public class WifiHelper {
         return new RSSData(rssList);
     }
 
-    //WIFI broadcaster class
+    /**
+     * Inner class used to scan the network. Receives the rss signals.
+     * In the switch statement the access points which matter can be specified.
+     */
     public class WifiReceiver extends BroadcastReceiver {
 
         public void onReceive(Context c, Intent intent) {
