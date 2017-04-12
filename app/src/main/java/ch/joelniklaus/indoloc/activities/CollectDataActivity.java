@@ -1,9 +1,14 @@
 package ch.joelniklaus.indoloc.activities;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +22,7 @@ import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.R;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
+import ch.joelniklaus.indoloc.helpers.LocationHelper;
 import ch.joelniklaus.indoloc.helpers.SensorHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import ch.joelniklaus.indoloc.helpers.WifiHelper;
@@ -33,7 +39,16 @@ import weka.classifiers.meta.LogitBoost;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 
+
+// TODO display gps location
+
+// TODO Tag software when finished
+// TODO add Log everywhere
+// TODO cleanup Code
+// TODO add Exception handling
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
+
+    public static final int LOCATION_PERMISSION = 100;
 
     //private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
     private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue, predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue, predictMLPValue;
@@ -56,6 +71,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private final FileHelper fileHelper = new FileHelper(this);
     private final SensorHelper sensorHelper = new SensorHelper(this);
     private final WifiHelper wifiHelper = new WifiHelper(this);
+    private final LocationHelper locationHelper = new LocationHelper(this);
 
 
     @Override
@@ -66,6 +82,12 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         sensorHelper.setUp();
 
         wifiHelper.setUp();
+
+        locationHelper.setUp();
+        // Request Permission for GPS (dangerous permission)
+        alert("before");
+        showPermissionDialog();
+        alert("after");
 
         setUpTextViews();
 
@@ -80,6 +102,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         wifiHelper.registerListeners();
 
+        locationHelper.registerListeners();
+
         loadDataPoints();
     }
 
@@ -92,6 +116,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         wifiHelper.unRegisterListeners();
 
+        locationHelper.unRegisterListeners();
+
         saveDataPoints();
     }
 
@@ -100,6 +126,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         DataPoint previousDataPoint = null;
         if (currentDataPoint != null)
             previousDataPoint = SerializationUtils.clone(currentDataPoint);
+
 
         int[] magneticValues = sensorHelper.readSensorData(event);
 
@@ -116,6 +143,14 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         //String landmark = landmarkEditText.getText().toString();
         RSSData rssData = wifiHelper.readWifiData(getIntent());
         SensorData sensorData = new SensorData(magneticValues[0], magneticValues[1]);
+
+        Location location = locationHelper.readLocationData();
+        if (location != null)
+            alert("Longitude: " + location.getLongitude() + ", Latitude: " + location.getLatitude());
+        else {
+            alert("location is null");
+        }
+
         currentDataPoint = new DataPoint(room, sensorData, rssData);
 
         // Only collect different DataPoints
@@ -129,6 +164,21 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
+    }
+
+    private void showPermissionDialog() {
+        if (!checkPermission(this)) {
+            requestPermission();
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
+    }
+
+    public static boolean checkPermission(final Context context) {
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void setUpTextViews() {
@@ -395,5 +445,29 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
     public void alert(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "ch.joelniklaus.indoloc"
-        minSdkVersion 14
+        minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -34,6 +34,8 @@ android {
         sourceCompatibility 1.8
     }
     */
+
+    // included because of some previous problems
     packagingOptions {
         exclude 'weka/gui/**'
         exclude 'weka/classifiers/bayes/net/icons/**'
