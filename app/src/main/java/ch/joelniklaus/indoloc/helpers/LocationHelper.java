@@ -56,15 +56,15 @@ public class LocationHelper extends AbstractHelper {
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                Log.e(this.getClass().getName(), "onStatusChanged: " + provider);
+                Log.e(getTag(), "onStatusChanged: " + provider);
             }
 
             public void onProviderEnabled(String provider) {
-                Log.e(this.getClass().getName(), "onProviderEnabled: " + provider);
+                Log.e(getTag(), "onProviderEnabled: " + provider);
             }
 
             public void onProviderDisabled(String provider) {
-                Log.e(this.getClass().getName(), "onProviderDisabled: " + provider);
+                Log.e(getTag(), "onProviderDisabled: " + provider);
             }
         };
 

@@ -36,4 +36,8 @@ public abstract class AbstractHelper {
     protected void assertion(boolean condition) {
         if (BuildConfig.DEBUG && !condition) throw new AssertionError();
     }
+
+    protected String getTag() {
+        return this.getClass().getName();
+    }
 }

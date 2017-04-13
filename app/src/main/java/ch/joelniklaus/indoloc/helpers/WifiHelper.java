@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import static android.content.Context.WIFI_SERVICE;
  * <p>
  * Created by joelniklaus on 19.12.16.
  */
-public class WifiHelper {
+public class WifiHelper extends AbstractHelper {
 
     private final Context context;
 
@@ -67,6 +68,9 @@ public class WifiHelper {
         wifiManager.startScan();
         wifiReceiver.onReceive(context, intent);
         //System.out.println(Arrays.toString(rssList.toArray()));
+        if(rssList == null) {
+            Log.w(getTag(), "Rss list is null");
+        }
         return new RSSData(rssList);
     }
 

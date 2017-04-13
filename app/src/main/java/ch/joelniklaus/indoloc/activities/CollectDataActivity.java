@@ -74,6 +74,12 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private final LocationHelper locationHelper = new LocationHelper(this);
 
 
+    /**
+     * Is called when the user first starts the app. Sets up all the helpers,
+     * asks for the location permission, sets up the text views and the prediction.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +100,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         initPrediction();
     }
 
+    /**
+     * Is called when the user (re)opens the app. Registers the listeners and loads the saved data points.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -108,6 +117,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
 
+    /**
+     * Is called when the user leaves the app. Unregisters the listeners and saves the collected data points.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -121,6 +133,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         saveDataPoints();
     }
 
+    /**
+     * Is called when a value of a sensor changes. Records all the data and saves it to the list of collected data points.
+     *
+     * @param event
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         DataPoint previousDataPoint = null;
@@ -166,21 +183,59 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     public void onAccuracyChanged(Sensor sensor, int i) {
     }
 
+    /**
+     * Shows a dialog to the user which requests the location permission.
+     */
     private void showPermissionDialog() {
         if (!checkPermission(this)) {
             requestPermission();
         }
     }
 
+    /**
+     * Requests from the user the permission to access the location data.
+     */
     private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
     }
 
+    /**
+     * Checks if the location permission has been granted by the user.
+     *
+     * @param context
+     * @return
+     */
     public static boolean checkPermission(final Context context) {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    alert("Location Permission granted!");
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    alert("Location Permission denied!");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    /**
+     * Sets up all the text views whose content has to be modified by the app during run time. Called once at the beginning.
+     */
     private void setUpTextViews() {
         //scanText = (TextView) findViewById(R.id.txtScanV);
         //scanText.setText("Scan Number");
@@ -241,6 +296,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         //landmarkEditText = (EditText) findViewById(R.id.editLandmark);
     }
 
+    /**
+     * Updates the content of the text views with the current values.
+     */
     private void setTextViewValues() {
         SensorData sensorData = currentDataPoint.getSensorData();
         magneticYValue.setText(Integer.toString(sensorData.getMagneticY()));
@@ -278,6 +336,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         classifiers.add(new MultilayerPerceptron());
     }
 
+    /**
+     * Saves the until now collected data points to a temporary file. This is a security measure to aid data recovery if anything goes wrong.
+     */
     private void saveDataPoints() {
         if (!dataPoints.isEmpty()) {
             fileHelper.saveDataPoints(dataPoints);
@@ -285,10 +346,18 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
+    /**
+     * Loads the temporarily saved data points again. Belongs to data security system which prevents data loss.
+     */
     private void loadDataPoints() {
         dataPoints = fileHelper.loadDataPoints();
     }
 
+    /**
+     * Starts the data collecting mode. If the app already is in data collecting mode stops it.
+     *
+     * @param view
+     */
     public void startCollecting(View view) {
         String label = startButton.getText().toString();
         try {
@@ -309,6 +378,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
+    /**
+     * Saves the collected values as a data point to the list of data points.
+     */
     private void saveDataPoint() {
         if (registering) {
             scanValue.setText(Integer.toString(scanNumber++));
@@ -316,6 +388,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
+    /**
+     * Predicts the room resp. landmark based on the trained classifiers and the current data point.
+     */
     public void predict() {
         if (predicting) {
             try {
@@ -330,6 +405,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
     }
 
+    /**
+     * Starts the live testing mode. If the application already is in the live testing mode stops it.
+     *
+     * @param view
+     */
     public void startLiveTest(View view) {
         String label = liveTestButton.getText().toString();
         try {
@@ -414,16 +494,31 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
     */
 
+    /**
+     * Creates a train file (train.arff) from the collected data and saves it to the external storage.
+     *
+     * @param view
+     */
     public void createTrainFile(View view) {
         String filePath = "train.arff";
         createArffFile(filePath);
     }
 
+    /**
+     * Creates a test file (test.arff) from the collected data and saves it to the external storage.
+     *
+     * @param view
+     */
     public void createTestFile(View view) {
         String filePath = "test.arff";
         createArffFile(filePath);
     }
 
+    /**
+     * Creates an arff file from the list of collected data points and saves it to the external storage.
+     *
+     * @param filePath
+     */
     private void createArffFile(String filePath) {
         if (dataPoints.isEmpty()) {
             alert("Please collect some Datapoints first!");
@@ -448,26 +543,4 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_PERMISSION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
 }

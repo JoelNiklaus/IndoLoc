@@ -190,7 +190,7 @@ public class FileHelper extends AbstractHelper {
     }
 
     /**
-     * Loads the saved datapoints from the external storage of the phone (sd card) again.
+     * Loads the saved data points from the external storage of the phone (sd card) again.
      *
      * @return
      */
