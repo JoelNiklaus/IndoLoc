@@ -377,6 +377,14 @@ public class WekaHelper {
     }
 
 
+    /**
+     * Converts an Instances object containing an arbitrary amount of rows into one containing only one row.
+     * Namely the one containing the data point provided.
+     *
+     * @param instances
+     * @param dataPoint
+     * @return
+     */
     @NonNull
     public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {
         Instances newInstances = new Instances(instances);
@@ -395,6 +403,12 @@ public class WekaHelper {
         return newInstances;
     }
 
+    /**
+     * Builds an Instances object out of the data points list. This Instances object can later be written to e.g. an arff file
+     *
+     * @param dataPoints
+     * @return
+     */
     @NonNull
     public static Instances buildInstances(ArrayList<DataPoint> dataPoints) {
         ArrayList<Attribute> attributes = buildAttributes(dataPoints);
@@ -404,9 +418,19 @@ public class WekaHelper {
 
         addInstances(dataPoints, data);
 
+        // TODO testen!!
+        //return removeDuplicates(data);
+
         return data;
     }
 
+    /**
+     * Builds the body of the arff file later used as training or testing data.
+     * Basically this method converts every entry in the data points list to one row in the instances file.
+     *
+     * @param dataPoints
+     * @param data
+     */
     private static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) {
         double[] instanceValues;
         for (DataPoint dataPoint : dataPoints) {
@@ -445,6 +469,14 @@ public class WekaHelper {
         }
     }
 
+    /**
+     * Builds the header of the arff file later used as training or testing data.
+     * For each feature an attribute is added. The final arff file has as many columns as it has attributes.
+     * The class attribute is the first attribute.
+     *
+     * @param dataPoints
+     * @return
+     */
     @NonNull
     private static ArrayList<Attribute> buildAttributes(ArrayList<DataPoint> dataPoints) {
         ArrayList<String> rooms = getRooms(dataPoints);
@@ -478,6 +510,12 @@ public class WekaHelper {
         return attributes;
     }
 
+    /**
+     * Lists all the rooms (classes) contained in the collected dataset
+     *
+     * @param dataPoints
+     * @return
+     */
     @NonNull
     private static ArrayList<String> getRooms(ArrayList<DataPoint> dataPoints) {
         ArrayList<String> rooms = new ArrayList<>();

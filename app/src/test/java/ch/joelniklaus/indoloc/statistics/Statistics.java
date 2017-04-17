@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 /**
+ * Data object containing the ratings of all the tested classifiers.
+ * The list can be sorted by accuracy (default), train time and test time.
+ * <p>
  * Created by joelniklaus on 26.11.16.
  */
 

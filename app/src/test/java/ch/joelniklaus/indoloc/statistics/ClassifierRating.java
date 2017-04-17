@@ -5,6 +5,8 @@ import java.text.DecimalFormat;
 import weka.classifiers.Evaluation;
 
 /**
+ * Data object containing the train time, test time, accuracy and evaluation of a classifier.
+ *
  * Created by joelniklaus on 26.11.16.
  */
 

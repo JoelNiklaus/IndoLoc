@@ -40,10 +40,13 @@ import weka.filters.unsupervised.instance.RemovePercentage;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * (Provides infrastructure which can be used by most of the other tests.)
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
+
+// TODO klassenkommentar mit @author bei allen tests hinzufügen
+// TODO with and without überarbeiten
+// TODO tests vereinheitlichen
 public abstract class AbstractTest {
 
     protected final int NUMBER_OF_TEST_ROUNDS = 2;
@@ -338,6 +341,7 @@ public abstract class AbstractTest {
 
         withAndWithout(ratingsWith, ratingsWithout);
     }
+
 
     private void withAndWithout(Statistics ratingsWith, Statistics ratingsWithout) {
         // Test each Classifier

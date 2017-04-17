@@ -3,8 +3,14 @@ package ch.joelniklaus.indoloc.models;
 import java.io.Serializable;
 
 /**
+ * Data object containing all the measured sensor data of one data point.
+ * At the moment only the magnetic field is measured.
+ * <p>
  * Created by joelniklaus on 11.11.16.
  */
+
+// TODO alle möglichen anderen sensordaten hinzufügen. Nützt nicht so schadets nicht.
+// TODO light, inclination data
 public class SensorData implements Serializable {
 
     private int magneticY, magneticZ;

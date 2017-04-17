@@ -128,6 +128,9 @@ public class SensorHelper extends AbstractHelper {
         return output;
     }
 
+    // TODO only round to 0.2
+    // TODO sehen ob genauigkeit vom sensor ausgelesen werden kann.
+
     /**
      * Rounds the given number to a given number of decimal places.
      *

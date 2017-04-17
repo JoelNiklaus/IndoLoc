@@ -3,8 +3,12 @@ package ch.joelniklaus.indoloc.models;
 import java.io.Serializable;
 
 /**
+ * Data object containing all the information collected in one specific point.
+ * <p>
  * Created by joelniklaus on 06.11.16.
  */
+
+// TODO gps support
 public class DataPoint implements Serializable {
 
     private String room;
@@ -13,7 +17,7 @@ public class DataPoint implements Serializable {
 
     private SensorData sensorData;
 
-    public DataPoint(String room, SensorData sensorData, RSSData rssData)  {
+    public DataPoint(String room, SensorData sensorData, RSSData rssData) {
         this.room = room;
         this.sensorData = sensorData;
         this.rssData = rssData;

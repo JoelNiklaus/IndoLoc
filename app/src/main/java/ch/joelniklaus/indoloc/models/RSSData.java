@@ -6,7 +6,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+
+// CODING TIP: Better use a `List`. It is more generic and it also receives an `ArrayList`.
+
 /**
+ * Data object containing all the received signal strengths of the scanned access points of one data point.
+ * Upon initialization also computes the mean and the variances of the received values.
+ * <p>
  * Created by joelniklaus on 11.11.16.
  */
 public class RSSData implements Serializable {
@@ -64,22 +70,35 @@ public class RSSData implements Serializable {
     /**
      * Computes the RSS Value relative to the maximum value.
      */
-    private ArrayList<Integer> computeRelativeRSSValues(ArrayList<Integer> values) {
-        int max = Collections.max(values);
-        for (int i = 0; i < values.size(); i++) {
-            values.set(i, max - values.get(i));
+    private ArrayList<Integer> computeRelativeRSSValues(List<Integer> values) {
+        ArrayList<Integer> relatives = new ArrayList<>(values);
+        int max = Collections.max(relatives);
+        for (int i = 0; i < relatives.size(); i++) {
+            relatives.set(i, max - relatives.get(i));
         }
-        return values;
+        return relatives;
     }
 
-    private static ArrayList<Double> variances(double mean, ArrayList<Integer> values) {
+    /**
+     * Computes the variance of each value.
+     *
+     * @param mean
+     * @param values
+     * @return
+     */
+    private static ArrayList<Double> variances(double mean, List<Integer> values) {
         ArrayList<Double> variances = new ArrayList<>();
         for (int i = 0; i < values.size(); i++)
             variances.add(i, mean - values.get(i));
         return variances;
     }
 
-    // Better use a `List`. It is more generic and it also receives an `ArrayList`.
+    /**
+     * Computes the mean of a list of integers.
+     *
+     * @param list
+     * @return
+     */
     public static double mean(List<Integer> list) {
         // 'average' is undefined if there are no elements in the list.
         if (list == null || list.isEmpty())

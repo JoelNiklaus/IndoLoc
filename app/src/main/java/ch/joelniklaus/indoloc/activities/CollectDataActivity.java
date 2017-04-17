@@ -43,9 +43,15 @@ import weka.core.Instances;
 // TODO display gps location
 
 // TODO Tag software when finished
+
+// TODO Run Code inspection tools
 // TODO add Log everywhere
 // TODO cleanup Code
 // TODO add Exception handling
+
+/**
+ * The activity which controls the data collection and also live testing of several trained classifiers based on the collected data.
+ */
 public class CollectDataActivity extends AppCompatActivity implements SensorEventListener {
 
     public static final int LOCATION_PERMISSION = 100;
@@ -237,6 +243,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      * Sets up all the text views whose content has to be modified by the app during run time. Called once at the beginning.
      */
     private void setUpTextViews() {
+        // TODO automate label initialization
+
         //scanText = (TextView) findViewById(R.id.txtScanV);
         //scanText.setText("Scan Number");
         scanValue = (TextView) findViewById(R.id.txtScan);
@@ -280,6 +288,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         //magneticZText = (TextView) findViewById(R.id.txtmagneticZV);
         //magneticZText.setText("MagneticZ");
         magneticZValue = (TextView) findViewById(R.id.txtmagneticZ);
+
+        // TODO initialize labels with simple names of classifiers (getClass().getSimpleName())
 
         predictNBValue = (TextView) findViewById(R.id.txtPredictNB);
         predictKNNValue = (TextView) findViewById(R.id.txtPredictKNN);
