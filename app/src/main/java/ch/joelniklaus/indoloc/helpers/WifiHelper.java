@@ -68,7 +68,7 @@ public class WifiHelper extends AbstractHelper {
         wifiManager.startScan();
         wifiReceiver.onReceive(context, intent);
         //System.out.println(Arrays.toString(rssList.toArray()));
-        if(rssList == null) {
+        if (rssList == null) {
             Log.w(getTag(), "Rss list is null");
         }
         return new RSSData(rssList);
@@ -117,7 +117,7 @@ public class WifiHelper extends AbstractHelper {
                 }
  */
 
- /* CDS
+ /* CDS*/
                 switch (scanResult.SSID) {
                     case "ap1":
                         rssList.set(0, level);
@@ -144,7 +144,7 @@ public class WifiHelper extends AbstractHelper {
                         rssList.set(7, level);
                         break;
                 }
-*/
+
 
  /* Rickenbach
                 switch (scanResult.SSID) {
@@ -174,7 +174,7 @@ public class WifiHelper extends AbstractHelper {
                         break;
                 }
 */
-                 /* Exeter James Owen Court*/
+                 /* Exeter James Owen Court
                 switch (scanResult.BSSID) {
                     case "00:c0:49:d8:db:e6": // University of Exeter
                         rssList.set(0, level);
@@ -210,7 +210,8 @@ public class WifiHelper extends AbstractHelper {
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
                        */
-                }
+            }
+
 
                 /* Exeter University Campus
 
@@ -241,7 +242,7 @@ public class WifiHelper extends AbstractHelper {
                         break;
                 }
                 */
-            }
         }
     }
 }
+

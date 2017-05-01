@@ -8,19 +8,18 @@ import java.io.Serializable;
  * Created by joelniklaus on 06.11.16.
  */
 
-// TODO gps support
 public class DataPoint implements Serializable {
 
     private String room;
-
     private RSSData rssData;
-
     private SensorData sensorData;
+    private LocationData locationData;
 
-    public DataPoint(String room, SensorData sensorData, RSSData rssData) {
+    public DataPoint(String room, SensorData sensorData, RSSData rssData, LocationData locationData) {
         this.room = room;
         this.sensorData = sensorData;
         this.rssData = rssData;
+        this.locationData = locationData;
     }
 
     public String getRoom() {
@@ -47,6 +46,14 @@ public class DataPoint implements Serializable {
         this.sensorData = sensorData;
     }
 
+    public LocationData getLocationData() {
+        return locationData;
+    }
+
+    public void setLocation(LocationData locationData) {
+        this.locationData = locationData;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,17 +61,21 @@ public class DataPoint implements Serializable {
 
         DataPoint dataPoint = (DataPoint) o;
 
-        if (!room.equals(dataPoint.room)) return false;
-        if (!rssData.equals(dataPoint.rssData)) return false;
-        return sensorData.equals(dataPoint.sensorData);
+        if (room != null ? !room.equals(dataPoint.room) : dataPoint.room != null) return false;
+        if (rssData != null ? !rssData.equals(dataPoint.rssData) : dataPoint.rssData != null)
+            return false;
+        if (sensorData != null ? !sensorData.equals(dataPoint.sensorData) : dataPoint.sensorData != null)
+            return false;
+        return locationData != null ? locationData.equals(dataPoint.locationData) : dataPoint.locationData == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = room.hashCode();
-        result = 31 * result + rssData.hashCode();
-        result = 31 * result + sensorData.hashCode();
+        int result = room != null ? room.hashCode() : 0;
+        result = 31 * result + (rssData != null ? rssData.hashCode() : 0);
+        result = 31 * result + (sensorData != null ? sensorData.hashCode() : 0);
+        result = 31 * result + (locationData != null ? locationData.hashCode() : 0);
         return result;
     }
 
@@ -74,6 +85,7 @@ public class DataPoint implements Serializable {
                 "room='" + room + '\'' +
                 ", rssData=" + rssData +
                 ", sensorData=" + sensorData +
+                ", locationData=" + locationData +
                 '}';
     }
 }

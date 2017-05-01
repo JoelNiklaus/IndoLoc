@@ -15,6 +15,8 @@ import ch.joelniklaus.indoloc.models.SensorData;
  */
 public class SensorHelper extends AbstractHelper {
 
+    // TODO see if I can make it more generic by list of Sensors
+
     private SensorManager sensorManager;
     private Sensor ambientTemperatureSensor, lightSensor, pressureSensor, relativeHumiditySensor, magnetometer, accelerometer;
     private double ambientTemperature, light, pressure, relativeHumidity;
@@ -38,6 +40,30 @@ public class SensorHelper extends AbstractHelper {
     public void setUp() {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
 
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
+            ambientTemperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+            //(alert("Success: ambientTemperatureSensor");
+        } else
+            alert("Failure: No ambientTemperatureSensor available");
+
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT) != null) {
+            lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+            //(alert("Success: lightSensor");
+        } else
+            alert("Failure: No lightSensor available");
+
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
+            pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+            //(alert("Success: pressureSensor");
+        } else
+            alert("Failure: No pressureSensor available");
+
+        if (sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY) != null) {
+            relativeHumiditySensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+            //(alert("Success: relativeHumiditySensor");
+        } else
+            alert("Failure: No relativeHumiditySensor available");
+
         if (sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null) {
             magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
             //(alert("Success: magnetometer");
@@ -55,6 +81,14 @@ public class SensorHelper extends AbstractHelper {
      * Registers the listeners of the sensors and sets the delay time. Must be called before reading sensor data.
      */
     public void registerListeners() {
+        if (!sensorManager.registerListener((SensorEventListener) context, ambientTemperatureSensor, SensorManager.SENSOR_DELAY_NORMAL))
+            alert("Could not register listener for ambientTemperatureSensor");
+        if (!sensorManager.registerListener((SensorEventListener) context, lightSensor, SensorManager.SENSOR_DELAY_NORMAL))
+            alert("Could not register listener for lightSensor");
+        if (!sensorManager.registerListener((SensorEventListener) context, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL))
+            alert("Could not register listener for pressureSensor");
+        if (!sensorManager.registerListener((SensorEventListener) context, relativeHumiditySensor, SensorManager.SENSOR_DELAY_NORMAL))
+            alert("Could not register listener for relativeHumiditySensor");
         if (!sensorManager.registerListener((SensorEventListener) context, magnetometer, SensorManager.SENSOR_DELAY_NORMAL))
             alert("Could not register listener for magnetometer");
         if (!sensorManager.registerListener((SensorEventListener) context, accelerometer, SensorManager.SENSOR_DELAY_NORMAL))
@@ -77,6 +111,19 @@ public class SensorHelper extends AbstractHelper {
      * @return
      */
     public SensorData readSensorData(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+            ambientTemperature = event.values[0];
+        }
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+            light = event.values[0];
+        }
+        if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+            pressure = event.values[0];
+        }
+        if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
+            relativeHumidity = event.values[0];
+        }
+
         // used for low-pass-filter
         //float alpha = (float) 0.8;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -95,6 +142,9 @@ public class SensorHelper extends AbstractHelper {
             //magnetic[2] = alpha * magnetic[2] + (1 - alpha) * event.values[2];
         }
 
+
+        // TODO Maybe move these computations to SensorData class
+
         float[] R = new float[9];
         float[] I = new float[9];
         SensorManager.getRotationMatrix(R, I, gravity, magnetic);
@@ -103,7 +153,7 @@ public class SensorHelper extends AbstractHelper {
         magneticFingerprint[2] = R[6] * magnetic[0] + R[7] * magnetic[1] + R[8] * magnetic[2];
 
         // round the values to the sensors accuracy.
-        // Does not work like this because this reports the accuracy level the sensor is working wiht between -1 and 3.
+        // Does not work like this because this reports the accuracy level the sensor is working with between -1 and 3.
         // So not a decimal number
         //double accuracy = event.accuracy;
 
@@ -115,7 +165,7 @@ public class SensorHelper extends AbstractHelper {
         magneticFingerprint[2] = round(magneticFingerprint[2], accuracy); // z-value
 
 
-        return new SensorData(magneticFingerprint[1], magneticFingerprint[2]);
+        return new SensorData(ambientTemperature, light, pressure, relativeHumidity, gravity, magnetic, magneticFingerprint[1], magneticFingerprint[2]);
     }
 
     /**

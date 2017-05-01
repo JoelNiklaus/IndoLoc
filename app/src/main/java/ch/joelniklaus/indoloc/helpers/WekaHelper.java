@@ -442,9 +442,35 @@ public class WekaHelper {
             index++;
 
             // sensors
+            instanceValues[index] = dataPoint.getSensorData().getAmbientTemperature();
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getLight();
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getPressure();
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getRelativeHumidity();
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getGravity()[0];
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getGravity()[1];
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getGravity()[2];
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getMagnetic()[0];
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getMagnetic()[1];
+            index++;
+            instanceValues[index] = dataPoint.getSensorData().getMagnetic()[2];
+            index++;
             instanceValues[index] = dataPoint.getSensorData().getMagneticY();
             index++;
             instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
+            index++;
+
+            // gps location
+            instanceValues[index] = dataPoint.getLocationData().getLatitude();
+            index++;
+            instanceValues[index] = dataPoint.getLocationData().getLongitude();
             index++;
 
             // rss values
@@ -491,8 +517,22 @@ public class WekaHelper {
         //assertion(dataPoints.get(0).getRssData().getValues().size() == dataPoints.get(0).getRssData().getVariances().size());
 
         // sensors
+        attributes.add(new Attribute("ambientTemperature", Attribute.NUMERIC));
+        attributes.add(new Attribute("light", Attribute.NUMERIC));
+        attributes.add(new Attribute("pressure", Attribute.NUMERIC));
+        attributes.add(new Attribute("relativeHumidity", Attribute.NUMERIC));
+        attributes.add(new Attribute("gravityX", Attribute.NUMERIC));
+        attributes.add(new Attribute("gravityY", Attribute.NUMERIC));
+        attributes.add(new Attribute("gravityZ", Attribute.NUMERIC));
+        attributes.add(new Attribute("magneticX", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
+        attributes.add(new Attribute("magneticProcessedY", Attribute.NUMERIC));
+        attributes.add(new Attribute("magneticProcessedZ", Attribute.NUMERIC));
+
+        // gps location
+        attributes.add(new Attribute("latitude", Attribute.NUMERIC));
+        attributes.add(new Attribute("longitude", Attribute.NUMERIC));
 
         // rss values
         for (int i = 0; i < dataPoints.get(0).getRssData().getValues().size(); i++)

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import ch.joelniklaus.indoloc.activities.CollectDataActivity;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
@@ -149,6 +150,10 @@ public class FileHelper extends AbstractHelper {
         saver.writeBatch();
         */
 
+        if (!CollectDataActivity.checkStoragePermission(context)) {
+            alert("Please grant permission to write to external storage");
+            return;
+        }
         BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsolutePath()));
         writer.write(data.toString());
         writer.flush();
