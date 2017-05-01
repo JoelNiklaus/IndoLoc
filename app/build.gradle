@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "ch.joelniklaus.indoloc"
-        minSdkVersion 22
+        minSdkVersion 23
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -88,7 +88,9 @@ dependencies {
     compile group: 'nz.ac.waikato.cms.weka', name: 'decorate', version: '1.0.2' // depending on weka-dev-3.9.1-tests
 
 
-    // Only used in tests
+    /* Only used in tests */
+
+    // JUnit
     testCompile 'junit:junit:4.12'
 
     // HyperParameterSearch

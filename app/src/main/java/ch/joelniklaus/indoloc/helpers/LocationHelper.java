@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import ch.joelniklaus.indoloc.activities.CollectDataActivity;
+import ch.joelniklaus.indoloc.models.LocationData;
 
 
 /**
@@ -25,11 +26,9 @@ import ch.joelniklaus.indoloc.activities.CollectDataActivity;
 public class LocationHelper extends AbstractHelper {
 
     private LocationManager locationManager;
+    private LocationListener locationListener;
 
     protected Location location;
-
-    double latitude;
-    double longitude;
 
     public LocationHelper(Context context) {
         super(context);
@@ -46,13 +45,10 @@ public class LocationHelper extends AbstractHelper {
      * Registers the listener of the gps. Must be called before reading location data.
      */
     public void registerListeners() {
-        LocationListener locationListener = new LocationListener() {
-            private Location location;
-
+        locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
-                this.location = location;
-                alert("Provider: " + location.getProvider() + ", Accuracy: " + location.getAccuracy() + ", Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
+                //alert("Provider: " + location.getProvider() + ", Accuracy: " + location.getAccuracy() + ", Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude());
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -68,7 +64,7 @@ public class LocationHelper extends AbstractHelper {
             }
         };
 
-        if (!CollectDataActivity.checkPermission(context)) {
+        if (!CollectDataActivity.checkLocationPermission(context)) {
             alert("Please grant permission to access gps data");
             return;
         }
@@ -82,17 +78,18 @@ public class LocationHelper extends AbstractHelper {
      * Unregisters the listener of the gps. Should be called after reading location data.
      */
     public void unRegisterListeners() {
-        locationManager.removeUpdates((LocationListener) context);
+        locationManager.removeUpdates(locationListener);
     }
 
-    public Location readLocationData() {
-        if (!CollectDataActivity.checkPermission(context)) {
+    public LocationData readLocationData() {
+        if (!CollectDataActivity.checkLocationPermission(context)) {
             alert("Please grant permission to access gps data");
             return null;
         }
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
             showSettingsAlert();
-        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        return new LocationData(location.getLatitude(), location.getLongitude());
     }
 
 
