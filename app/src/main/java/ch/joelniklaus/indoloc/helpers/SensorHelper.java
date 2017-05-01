@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import ch.joelniklaus.indoloc.models.SensorData;
+
 /**
  * Reads and prepares sensor data.
  * <p>
@@ -74,7 +76,7 @@ public class SensorHelper extends AbstractHelper {
      * @param event
      * @return
      */
-    public int[] readSensorData(SensorEvent event) {
+    public SensorData readSensorData(SensorEvent event) {
         // used for low-pass-filter
         //float alpha = (float) 0.8;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -100,14 +102,20 @@ public class SensorHelper extends AbstractHelper {
         magneticFingerprint[1] = R[3] * magnetic[0] + R[4] * magnetic[1] + R[5] * magnetic[2];
         magneticFingerprint[2] = R[6] * magnetic[0] + R[7] * magnetic[1] + R[8] * magnetic[2];
 
-        // round to 0 decimal place because of sensor resolution
-        magneticFingerprint[0] = round(magneticFingerprint[0], 0); // x-value: should always be 0
-        assertion(magneticFingerprint[0] == 0.0);
-        magneticFingerprint[1] = round(magneticFingerprint[1], 0); // y-value
-        magneticFingerprint[2] = round(magneticFingerprint[2], 0); // z-value
+        // round the values to the sensors accuracy.
+        // Does not work like this because this reports the accuracy level the sensor is working wiht between -1 and 3.
+        // So not a decimal number
+        //double accuracy = event.accuracy;
 
-        int[] magneticField = {(int) magneticFingerprint[1], (int) magneticFingerprint[2]};
-        return magneticField;
+        // round to 0.2 to be sure because most sensors have an accuracy of around 0.15
+        double accuracy = 0.2;
+        magneticFingerprint[0] = round(magneticFingerprint[0], accuracy); // x-value: should always be 0
+        assertion(magneticFingerprint[0] == 0.0);
+        magneticFingerprint[1] = round(magneticFingerprint[1], accuracy); // y-value
+        magneticFingerprint[2] = round(magneticFingerprint[2], accuracy); // z-value
+
+
+        return new SensorData(magneticFingerprint[1], magneticFingerprint[2]);
     }
 
     /**
@@ -128,9 +136,6 @@ public class SensorHelper extends AbstractHelper {
         return output;
     }
 
-    // TODO only round to 0.2
-    // TODO sehen ob genauigkeit vom sensor ausgelesen werden kann.
-
     /**
      * Rounds the given number to a given number of decimal places.
      *
@@ -140,12 +145,25 @@ public class SensorHelper extends AbstractHelper {
      */
     public double round(double number, int decimalPlaces) {
         double factor = Math.pow(10, decimalPlaces);
-        return Math.round(factor * number) / factor;
+        return Math.round(number * factor) / factor;
         /*
         BigDecimal bd = new BigDecimal(number);
         bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
         return bd.doubleValue();
         */
+    }
+
+    /**
+     * Rounds the given number to a given nearest fraction.
+     * Eg. round(0.523, 0.2) => 0.6
+     *
+     * @param number
+     * @param fraction
+     * @return
+     */
+    public double round(double number, double fraction) {
+        double factor = 1 / fraction;
+        return Math.round(number * factor) / factor;
     }
 
 }
