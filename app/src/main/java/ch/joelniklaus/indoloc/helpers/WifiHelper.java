@@ -28,7 +28,7 @@ public class WifiHelper extends AbstractHelper {
     private WifiManager wifiManager;
 
     private ArrayList<Integer> rssList = new ArrayList<>(NUMBER_OF_ACCESS_POINTS);
-    public static final int NUMBER_OF_ACCESS_POINTS = 8;
+    public static final int NUMBER_OF_ACCESS_POINTS = 10;
 
     public WifiHelper(Context context) {
         this.context = context;
@@ -142,6 +142,12 @@ public class WifiHelper extends AbstractHelper {
                         break;
                     case "eduroam":
                         rssList.set(7, level);
+                        break;
+                    case "9":
+                        rssList.set(8, level);
+                        break;
+                    case "10":
+                        rssList.set(9, level);
                         break;
                 }
 

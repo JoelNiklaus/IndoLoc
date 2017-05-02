@@ -9,6 +9,7 @@ import java.util.Random;
 
 import ch.joelniklaus.indoloc.BuildConfig;
 import ch.joelniklaus.indoloc.models.DataPoint;
+import ch.joelniklaus.indoloc.models.SensorData;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -442,29 +443,34 @@ public class WekaHelper {
             index++;
 
             // sensors
-            instanceValues[index] = dataPoint.getSensorData().getAmbientTemperature();
+            SensorData sensorData = dataPoint.getSensorData();
+            instanceValues[index] = sensorData.getAmbientTemperature();
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getLight();
+            instanceValues[index] = sensorData.getLight();
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getPressure();
+            instanceValues[index] = sensorData.getPressure();
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getRelativeHumidity();
+            instanceValues[index] = sensorData.getRelativeHumidity();
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getGravity()[0];
+            instanceValues[index] = sensorData.getGravity()[0];
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getGravity()[1];
+            instanceValues[index] = sensorData.getGravity()[1];
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getGravity()[2];
+            instanceValues[index] = sensorData.getGravity()[2];
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getMagnetic()[0];
+            instanceValues[index] = sensorData.getMagnetic()[0];
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getMagnetic()[1];
+            instanceValues[index] = sensorData.getMagnetic()[1];
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getMagnetic()[2];
+            instanceValues[index] = sensorData.getMagnetic()[2];
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getMagneticY();
+            instanceValues[index] = sensorData.getGravityMagnitude();
             index++;
-            instanceValues[index] = dataPoint.getSensorData().getMagneticZ();
+            instanceValues[index] = sensorData.getGeomagneticMagnitude();
+            index++;
+            instanceValues[index] = sensorData.getMagneticYProcessedOld();
+            index++;
+            instanceValues[index] = sensorData.getMagneticZProcessedOld();
             index++;
 
             // gps location
@@ -474,8 +480,9 @@ public class WekaHelper {
             index++;
 
             // rss values
-            for (int i = 0; i < dataPoint.getRssData().getValues().size(); i++) {
-                instanceValues[index] = dataPoint.getRssData().getValues().get(i);
+            ArrayList<Integer> values = dataPoint.getRssData().getValues();
+            for (int i = 0; i < values.size(); i++) {
+                instanceValues[index] = values.get(i);
                 index++;
             }
 
@@ -527,6 +534,8 @@ public class WekaHelper {
         attributes.add(new Attribute("magneticX", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticY", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticZ", Attribute.NUMERIC));
+        attributes.add(new Attribute("gravityMagnitude", Attribute.NUMERIC));
+        attributes.add(new Attribute("geomagneticMagnitude", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticProcessedY", Attribute.NUMERIC));
         attributes.add(new Attribute("magneticProcessedZ", Attribute.NUMERIC));
 
