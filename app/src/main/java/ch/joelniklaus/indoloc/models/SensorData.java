@@ -1,5 +1,7 @@
 package ch.joelniklaus.indoloc.models;
 
+import android.hardware.SensorManager;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -10,71 +12,165 @@ import java.util.Arrays;
  * Created by joelniklaus on 11.11.16.
  */
 
-// TODO alle möglichen anderen sensordaten hinzufügen. Nützt nicht so schadets nicht.
-// TODO light, inclination data
 public class SensorData implements Serializable {
 
-    private double ambientTemperature, light, pressure, relativeHumidity, magneticY, magneticZ;
+    private float ambientTemperature, light, pressure, relativeHumidity;
+    private float geomagneticMagnitude, gravityMagnitude, magneticYProcessedOld, magneticZProcessedOld;
     private float[] gravity, magnetic;
+    private float[] rotation = new float[9], inclination = new float[9];
 
 
-    public SensorData(double ambientTemperature, double light, double pressure, double relativeHumidity, float[] gravity, float[] magnetic, double magneticY, double magneticZ) {
+    public SensorData(float ambientTemperature, float light, float pressure, float relativeHumidity, float[] gravity, float[] magnetic) {
         this.ambientTemperature = ambientTemperature;
         this.light = light;
         this.pressure = pressure;
         this.relativeHumidity = relativeHumidity;
         this.gravity = gravity;
         this.magnetic = magnetic;
-        this.magneticY = magneticY;
-        this.magneticZ = magneticZ;
+        if (!SensorManager.getRotationMatrix(rotation, inclination, gravity, magnetic))
+            System.out.println("Could not compute inclination and rotation matrices.");
+        computeMagneticProcessedOld(magnetic);
+        this.gravityMagnitude = rotation[6] * gravity[0] + rotation[7] * gravity[1] + rotation[8] * gravity[2]; // Z-Direction
+        float[] rotInc = multiplyMatrix(inclination, rotation);
+        this.geomagneticMagnitude = rotInc[3] * magnetic[0] + rotInc[4] * magnetic[1] + rotInc[5] * magnetic[2]; // Y-Direction (To Magnetic North Pole)
     }
 
-    public double getAmbientTemperature() {
+    private void computeMagneticProcessedOld(float[] magnetic) {
+        float[] magneticFingerprint = new float[3];
+        magneticFingerprint[0] = rotation[0] * magnetic[0] + rotation[1] * magnetic[1] + rotation[2] * magnetic[2];
+        magneticFingerprint[1] = rotation[3] * magnetic[0] + rotation[4] * magnetic[1] + rotation[5] * magnetic[2];
+        magneticFingerprint[2] = rotation[6] * magnetic[0] + rotation[7] * magnetic[1] + rotation[8] * magnetic[2];
+
+        // round the values to the sensors accuracy.
+        // Does not work like this because this reports the accuracy level the sensor is working with between -1 and 3.
+        // So not a decimal number
+        //float accuracy = event.accuracy;
+
+        // round to 0.2 to be sure because most sensors have an accuracy of around 0.15
+        // TODO Round as an analysing tool.
+       /*
+        float accuracy = 0.2f;
+        magneticFingerprint[0] = round(magneticFingerprint[0], accuracy); // x-value: should always be 0
+        //assertion(magneticFingerprint[0] == 0.0);
+        magneticFingerprint[1] = round(magneticFingerprint[1], accuracy); // y-value
+        magneticFingerprint[2] = round(magneticFingerprint[2], accuracy); // z-value
+        */
+        // set values
+        this.magneticYProcessedOld = magneticFingerprint[1];
+        this.magneticZProcessedOld = magneticFingerprint[2];
+    }
+
+    /**
+     * Helper method which multiplies the 3-by-3 Matrices rotation and inclination.
+     *
+     * @param first
+     * @param second
+     * @return
+     */
+    public float[] multiplyMatrix(float[] first, float[] second) {
+        float[] result = new float[9];
+
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 3; col++)
+                for (int i = 0; i < 3; i++)
+                    result[3 * row + col] += first[3 * row + i] * second[col + 3 * i];
+
+        return result;
+    }
+
+    /**
+     * Rounds the given number to a given number of decimal places.
+     *
+     * @param number
+     * @param decimalPlaces
+     * @return
+     */
+    public float round(float number, int decimalPlaces) {
+        float factor = (float) Math.pow(10, decimalPlaces);
+        return Math.round(number * factor) / factor;
+        /*
+        BigDecimal bd = new BigDecimal(number);
+        bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+        */
+    }
+
+    /**
+     * Rounds the given number to a given nearest fraction.
+     * Eg. round(0.523, 0.2) => 0.6
+     *
+     * @param number
+     * @param fraction
+     * @return
+     */
+    public float round(float number, float fraction) {
+        float factor = 1 / fraction;
+        return Math.round(number * factor) / factor;
+    }
+
+
+    public float getAmbientTemperature() {
         return ambientTemperature;
     }
 
-    public void setAmbientTemperature(double ambientTemperature) {
+    public void setAmbientTemperature(float ambientTemperature) {
         this.ambientTemperature = ambientTemperature;
     }
 
-    public double getLight() {
+    public float getLight() {
         return light;
     }
 
-    public void setLight(double light) {
+    public void setLight(float light) {
         this.light = light;
     }
 
-    public double getPressure() {
+    public float getPressure() {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
+    public void setPressure(float pressure) {
         this.pressure = pressure;
     }
 
-    public double getRelativeHumidity() {
+    public float getRelativeHumidity() {
         return relativeHumidity;
     }
 
-    public void setRelativeHumidity(double relativeHumidity) {
+    public void setRelativeHumidity(float relativeHumidity) {
         this.relativeHumidity = relativeHumidity;
     }
 
-    public double getMagneticY() {
-        return magneticY;
+    public float getGeomagneticMagnitude() {
+        return geomagneticMagnitude;
     }
 
-    public void setMagneticY(double magneticY) {
-        this.magneticY = magneticY;
+    public void setGeomagneticMagnitude(float geomagneticMagnitude) {
+        this.geomagneticMagnitude = geomagneticMagnitude;
     }
 
-    public double getMagneticZ() {
-        return magneticZ;
+    public float getGravityMagnitude() {
+        return gravityMagnitude;
     }
 
-    public void setMagneticZ(double magneticZ) {
-        this.magneticZ = magneticZ;
+    public void setGravityMagnitude(float gravityMagnitude) {
+        this.gravityMagnitude = gravityMagnitude;
+    }
+
+    public float getMagneticYProcessedOld() {
+        return magneticYProcessedOld;
+    }
+
+    public void setMagneticYProcessedOld(float magneticYProcessedOld) {
+        this.magneticYProcessedOld = magneticYProcessedOld;
+    }
+
+    public float getMagneticZProcessedOld() {
+        return magneticZProcessedOld;
+    }
+
+    public void setMagneticZProcessedOld(float magneticZProcessedOld) {
+        this.magneticZProcessedOld = magneticZProcessedOld;
     }
 
     public float[] getGravity() {
@@ -93,6 +189,22 @@ public class SensorData implements Serializable {
         this.magnetic = magnetic;
     }
 
+    public float[] getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float[] rotation) {
+        this.rotation = rotation;
+    }
+
+    public float[] getInclination() {
+        return inclination;
+    }
+
+    public void setInclination(float[] inclination) {
+        this.inclination = inclination;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -100,35 +212,35 @@ public class SensorData implements Serializable {
 
         SensorData that = (SensorData) o;
 
-        if (Double.compare(that.ambientTemperature, ambientTemperature) != 0) return false;
-        if (Double.compare(that.light, light) != 0) return false;
-        if (Double.compare(that.pressure, pressure) != 0) return false;
-        if (Double.compare(that.relativeHumidity, relativeHumidity) != 0) return false;
-        if (Double.compare(that.magneticY, magneticY) != 0) return false;
-        if (Double.compare(that.magneticZ, magneticZ) != 0) return false;
+        if (Float.compare(that.ambientTemperature, ambientTemperature) != 0) return false;
+        if (Float.compare(that.light, light) != 0) return false;
+        if (Float.compare(that.pressure, pressure) != 0) return false;
+        if (Float.compare(that.relativeHumidity, relativeHumidity) != 0) return false;
+        if (Float.compare(that.geomagneticMagnitude, geomagneticMagnitude) != 0) return false;
+        if (Float.compare(that.gravityMagnitude, gravityMagnitude) != 0) return false;
+        if (Float.compare(that.magneticYProcessedOld, magneticYProcessedOld) != 0) return false;
+        if (Float.compare(that.magneticZProcessedOld, magneticZProcessedOld) != 0) return false;
         if (!Arrays.equals(gravity, that.gravity)) return false;
-        return Arrays.equals(magnetic, that.magnetic);
+        if (!Arrays.equals(magnetic, that.magnetic)) return false;
+        if (!Arrays.equals(rotation, that.rotation)) return false;
+        return Arrays.equals(inclination, that.inclination);
 
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(ambientTemperature);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(light);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(pressure);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(relativeHumidity);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(magneticY);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(magneticZ);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = (ambientTemperature != +0.0f ? Float.floatToIntBits(ambientTemperature) : 0);
+        result = 31 * result + (light != +0.0f ? Float.floatToIntBits(light) : 0);
+        result = 31 * result + (pressure != +0.0f ? Float.floatToIntBits(pressure) : 0);
+        result = 31 * result + (relativeHumidity != +0.0f ? Float.floatToIntBits(relativeHumidity) : 0);
+        result = 31 * result + (geomagneticMagnitude != +0.0f ? Float.floatToIntBits(geomagneticMagnitude) : 0);
+        result = 31 * result + (gravityMagnitude != +0.0f ? Float.floatToIntBits(gravityMagnitude) : 0);
+        result = 31 * result + (magneticYProcessedOld != +0.0f ? Float.floatToIntBits(magneticYProcessedOld) : 0);
+        result = 31 * result + (magneticZProcessedOld != +0.0f ? Float.floatToIntBits(magneticZProcessedOld) : 0);
         result = 31 * result + Arrays.hashCode(gravity);
         result = 31 * result + Arrays.hashCode(magnetic);
+        result = 31 * result + Arrays.hashCode(rotation);
+        result = 31 * result + Arrays.hashCode(inclination);
         return result;
     }
 
@@ -139,10 +251,14 @@ public class SensorData implements Serializable {
                 ", light=" + light +
                 ", pressure=" + pressure +
                 ", relativeHumidity=" + relativeHumidity +
-                ", magneticY=" + magneticY +
-                ", magneticZ=" + magneticZ +
+                ", geomagneticMagnitude=" + geomagneticMagnitude +
+                ", gravityMagnitude=" + gravityMagnitude +
+                ", magneticYProcessedOld=" + magneticYProcessedOld +
+                ", magneticZProcessedOld=" + magneticZProcessedOld +
                 ", gravity=" + Arrays.toString(gravity) +
                 ", magnetic=" + Arrays.toString(magnetic) +
+                ", rotation=" + Arrays.toString(rotation) +
+                ", inclination=" + Arrays.toString(inclination) +
                 '}';
     }
 }

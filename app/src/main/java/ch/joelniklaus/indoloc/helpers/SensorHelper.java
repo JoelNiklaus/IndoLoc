@@ -14,15 +14,12 @@ import ch.joelniklaus.indoloc.models.SensorData;
  * Created by joelniklaus on 13.11.16.
  */
 public class SensorHelper extends AbstractHelper {
-
-    // TODO see if I can make it more generic by list of Sensors
-
+    
     private SensorManager sensorManager;
     private Sensor ambientTemperatureSensor, lightSensor, pressureSensor, relativeHumiditySensor, magnetometer, accelerometer;
-    private double ambientTemperature, light, pressure, relativeHumidity;
+    private float ambientTemperature, light, pressure, relativeHumidity;
     private float[] magnetic = new float[3];
     private float[] gravity = new float[3];
-    private final double[] magneticFingerprint = new double[3];
 
 
     /**
@@ -112,16 +109,16 @@ public class SensorHelper extends AbstractHelper {
      */
     public SensorData readSensorData(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-            ambientTemperature = event.values[0];
+            ambientTemperature = lowPass(event.values[0], ambientTemperature);
         }
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-            light = event.values[0];
+            light = lowPass(event.values[0], light);
         }
         if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
-            pressure = event.values[0];
+            pressure = lowPass(event.values[0], pressure);
         }
         if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
-            relativeHumidity = event.values[0];
+            relativeHumidity = lowPass(event.values[0], relativeHumidity);
         }
 
         // used for low-pass-filter
@@ -142,30 +139,7 @@ public class SensorHelper extends AbstractHelper {
             //magnetic[2] = alpha * magnetic[2] + (1 - alpha) * event.values[2];
         }
 
-
-        // TODO Maybe move these computations to SensorData class
-
-        float[] R = new float[9];
-        float[] I = new float[9];
-        SensorManager.getRotationMatrix(R, I, gravity, magnetic);
-        magneticFingerprint[0] = R[0] * magnetic[0] + R[1] * magnetic[1] + R[2] * magnetic[2];
-        magneticFingerprint[1] = R[3] * magnetic[0] + R[4] * magnetic[1] + R[5] * magnetic[2];
-        magneticFingerprint[2] = R[6] * magnetic[0] + R[7] * magnetic[1] + R[8] * magnetic[2];
-
-        // round the values to the sensors accuracy.
-        // Does not work like this because this reports the accuracy level the sensor is working with between -1 and 3.
-        // So not a decimal number
-        //double accuracy = event.accuracy;
-
-        // round to 0.2 to be sure because most sensors have an accuracy of around 0.15
-        double accuracy = 0.2;
-        magneticFingerprint[0] = round(magneticFingerprint[0], accuracy); // x-value: should always be 0
-        assertion(magneticFingerprint[0] == 0.0);
-        magneticFingerprint[1] = round(magneticFingerprint[1], accuracy); // y-value
-        magneticFingerprint[2] = round(magneticFingerprint[2], accuracy); // z-value
-
-
-        return new SensorData(ambientTemperature, light, pressure, relativeHumidity, gravity, magnetic, magneticFingerprint[1], magneticFingerprint[2]);
+        return new SensorData(ambientTemperature, light, pressure, relativeHumidity, gravity, magnetic);
     }
 
     /**
@@ -178,42 +152,22 @@ public class SensorHelper extends AbstractHelper {
      * @return
      */
     protected float[] lowPass(float[] input, float[] output) {
-        float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
         if (output == null) return input;
         for (int i = 0; i < input.length; i++) {
-            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+            output[i] = lowPass(input[i], output[i]);
         }
         return output;
     }
 
     /**
-     * Rounds the given number to a given number of decimal places.
+     * Low pass filter for a given input value.
      *
-     * @param number
-     * @param decimalPlaces
+     * @param input
+     * @param output
      * @return
      */
-    public double round(double number, int decimalPlaces) {
-        double factor = Math.pow(10, decimalPlaces);
-        return Math.round(number * factor) / factor;
-        /*
-        BigDecimal bd = new BigDecimal(number);
-        bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
-        return bd.doubleValue();
-        */
+    protected float lowPass(float input, float output) {
+        float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
+        return output + ALPHA * (input - output);
     }
-
-    /**
-     * Rounds the given number to a given nearest fraction.
-     * Eg. round(0.523, 0.2) => 0.6
-     *
-     * @param number
-     * @param fraction
-     * @return
-     */
-    public double round(double number, double fraction) {
-        double factor = 1 / fraction;
-        return Math.round(number * factor) / factor;
-    }
-
 }
