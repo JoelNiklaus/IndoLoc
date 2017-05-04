@@ -137,16 +137,16 @@ public class WifiHelper extends AbstractHelper {
                     case "APL1":
                         rssList.set(5, level);
                         break;
-                    case "public-unibe":
+                    case "APL3":
                         rssList.set(6, level);
                         break;
-                    case "eduroam":
+                    case "Swisscom_Auto_Login":
                         rssList.set(7, level);
                         break;
-                    case "9":
+                    case "eduroam":
                         rssList.set(8, level);
                         break;
-                    case "10":
+                    case "public-unibe":
                         rssList.set(9, level);
                         break;
                 }
