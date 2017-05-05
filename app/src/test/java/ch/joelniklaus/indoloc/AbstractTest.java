@@ -5,12 +5,16 @@ import android.support.annotation.NonNull;
 import org.junit.Before;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import ch.joelniklaus.indoloc.exceptions.DifferentHeaderException;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import ch.joelniklaus.indoloc.statistics.ClassifierRating;
-import ch.joelniklaus.indoloc.statistics.Statistics;
+import ch.joelniklaus.indoloc.statistics.AccuracyRating;
+import ch.joelniklaus.indoloc.statistics.AccuracyStatistics;
+import ch.joelniklaus.indoloc.statistics.PerformanceRating;
+import ch.joelniklaus.indoloc.statistics.PerformanceStatistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.BayesNet;
@@ -35,21 +39,14 @@ import weka.classifiers.meta.Vote;
 import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
-import weka.filters.unsupervised.instance.RemovePercentage;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * (Provides infrastructure which can be used by most of the other tests.)
- *
  */
 
 // TODO klassenkommentar mit @author bei allen tests hinzufügen
-// TODO with and without überarbeiten
-// TODO tests vereinheitlichen
 public abstract class AbstractTest {
 
-    protected final int NUMBER_OF_TEST_ROUNDS = 2;
 
     protected final Timer timer = new Timer();
 
@@ -69,32 +66,27 @@ public abstract class AbstractTest {
 
         addClassifiers();
 
-        /*
-        data = fileHelper.loadArff(filePath);
-
-        int numInstances = data.numInstances();
-        RemovePercentage remove = wekaHelper.randomizeAndGetRemovePercentage(data);
-        train = wekaHelper.getTrainingSet(data, remove);
-        test = wekaHelper.getTestingSet(data, remove);
-
-        assertEquals(data.numInstances(), numInstances);
-
-        // Train Classifiers
-        for (int i = 0; i < classifiers.size(); i++)
-            trainedClassifiers.add(i, wekaHelper.train(train, classifiers.get(i)));
-            */
+        // conduct one first experiment without any changes as a starting point for comparison
+        System.out.println("===== Starting Experiment =====");
+        conductPerformanceExperiment(train, test);
     }
 
     protected abstract void fetchData() throws Exception;
 
     protected void loadFiles(String trainPath, String testPath) throws Exception {
         train = loadFile(trainPath);
-        train = WekaHelper.removeDuplicates(train);
         test = loadFile(testPath);
     }
 
     protected Instances loadFile(String fileName) throws Exception {
-        return fileHelper.loadArff(getFilePath(fileName));
+        Instances data = fileHelper.loadArff(getFilePath(fileName));
+        //data = WekaHelper.removeDuplicates(data);
+        // prepare data
+        int seed = 0;       // the seed for randomizing the data
+        // randomize data
+        data = randomizeData(data, seed);
+
+        return data;
     }
 
     public String getFilePath(String fileName) {
@@ -108,11 +100,11 @@ public abstract class AbstractTest {
 
         // Logistic Regression
         Logistic logistic = new Logistic();
-        classifiers.add(logistic);
+        //classifiers.add(logistic);
 
         // Support Vector Machine
         Classifier libSVM = new LibSVM();
-        classifiers.add(libSVM);
+        //classifiers.add(libSVM);
 
         // Sequential Minimal Optimization
         Classifier smo = new SMO();
@@ -126,7 +118,7 @@ public abstract class AbstractTest {
         String[] iBkOptions = {"-K", "4", "-I"};
         IBk iBk = new IBk();
         iBk.setOptions(iBkOptions);
-        classifiers.add(iBk);
+        //classifiers.add(iBk);
 
         // KStar (Auto Weka Suggestion 5 min) -> very slow in testing
         String[] kStarOptions = {"-B", "59", "-M", "m"};
@@ -137,7 +129,7 @@ public abstract class AbstractTest {
         // LWL (Auto Weka Suggestion 30 min)
         String[] lwlOptions = {"-K", "30", "-A", "weka.core.neighboursearch.LinearNNSearch", "-W", "weka.classifiers.bayes.NaiveBayes", "--"};
         LWL lwl = new LWL();
-        lwl.setOptions(lwlOptions);
+        //lwl.setOptions(lwlOptions);
 
         /* ==============================
         Bayes
@@ -158,7 +150,7 @@ public abstract class AbstractTest {
 
         // J48 Tree
         J48 j48 = new J48();
-        classifiers.add(j48);
+        //classifiers.add(j48);
 
         // Random Forest (Auto Weka Suggestion 10 min)
         String[] randomForestOptions = {"-I", "10", "-K", "0", "-depth", "0"};
@@ -172,15 +164,15 @@ public abstract class AbstractTest {
 
         // Logistic Boosting
         LogitBoost logitBoost = new LogitBoost();
-        classifiers.add(logitBoost);
+        //classifiers.add(logitBoost);
 
         // Adaptive Boosting
         AdaBoostM1 adaBoostM1 = new AdaBoostM1();
-        classifiers.add(adaBoostM1);
+        //classifiers.add(adaBoostM1);
 
         // Bagging
         Bagging bagging = new Bagging();
-        classifiers.add(bagging);
+        //classifiers.add(bagging);
 
         // Voting -> very bad
         Vote vote = new Vote();
@@ -210,7 +202,7 @@ public abstract class AbstractTest {
         RandomSubSpace randomSubSpace = new RandomSubSpace();
         String[] options = {"-I", "14", "-P", "0.620718940248979", "-S", "1", "-W", "weka.classifiers.trees.RandomForest", "--", "-I", "2", "-K", "11", "-depth", "0"};
         randomSubSpace.setOptions(options);
-        classifiers.add(randomSubSpace);
+        //classifiers.add(randomSubSpace);
 
         /* ==============================
         Neural Network
@@ -223,48 +215,105 @@ public abstract class AbstractTest {
         mlp.setMomentum(0.2);
         mlp.setTrainingTime(50);
         mlp.setHiddenLayers("3");
-        classifiers.add(mlp);
+        //classifiers.add(mlp);
+    }
+
+    protected AccuracyStatistics conductAccuracyExperiment(Instances train, Instances test, boolean crossValidation) throws Exception {
+        Instances data = null;
+        if (crossValidation) {
+            try {
+                data = WekaHelper.mergeInstances(train, test);
+            } catch (DifferentHeaderException e) {
+                e.printStackTrace();
+            }
+        }
+
+        AccuracyStatistics accuracyStatistics = new AccuracyStatistics();
+
+        for (Classifier classifier : classifiers) {
+            System.out.println("Evaluating " + classifier.getClass().getSimpleName());
+            Evaluation evaluation = null;
+            if (crossValidation)
+                evaluation = crossValidateClassifier(classifier, data);
+            else
+                evaluation = trainTestClassifier(classifier, train, test);
+
+            accuracyStatistics.add(new AccuracyRating(classifier.getClass().getSimpleName(), evaluation));
+        }
+
+        System.out.println(train.numInstances() + " training instances, " + test.numInstances() + " testing instances");
+        accuracyStatistics.printStatistics();
+
+        return accuracyStatistics;
+    }
+
+    protected Evaluation trainTestClassifier(Classifier classifier, Instances train, Instances test) throws Exception {
+        classifier.buildClassifier(train);
+        Evaluation evaluation = new Evaluation(train);
+        evaluation.evaluateModel(classifier, test);
+
+        return evaluation;
+    }
+
+    protected Evaluation crossValidateClassifier(Classifier classifier, Instances data) throws Exception {
+        int folds = 10;     // the number of folds to generate, >=2
+
+        if (data.classAttribute().isNominal())
+            data.stratify(folds);
+
+        // perform cross-validation
+        Evaluation evaluation = new Evaluation(data);
+        for (int n = 0; n < folds; n++) {
+            Instances train = data.trainCV(folds, n);
+            Instances test = data.testCV(folds, n);
+
+            // build and evaluate classifier
+            classifier.buildClassifier(train);
+            evaluation.evaluateModel(classifier, test);
+        }
+
+        /*
+        // output evaluation
+        System.out.println();
+        System.out.println("=== Setup ===");
+        System.out.println();
+        System.out.println(evaluation.toSummaryString("=== " + folds + "-fold Cross-validation ===", false));
+        */
+
+        return evaluation;
     }
 
 
-    protected Statistics sortAndPrintStatistics(Statistics statistics) {
+    @NonNull
+    protected Instances randomizeData(Instances data, int seed) {
+        Random rand = new Random(seed);
+        Instances randData = new Instances(data);
+        randData.randomize(rand);
+
+        return randData;
+    }
+
+
+    protected PerformanceStatistics conductPerformanceExperiment(Instances train, Instances test) throws Exception {
+        PerformanceStatistics statistics = new PerformanceStatistics();
+        for (Classifier classifier : classifiers) {
+            PerformanceRating performanceRating = testClassifierPerformance(classifier, train, test);
+            statistics.add(performanceRating);
+        }
+
+        System.out.println(train.numInstances() + " training instances, " + test.numInstances() + " testing instances");
         statistics.sortByAccuracy();
+        statistics.printStatistics();
 
-        statistics.print();
-
-        return statistics;
-    }
-
-    protected ClassifierRating printClassifierRating(ClassifierRating classifierRating) throws Exception {
-        System.out.println(classifierRating.toString() + "\n");
-        System.out.println(classifierRating.getEvaluation().toMatrixString());
-        return classifierRating;
-    }
-
-    protected Statistics getClassifierRatings(Instances data) throws Exception {
-        Statistics statistics = new Statistics();
-        for (Classifier classifier : classifiers) {
-            ClassifierRating classifierRating = testClassifier(classifier, data);
-            statistics.add(classifierRating);
-        }
-        return statistics;
-    }
-
-    protected Statistics getClassifierRatings(Instances train, Instances test) throws Exception {
-        Statistics statistics = new Statistics();
-        for (Classifier classifier : classifiers) {
-            ClassifierRating classifierRating = testClassifier(classifier, train, test);
-            statistics.add(classifierRating);
-        }
         return statistics;
     }
 
     @NonNull
-    protected ClassifierRating testClassifier(Classifier classifier, Instances train, Instances test) throws Exception {
-        double correctPctSum = 0;
+    protected PerformanceRating testClassifierPerformance(Classifier classifier, Instances train, Instances test) throws Exception {
+        final int NUMBER_OF_TEST_ROUNDS = 5;
+
         long trainTimeSum = 0;
         long testTimeSum = 0;
-        Evaluation lastEvaluation = null;
         for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
             // Training
             timer.reset();
@@ -277,93 +326,14 @@ public abstract class AbstractTest {
             WekaHelper.test(test, classifier);
             // mean testing time per instance
             testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
-
-            // Evaluation
-            lastEvaluation = WekaHelper.evaluate(train, test, classifier);
-            correctPctSum += lastEvaluation.pctCorrect();
         }
+        // Evaluation
+        Evaluation evaluation = WekaHelper.evaluate(train, test, classifier);
+
         double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
         double meanTestTime = testTimeSum / NUMBER_OF_TEST_ROUNDS;
-        double meanAccuracy = correctPctSum / NUMBER_OF_TEST_ROUNDS;
 
-        return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime, lastEvaluation);
+        return new PerformanceRating(classifier.getClass().getSimpleName(), evaluation.pctCorrect(), meanTestTime, meanTrainTime);
     }
-
-    @NonNull
-    protected ClassifierRating testClassifier(Classifier classifier, Instances data) throws Exception {
-        double correctPctSum = 0;
-        long trainTimeSum = 0;
-        long testTimeSum = 0;
-        Evaluation lastEvaluation = null;
-        for (int round = 0; round < NUMBER_OF_TEST_ROUNDS; round++) {
-            // Generate new Training and Testing set
-            RemovePercentage remove = WekaHelper.randomizeAndGetRemovePercentage(data);
-            Instances train = WekaHelper.getTrainingSet(data, remove);
-            Instances test = WekaHelper.getTestingSet(data, remove);
-
-            // Training
-            timer.reset();
-            classifier = WekaHelper.train(train, classifier);
-            // mean training time per instance
-            trainTimeSum += timer.timeElapsedMicroS() / train.numInstances();
-
-            // Testing
-            timer.reset();
-            WekaHelper.test(test, classifier);
-            // mean testing time per instance
-            testTimeSum += timer.timeElapsedMicroS() / test.numInstances();
-
-            // Evaluation
-            lastEvaluation = WekaHelper.evaluate(train, test, classifier);
-            correctPctSum += lastEvaluation.pctCorrect();
-        }
-        double meanTrainTime = trainTimeSum / NUMBER_OF_TEST_ROUNDS;
-        double meanTestTime = testTimeSum / NUMBER_OF_TEST_ROUNDS;
-        double meanAccuracy = correctPctSum / NUMBER_OF_TEST_ROUNDS;
-
-        return new ClassifierRating(classifier.getClass().getSimpleName(), meanAccuracy, meanTestTime, meanTrainTime, lastEvaluation);
-    }
-
-    protected void testWithAndWithout(Instances withTrain, Instances withTest, Instances withoutTrain, Instances withoutTest) throws Exception {
-        // With
-        Statistics ratingsWith = getClassifierRatings(withTrain, withTest);
-        // Without
-        Statistics ratingsWithout = getClassifierRatings(withoutTrain, withoutTest);
-
-        withAndWithout(ratingsWith, ratingsWithout);
-    }
-
-    protected void testWithAndWithout(Instances with, Instances without) throws Exception {
-        // With
-        Statistics ratingsWith = getClassifierRatings(with);
-        // Without
-        Statistics ratingsWithout = getClassifierRatings(without);
-
-        withAndWithout(ratingsWith, ratingsWithout);
-    }
-
-
-    private void withAndWithout(Statistics ratingsWith, Statistics ratingsWithout) {
-        // Test each Classifier
-        for (int i = 0; i < ratingsWith.getList().size(); i++) {
-            ClassifierRating ratingWith = ratingsWith.get(i);
-            ClassifierRating ratingWithout = ratingsWithout.get(i);
-            assertTrue(ratingWith.getName().equals(ratingWithout.getName()));
-            //assertTrue(ratingWith.getMeanAccuracy() > ratingWithout.getMeanAccuracy());
-        }
-
-        System.out.println("\n\n==========\nWith:\n==========");
-        ratingsWith = sortAndPrintStatistics(ratingsWith);
-
-        System.out.println("\n\n==========\nWithout:\n==========");
-        ratingsWithout = sortAndPrintStatistics(ratingsWithout);
-
-        // Test sorted ClassifierRatings
-        ClassifierRating bestWith = ratingsWith.get(0);
-        ClassifierRating bestWithout = ratingsWithout.get(0);
-        assertTrue(bestWith.getMeanAccuracy() > bestWithout.getMeanAccuracy());
-        //assertTrue(bestWith.getName().equals(bestWithout.getName()));
-    }
-
 
 }

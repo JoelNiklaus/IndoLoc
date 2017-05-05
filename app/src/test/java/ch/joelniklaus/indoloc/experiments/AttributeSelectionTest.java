@@ -24,7 +24,7 @@ public class AttributeSelectionTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception {
-        loadFiles("experiments/experiment_new", "experiments/experiment_new");
+        loadFiles("final_cds/train_room", "final_cds/test_room");
     }
 
     /**
@@ -50,7 +50,7 @@ public class AttributeSelectionTest extends AbstractTest {
      * uses the filter
      */
     @Test
-    public  void useFilter() throws Exception {
+    public void useFilter() throws Exception {
         System.out.println("\n2. Filter");
         weka.filters.supervised.attribute.AttributeSelection filter = new weka.filters.supervised.attribute.AttributeSelection();
         CfsSubsetEval eval = new CfsSubsetEval();
@@ -67,7 +67,7 @@ public class AttributeSelectionTest extends AbstractTest {
      * uses the low level approach
      */
     @Test
-    public  void useLowLevel() throws Exception {
+    public void useLowLevel() throws Exception {
         System.out.println("\n3. Low-level");
         AttributeSelection attsel = new AttributeSelection();
         CfsSubsetEval eval = new CfsSubsetEval();

@@ -1,17 +1,9 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
-import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import ch.joelniklaus.indoloc.statistics.Statistics;
 import weka.classifiers.Classifier;
-import weka.classifiers.lazy.IBk;
-import weka.classifiers.meta.Dagging;
-import weka.classifiers.meta.LogitBoost;
-import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -30,9 +22,10 @@ public class LandmarkTest extends AbstractTest {
         loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
     }
 
+    /*
     @Test
     public void testPredictNormally() throws Exception {
-        Statistics statistics = getClassifierRatings(train, test);
+        AccuracyStatistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
 
         WekaHelper.removeAllOfSpecificClass(train, 4);
@@ -60,6 +53,7 @@ public class LandmarkTest extends AbstractTest {
 
         System.out.println(relevantClassesAccuracy(test, randomForest));
     }
+    */
 
     /**
      * Calculates the accuracy of only the relevant classes. So the undefined area is not so important.

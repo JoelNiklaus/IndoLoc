@@ -1,16 +1,6 @@
 package ch.joelniklaus.indoloc.experiments;
 
-import org.junit.Test;
-
 import ch.joelniklaus.indoloc.AbstractTest;
-import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import ch.joelniklaus.indoloc.statistics.ClassifierRating;
-import ch.joelniklaus.indoloc.statistics.Statistics;
-import weka.classifiers.functions.MultilayerPerceptron;
-import weka.classifiers.meta.Dagging;
-import weka.classifiers.meta.Vote;
-import weka.core.Instances;
-import weka.filters.unsupervised.instance.RemovePercentage;
 
 
 /**
@@ -25,6 +15,7 @@ public class ClassifierTest extends AbstractTest {
         loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
     }
 
+    /*
     @Test
     public void testVoting() throws Exception {
         Vote vote = new Vote();
@@ -43,8 +34,8 @@ public class ClassifierTest extends AbstractTest {
         };
         vote.setOptions(options);
 
-        ClassifierRating classifierRating = testClassifier(vote, train, test);
-        printClassifierRating(classifierRating);
+        PerformanceRating performanceRating = testClassifier(vote, train, test);
+        printClassifierRating(performanceRating);
     }
 
     @Test
@@ -65,8 +56,8 @@ public class ClassifierTest extends AbstractTest {
         };
         vote.setOptions(options);
 
-        ClassifierRating classifierRating = testClassifier(vote, train, test);
-        printClassifierRating(classifierRating);
+        PerformanceRating performanceRating = testClassifier(vote, train, test);
+        printClassifierRating(performanceRating);
     }
 
     @Test
@@ -87,8 +78,8 @@ public class ClassifierTest extends AbstractTest {
         };
         dagging.setOptions(options);
 
-        ClassifierRating classifierRating = testClassifier(mlp, train, test);
-        printClassifierRating(classifierRating);
+        PerformanceRating performanceRating = testClassifier(mlp, train, test);
+        printClassifierRating(performanceRating);
     }
 
     @Test
@@ -115,19 +106,19 @@ public class ClassifierTest extends AbstractTest {
         Instances train = data.trainCV(2, 0);
         Instances test = data.testCV(2, 0);
 
-        Statistics statistics = getClassifierRatings(train, test);
+        AccuracyStatistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
     }
 
     @Test
     public void testTrainAndTestSetOfSameCollection() throws Exception {
-        Statistics statistics = getClassifierRatings(train);
+        AccuracyStatistics statistics = getClassifierRatings(train);
         sortAndPrintStatistics(statistics);
     }
 
     @Test
     public void testDifferentlyCollectedTrainAndTestSet() throws Exception {
-        Statistics statistics = getClassifierRatings(train, test);
+        AccuracyStatistics statistics = getClassifierRatings(train, test);
         sortAndPrintStatistics(statistics);
     }
 
@@ -135,16 +126,9 @@ public class ClassifierTest extends AbstractTest {
     public void testDifferentlyCollectedTrainAndTestSetMerged() throws Exception {
         Instances data = merge(train, test);
 
-        Statistics statistics = getClassifierRatings(data);
+        AccuracyStatistics statistics = getClassifierRatings(data);
         sortAndPrintStatistics(statistics);
     }
 
-    private Instances merge(Instances first, Instances second) throws Exception {
-        if (!first.equalHeaders(second))
-            throw new Exception("The two instances have different headers");
-
-        for (int i = 0; i < second.numInstances(); i++)
-            first.add(second.instance(i));
-        return first;
-    }
+*/
 }

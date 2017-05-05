@@ -68,7 +68,6 @@ public class CrossValidationTest extends AbstractTest {
     }
 
 
-
     /**
      * Performs a single run of cross-validation. Outputs the Confusion matrices
      * for each single fold.
@@ -222,13 +221,15 @@ public class CrossValidationTest extends AbstractTest {
     }
 
     @NonNull
-    private Instances randomizeData(Instances data, int folds, int seed) {
+    protected Instances randomizeData(Instances data, int folds, int seed) {
         Random rand = new Random(seed);
         Instances randData = new Instances(data);
         randData.randomize(rand);
-        if (randData.classAttribute().isNominal())
-            randData.stratify(folds);
+        if (data.classAttribute().isNominal())
+            data.stratify(folds);
+
         return randData;
     }
+
 
 }

@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import ch.joelniklaus.indoloc.statistics.ClassifierRating;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.meta.AutoWEKAClassifier;
 import weka.classifiers.meta.CVParameterSelection;
@@ -46,10 +45,12 @@ public class HyperParameterSearchTest extends AbstractTest {
         //mlp.setValidationSetSize(20);
         mlp.setHiddenLayers("3");
 
-        ClassifierRating classifierRating = testClassifier(mlp, train, test);
-        System.out.println(classifierRating.toString());
-        System.out.println(classifierRating.getEvaluation().toMatrixString());
+        /*
+        PerformanceRating performanceRating = testClassifier(mlp, train, test);
+        System.out.println(performanceRating.toString());
+        System.out.println(performanceRating.getEvaluation().toMatrixString());
         System.out.println(Arrays.toString(mlp.getOptions()));
+        */
     }
 
     /**
