@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import ch.joelniklaus.indoloc.BuildConfig;
+import ch.joelniklaus.indoloc.exceptions.DifferentHeaderException;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import ch.joelniklaus.indoloc.models.SensorData;
 import weka.classifiers.Classifier;
@@ -21,6 +22,7 @@ import weka.classifiers.meta.LogitBoost;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
+import weka.core.Instance;
 import weka.core.InstanceComparator;
 import weka.core.Instances;
 import weka.filters.Filter;
@@ -52,6 +54,25 @@ public class WekaHelper {
 
     public WekaHelper(Context context) {
         this.context = context;
+    }
+
+    /**
+     * Merges together two instances
+     *
+     * @param first
+     * @param second
+     * @return
+     * @throws Exception
+     */
+    public static Instances mergeInstances(Instances first, Instances second) throws DifferentHeaderException {
+        if (!first.equalHeaders(second))
+            throw new DifferentHeaderException("The two instances have different headers.");
+
+        Instances merged = new Instances(first);
+
+        for (Instance instance : second)
+            merged.add(instance);
+        return merged;
     }
 
     /**
@@ -294,6 +315,34 @@ public class WekaHelper {
     }
 
     /**
+     * Rounds the all the attribute values of a given data set to the nearest fraction given.
+     *
+     * @param data
+     * @param attributeIndex
+     * @param fraction
+     * @return
+     */
+    public static Instances roundAttribute(Instances data, int attributeIndex, double fraction) {
+        Instances newData = new Instances(data);
+        for (Instance instance : newData)
+            instance.setValue(attributeIndex, round(instance.value(attributeIndex), fraction));
+        return newData;
+    }
+
+    /**
+     * Rounds the given number to a given nearest fraction.
+     * Eg. round(0.523, 0.2) => 0.6
+     *
+     * @param number
+     * @param fraction
+     * @return
+     */
+    public static double round(double number, double fraction) {
+        double factor = 1 / fraction;
+        return Math.round(number * factor) / factor;
+    }
+
+    /**
      * @param data
      * @param classValuesIndices the class values to be removed
      * @return
@@ -349,7 +398,7 @@ public class WekaHelper {
     public static Instances getEveryNThInstance(Instances data, int n) {
         Instances newData = new Instances(data);
         newData.delete();
-        for (int i = data.numInstances() - 1; i >= 0; i -= n)
+        for (int i = 0; i < data.numInstances(); i += n)
             newData.add(data.instance(i));
         assertion(newData.numInstances() * n - n <= data.numInstances());
         return newData;

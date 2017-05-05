@@ -1,24 +1,15 @@
 package ch.joelniklaus.indoloc.unitTests;
 
-import android.support.annotation.NonNull;
-
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.DifferentHeaderException;
+import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
-import ch.joelniklaus.indoloc.models.DataPoint;
-import ch.joelniklaus.indoloc.models.RSSData;
-import ch.joelniklaus.indoloc.models.SensorData;
-import weka.classifiers.trees.RandomForest;
 import weka.core.Instance;
 import weka.core.InstanceComparator;
 import weka.core.Instances;
-import weka.filters.supervised.instance.StratifiedRemoveFolds;
-import weka.filters.unsupervised.instance.RemovePercentage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,15 +21,162 @@ import static org.junit.Assert.assertTrue;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class WekaHelperUnitTest extends AbstractTest {
+public class WekaHelperUnitTest {
 
     private final InstanceComparator comparator = new InstanceComparator();
+    private FileHelper fileHelper = new FileHelper();
 
-    @Override
-    protected void fetchData() throws Exception {
-        loadFiles("exeter/train_small", "exeter/test_small");
+    protected Instances loadFile(String fileName) throws Exception {
+        return fileHelper.loadArff(AbstractTest.ASSETS_PATH + fileName + AbstractTest.ENDING);
     }
 
+    @Test
+    public void testMergeInstances() throws Exception, DifferentHeaderException {
+        Instances train = loadFile("unittests/train_landmark");
+        Instances test = loadFile("unittests/test_landmark");
+
+        Instances data = WekaHelper.mergeInstances(train, test);
+
+        for (Instance instance : train)
+            assertTrue(instancesContainInstance(data, instance));
+        for (Instance instance : test)
+            assertTrue(instancesContainInstance(data, instance));
+    }
+
+    @Test(expected = DifferentHeaderException.class)
+    public void testMergeInstancesException() throws Exception, DifferentHeaderException {
+        Instances train = loadFile("final_cds/train_landmark");
+        Instances test = loadFile("final_cds/test_room");
+
+        Instances data = WekaHelper.mergeInstances(train, test);
+    }
+
+    @Test
+    public void testRemoveOneAttribute() throws Exception {
+        Instances data = loadFile("unittests/duplicates");
+
+        // Remove third Attribute (index 2)
+        Instances newData = WekaHelper.removeAttributes(data, "3");
+        assertNotEquals(data, newData);
+        assertEquals(data.numAttributes(), newData.numAttributes() + 1);
+        assertTrue(data.attribute(0).equals(newData.attribute(0)));
+        assertTrue(data.attribute(1).equals(newData.attribute(1)));
+        assertFalse(data.attribute(2).equals(newData.attribute(2)));
+        assertFalse(data.attribute(3).equals(newData.attribute(3)));
+        assertTrue(data.attribute(3).equals(newData.attribute(2)));
+        assertTrue(data.attribute(4).equals(newData.attribute(3)));
+
+        assertEquals(data.numInstances(), newData.numInstances());
+        assertEquals(data.instance(0).numValues(), newData.instance(0).numValues() + 1);
+
+        System.out.println(data);
+        System.out.println(newData);
+    }
+
+    @Test
+    public void testRemoveMultipleAttributes() throws Exception {
+        Instances data = loadFile("unittests/duplicates");
+
+        // Remove third to fifth Attribute (indices 2 to 4)
+        Instances newData = WekaHelper.removeAttributes(data, "3-5");
+        assertNotEquals(data, newData);
+        assertTrue(data.numAttributes() == newData.numAttributes() + 3);
+        assertTrue(data.attribute(0).equals(newData.attribute(0)));
+        assertTrue(data.attribute(1).equals(newData.attribute(1)));
+        assertFalse(data.attribute(2).equals(newData.attribute(2)));
+        assertFalse(data.attribute(3).equals(newData.attribute(3)));
+        assertFalse(data.attribute(4).equals(newData.attribute(4)));
+        assertTrue(data.attribute(5).equals(newData.attribute(2)));
+        assertTrue(data.attribute(6).equals(newData.attribute(3)));
+
+        assertEquals(data.numInstances(), newData.numInstances());
+        assertEquals(data.instance(0).numValues(), newData.instance(0).numValues() + 3);
+    }
+
+    @Test
+    public void testRemoveDuplicates() throws Exception {
+        Instances data = loadFile("unittests/duplicates");
+
+        Instances oldData = SerializationUtils.clone(data);
+        assertEquals(9, data.numInstances());
+        data = WekaHelper.removeDuplicates(data);
+        assertEquals(9, oldData.numInstances());
+        assertEquals(4, data.numInstances());
+
+        assertTrue(oldData.numAttributes() == data.numAttributes());
+
+        System.out.println(data.toString());
+        System.out.println(oldData.toString());
+
+        // Every instance of the small set should be in the large set
+        for (int i = 0; i < data.numInstances(); i++)
+            assertTrue(instancesContainInstance(oldData, data.instance(i)));
+    }
+
+    @Test
+    public void testRoundAttribute() throws Exception {
+        Instances data = loadFile("unittests/train_landmark");
+
+        // round light to 0.1
+        Instances newData = WekaHelper.roundAttribute(data, 2, 0.1);
+
+        for (int i = 0; i < data.size(); i++)
+            assertTrue(data.instance(i).value(2) - newData.instance(i).value(2) != 0);
+        System.out.println(newData);
+    }
+
+    @Test
+    public void testGetEvery2NdInstance() throws Exception {
+        Instances train = loadFile("unittests/train_landmark");
+
+        // reduce training set by 50%
+        Instances newTrain = WekaHelper.getEveryNThInstance(train, 2);
+
+        System.out.println(train);
+        System.out.println(newTrain);
+
+        for (int i = 0; i < train.size(); i += 2)
+            assertTrue(instancesContainInstance(newTrain, train.instance(i)));
+        for (int i = 1; i < train.size(); i += 2)
+            assertFalse(instancesContainInstance(newTrain, train.instance(i)));
+    }
+
+    @Test
+    public void testGetEvery3RdInstance() throws Exception {
+        Instances train = loadFile("unittests/train_landmark");
+
+        // reduce training set by 66%
+        Instances newTrain = WekaHelper.getEveryNThInstance(train, 3);
+
+        System.out.println(train);
+        System.out.println(newTrain);
+
+        for (int i = 0; i < train.size(); i += 3)
+            assertTrue(instancesContainInstance(newTrain, train.instance(i)));
+        for (int i = 1; i < train.size(); i += 3)
+            assertFalse(instancesContainInstance(newTrain, train.instance(i)));
+    }
+
+    @Test
+    public void testGetEvery4ThInstance() throws Exception {
+        Instances train = loadFile("unittests/train_landmark");
+
+        // reduce training set by 75%
+        Instances newTrain = WekaHelper.getEveryNThInstance(train, 4);
+
+        System.out.println(train);
+        System.out.println(newTrain);
+
+        for (int i = 0; i < train.size(); i += 4)
+            assertTrue(instancesContainInstance(newTrain, train.instance(i)));
+        for (int i = 1; i < train.size(); i += 4)
+            assertFalse(instancesContainInstance(newTrain, train.instance(i)));
+    }
+
+
+
+
+    /*
     @Test
     public void testGetTestingSetAndGetTrainingSetStratifiedRemoveFolds() throws Exception {
         Instances data = loadFile("unittests/remove");
@@ -104,58 +242,7 @@ public class WekaHelperUnitTest extends AbstractTest {
         testInstancesEqual(expected, actual);
     }
 
-    @Test
-    public void testRemoveOneAttribute() throws Exception {
-        Instances data = loadFile("unittests/duplicates");
 
-        // Remove third Attribute (index 2)
-        Instances newData = WekaHelper.removeAttributes(data, "3");
-        assertNotEquals(data, newData);
-        assertTrue(data.numAttributes() == newData.numAttributes() + 1);
-        assertTrue(data.attribute(0).equals(newData.attribute(0)));
-        assertTrue(data.attribute(1).equals(newData.attribute(1)));
-        assertFalse(data.attribute(2).equals(newData.attribute(2)));
-        assertFalse(data.attribute(3).equals(newData.attribute(3)));
-        assertTrue(data.attribute(3).equals(newData.attribute(2)));
-        assertTrue(data.attribute(4).equals(newData.attribute(3)));
-    }
-
-    @Test
-    public void testRemoveMultipleAttributes() throws Exception {
-        Instances data = loadFile("unittests/duplicates");
-
-        // Remove third to fifth Attribute (indices 2 to 4)
-        Instances newData = WekaHelper.removeAttributes(data, "3-5");
-        assertNotEquals(data, newData);
-        assertTrue(data.numAttributes() == newData.numAttributes() + 3);
-        assertTrue(data.attribute(0).equals(newData.attribute(0)));
-        assertTrue(data.attribute(1).equals(newData.attribute(1)));
-        assertFalse(data.attribute(2).equals(newData.attribute(2)));
-        assertFalse(data.attribute(3).equals(newData.attribute(3)));
-        assertFalse(data.attribute(4).equals(newData.attribute(4)));
-        assertTrue(data.attribute(5).equals(newData.attribute(2)));
-        assertTrue(data.attribute(6).equals(newData.attribute(3)));
-    }
-
-    @Test
-    public void testRemoveDuplicates() throws Exception {
-        Instances data = loadFile("unittests/duplicates");
-
-        Instances oldData = SerializationUtils.clone(data);
-        assertEquals(9, data.numInstances());
-        data = WekaHelper.removeDuplicates(data);
-        assertEquals(9, oldData.numInstances());
-        assertEquals(4, data.numInstances());
-
-        assertTrue(oldData.numAttributes() == data.numAttributes());
-
-        System.out.println(data.toString());
-        System.out.println(oldData.toString());
-
-        // Every instance of the small set should be in the large set
-        for (int i = 0; i < data.numInstances(); i++)
-            assertTrue(dataContainsInstance(oldData, data.instance(i)));
-    }
 
     @Test
     public void testRemoveAllOfSpecificClass() throws Exception {
@@ -291,11 +378,23 @@ public class WekaHelperUnitTest extends AbstractTest {
         addDataPoint(dataPoints, "gang", new SensorData(11, -39), rss5);
         return dataPoints;
     }
+    */
+
+    private boolean instancesContainInstance(Instances haystick, Instance needle) {
+        for (Instance instance : haystick)
+            if (areInstancesEqual(instance, needle))
+                return true;
+        return false;
+    }
+
+    private boolean areInstancesEqual(Instance first, Instance second) {
+        return comparator.compare(first, second) == 0;
+    }
 
     private void testInstancesEqual(Instances expected, Instances actual) {
         assertTrue(actual.equalHeaders(expected));
         for (int i = 0; i < expected.numInstances(); i++)
-            assertTrue(comparator.compare(expected.instance(i), actual.instance(i)) == 0);
+            assertTrue(areInstancesEqual(expected.instance(i), actual.instance(i)));
     }
 
 }
