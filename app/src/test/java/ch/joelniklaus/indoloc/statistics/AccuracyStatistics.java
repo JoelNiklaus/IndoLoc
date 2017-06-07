@@ -37,6 +37,8 @@ public class AccuracyStatistics {
                 e.printStackTrace();
             }
         }
+
+        System.out.println("\n\n");
     }
 
     public void add(AccuracyRating accuracyRating) {

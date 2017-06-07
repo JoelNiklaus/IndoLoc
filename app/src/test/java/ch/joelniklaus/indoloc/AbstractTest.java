@@ -18,7 +18,6 @@ import ch.joelniklaus.indoloc.statistics.PerformanceRating;
 import ch.joelniklaus.indoloc.statistics.PerformanceStatistics;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.BayesNet;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.functions.LibSVM;
 import weka.classifiers.functions.Logistic;
@@ -69,7 +68,9 @@ public abstract class AbstractTest {
 
         // conduct one first experiment without any changes as a starting point for comparison
         System.out.println("===== Starting Experiment =====");
-        conductPerformanceExperiment(train, test, false);
+        PerformanceStatistics performanceStatistics = conductPerformanceExperiment(train, test, false);
+        System.out.println(train.numInstances() + " training instances, " + test.numInstances() + " testing instances");
+        performanceStatistics.printStatisticsCSV();
     }
 
     /**
@@ -172,10 +173,6 @@ public abstract class AbstractTest {
         // Naive Bayes
         NaiveBayes naiveBayes = new NaiveBayes();
         classifiers.add(naiveBayes);
-
-        // Bayes Net (descretizing data)
-        BayesNet bayesNet = new BayesNet();
-        //classifiers.add(bayesNet);
 
 
         /* ==============================

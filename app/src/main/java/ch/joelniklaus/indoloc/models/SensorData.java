@@ -101,32 +101,6 @@ public class SensorData implements Serializable {
         return result;
     }
 
-    /**
-     * Rounds the given number to a given number of decimal places.
-     *
-     * @param number
-     * @param decimalPlaces
-     * @return
-     */
-    public float round(float number, int decimalPlaces) {
-        float factor = (float) Math.pow(10, decimalPlaces);
-        return Math.round(number * factor) / factor;
-    }
-
-    /**
-     * Rounds the given number to a given nearest fraction.
-     * Eg. round(0.523, 0.2) => 0.6
-     *
-     * @param number
-     * @param fraction
-     * @return
-     */
-    public float round(float number, float fraction) {
-        float factor = 1 / fraction;
-        return Math.round(number * factor) / factor;
-    }
-
-
     public float getAmbientTemperature() {
         return ambientTemperature;
     }

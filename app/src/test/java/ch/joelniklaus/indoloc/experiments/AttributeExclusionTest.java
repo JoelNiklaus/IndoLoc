@@ -46,7 +46,7 @@ public class AttributeExclusionTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception, CouldNotLoadArffException {
-        loadFiles("final_cds/train_room", "final_cds/test_room");
+        loadFiles("thesis/cds/room/train", "thesis/cds/room/test");
     }
 
     @Test

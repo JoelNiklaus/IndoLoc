@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import ch.joelniklaus.indoloc.helpers.AbstractHelper;
+
 /**
  * Data object containing the ratings of all the tested classifiers.
  * The list can be sorted by accuracy (default), train time and test time.
@@ -38,6 +40,8 @@ public class PerformanceStatistics {
             System.out.format(format, performanceRating.getName(), performanceRating.getAccuracy(), performanceRating.getMeanTestTime(), performanceRating.getMeanTrainTime());
             System.out.format("%n+---------------------------+----------+-----------+------------+%n");
         }
+
+        System.out.println("\n\n");
     }
 
     /**
@@ -47,7 +51,12 @@ public class PerformanceStatistics {
         System.out.println("Classifier Name, Accuracy, Test Time, Train Time");
 
         for (PerformanceRating performanceRating : ratings)
-            System.out.println(performanceRating.getName() + ", " + performanceRating.getAccuracy() + ", " + performanceRating.getMeanTestTime() + ", " + performanceRating.getMeanTrainTime());
+            System.out.println(performanceRating.getName()
+                    + ", " + AbstractHelper.round((float) performanceRating.getAccuracy(), 2)
+                    + ", " + performanceRating.getMeanTestTime()
+                    + ", " + performanceRating.getMeanTrainTime());
+
+        System.out.println("\n\n");
     }
 
 
