@@ -2,7 +2,6 @@ package ch.joelniklaus.indoloc.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,18 +18,10 @@ public class RSSData implements Serializable {
 
     private ArrayList<Integer> values;
 
-    private double mean;
+    //private double mean;
 
-    private ArrayList<Double> variances;
+    //private ArrayList<Double> variances;
 
-    public static RSSData createRSSDataTest(ArrayList<Integer> values) {
-        RSSData rssData = new RSSData();
-        rssData.setValues(values);
-        double mean = mean(values);
-        rssData.setMean(mean);
-        rssData.setVariances(variances(mean, values));
-        return rssData;
-    }
 
     public RSSData() {
 
@@ -51,6 +42,7 @@ public class RSSData implements Serializable {
         this.values = values;
     }
 
+    /*
     public double getMean() {
         return mean;
     }
@@ -66,6 +58,7 @@ public class RSSData implements Serializable {
     public void setVariances(ArrayList<Double> variances) {
         this.variances = variances;
     }
+    */
 
     /**
      * Computes the RSS Value relative to the maximum value.
@@ -132,9 +125,7 @@ public class RSSData implements Serializable {
     @Override
     public String toString() {
         return "RSSData{" +
-                "values=" + Arrays.toString(values.toArray()) +
-                ", mean=" + mean +
-                ", variances=" + Arrays.toString(variances.toArray()) +
+                "values=" + values +
                 '}';
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import ch.joelniklaus.indoloc.R;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.core.Instances;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void evaluateModel(View view) {
         try {
-            Instances data = fileHelper.loadArffFromAssets("data.arff");
+            Instances data = fileHelper.loadArffFromAssets("eigerstrasse/data.arff");
 
             wekaHelper.evaluateForView(data);
         } catch (Exception e) {
@@ -46,12 +47,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
+        } catch (CouldNotLoadArffException e) {
+            e.printStackTrace();
         }
     }
 
     public void trainModel(View view) {
         try {
-            Instances data = fileHelper.loadArffFromAssets("data.arff");
+            Instances data = fileHelper.loadArffFromAssets("eigerstrasse/data.arff");
 
             Instances test = wekaHelper.trainForView(data);
 

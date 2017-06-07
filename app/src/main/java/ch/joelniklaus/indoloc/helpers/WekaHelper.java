@@ -9,7 +9,9 @@ import java.util.Random;
 
 import ch.joelniklaus.indoloc.BuildConfig;
 import ch.joelniklaus.indoloc.exceptions.DifferentHeaderException;
+import ch.joelniklaus.indoloc.exceptions.InvalidRoomException;
 import ch.joelniklaus.indoloc.models.DataPoint;
+import ch.joelniklaus.indoloc.models.LocationData;
 import ch.joelniklaus.indoloc.models.SensorData;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -436,7 +438,7 @@ public class WekaHelper {
      * @return
      */
     @NonNull
-    public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) {
+    public static Instances convertToSingleInstance(Instances instances, DataPoint dataPoint) throws InvalidRoomException {
         Instances newInstances = new Instances(instances);
         newInstances.delete();
         newInstances.setClassIndex(0);
@@ -466,7 +468,11 @@ public class WekaHelper {
         Instances data = new Instances("TestInstances", attributes, dataPoints.size());
         data.setClassIndex(0);
 
-        addInstances(dataPoints, data);
+        try {
+            addInstances(dataPoints, data);
+        } catch (InvalidRoomException e) {
+            e.printStackTrace();
+        }
 
         // TODO testen!!
         //return removeDuplicates(data);
@@ -481,59 +487,80 @@ public class WekaHelper {
      * @param dataPoints
      * @param data
      */
-    private static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) {
+    private static void addInstances(ArrayList<DataPoint> dataPoints, Instances data) throws InvalidRoomException {
         double[] instanceValues;
         for (DataPoint dataPoint : dataPoints) {
-            instanceValues = new double[data.numAttributes()];
-            int index = 0;
+            instanceValues = getInstanceValues(data, dataPoint);
+            data.add(new DenseInstance(1.0, instanceValues));
+        }
+    }
 
-            // room
-            instanceValues[index] = data.classAttribute().indexOfValue(dataPoint.getRoom());
-            index++;
+    /**
+     * Copies all the information from the datapoint to the instance values array and returns it.
+     *
+     * @param data
+     * @param dataPoint
+     * @return
+     * @throws InvalidRoomException
+     */
+    private static double[] getInstanceValues(Instances data, DataPoint dataPoint) throws InvalidRoomException {
+        double[] instanceValues;
+        instanceValues = new double[data.numAttributes()];
+        int index = 0;
 
-            // sensors
-            SensorData sensorData = dataPoint.getSensorData();
-            instanceValues[index] = sensorData.getAmbientTemperature();
-            index++;
-            instanceValues[index] = sensorData.getLight();
-            index++;
-            instanceValues[index] = sensorData.getPressure();
-            index++;
-            instanceValues[index] = sensorData.getRelativeHumidity();
-            index++;
-            instanceValues[index] = sensorData.getGravity()[0];
-            index++;
-            instanceValues[index] = sensorData.getGravity()[1];
-            index++;
-            instanceValues[index] = sensorData.getGravity()[2];
-            index++;
-            instanceValues[index] = sensorData.getMagnetic()[0];
-            index++;
-            instanceValues[index] = sensorData.getMagnetic()[1];
-            index++;
-            instanceValues[index] = sensorData.getMagnetic()[2];
-            index++;
-            instanceValues[index] = sensorData.getGravityMagnitude();
-            index++;
-            instanceValues[index] = sensorData.getGeomagneticMagnitude();
-            index++;
-            instanceValues[index] = sensorData.getMagneticYProcessedOld();
-            index++;
-            instanceValues[index] = sensorData.getMagneticZProcessedOld();
-            index++;
+        // room
+        int indexOfValue = data.classAttribute().indexOfValue(dataPoint.getRoom());
+        if (indexOfValue == -1)
+            throw new InvalidRoomException("Invalid Room name");
 
-            // gps location
-            instanceValues[index] = dataPoint.getLocationData().getLatitude();
-            index++;
-            instanceValues[index] = dataPoint.getLocationData().getLongitude();
-            index++;
+        instanceValues[index] = indexOfValue;
+        index++;
 
-            // rss values
-            ArrayList<Integer> values = dataPoint.getRssData().getValues();
-            for (int i = 0; i < values.size(); i++) {
-                instanceValues[index] = values.get(i);
-                index++;
-            }
+
+        // sensors
+        SensorData sensorData = dataPoint.getSensorData();
+        instanceValues[index] = sensorData.getAmbientTemperature();
+        index++;
+        instanceValues[index] = sensorData.getLight();
+        index++;
+        instanceValues[index] = sensorData.getPressure();
+        index++;
+        instanceValues[index] = sensorData.getRelativeHumidity();
+        index++;
+        instanceValues[index] = sensorData.getGravity()[0];
+        index++;
+        instanceValues[index] = sensorData.getGravity()[1];
+        index++;
+        instanceValues[index] = sensorData.getGravity()[2];
+        index++;
+        instanceValues[index] = sensorData.getMagnetic()[0];
+        index++;
+        instanceValues[index] = sensorData.getMagnetic()[1];
+        index++;
+        instanceValues[index] = sensorData.getMagnetic()[2];
+        index++;
+        instanceValues[index] = sensorData.getGravityMagnitude();
+        index++;
+        instanceValues[index] = sensorData.getGeomagneticMagnitude();
+        index++;
+        instanceValues[index] = sensorData.getMagneticYProcessedOld();
+        index++;
+        instanceValues[index] = sensorData.getMagneticZProcessedOld();
+        index++;
+
+        // gps location
+        LocationData locationData = dataPoint.getLocationData();
+        instanceValues[index] = locationData.getLatitude();
+        index++;
+        instanceValues[index] = locationData.getLongitude();
+        index++;
+
+        // rss values
+        ArrayList<Integer> values = dataPoint.getRssData().getValues();
+        for (int i = 0; i < values.size(); i++) {
+            instanceValues[index] = values.get(i);
+            index++;
+        }
 
             /*
             // rss mean
@@ -546,9 +573,7 @@ public class WekaHelper {
                 index++;
             }
             */
-
-            data.add(new DenseInstance(1.0, instanceValues));
-        }
+        return instanceValues;
     }
 
     /**

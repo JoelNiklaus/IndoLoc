@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.activities.CollectDataActivity;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.models.DataPoint;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
@@ -19,7 +20,7 @@ import weka.core.converters.ConverterUtils;
 
 /**
  * Reads and writes data to files on the phone.
- *
+ * <p>
  * Created by joelniklaus on 19.11.16.
  */
 public class FileHelper extends AbstractHelper {
@@ -90,7 +91,7 @@ public class FileHelper extends AbstractHelper {
      * @return
      * @throws Exception
      */
-    public Instances loadArffFromExternalStorage(String fileName) throws Exception {
+    public Instances loadArffFromExternalStorage(String fileName) throws CouldNotLoadArffException {
         if (isExternalStorageReadable()) {
             File file = new File(EXTERNAL_DIRECTORY, fileName);
             return loadArff(file.getAbsolutePath());
@@ -118,7 +119,7 @@ public class FileHelper extends AbstractHelper {
      * @return
      * @throws Exception
      */
-    public Instances loadArffFromInternalStorage(String fileName) throws Exception {
+    public Instances loadArffFromInternalStorage(String fileName) throws CouldNotLoadArffException {
         return loadArff(context.getFilesDir() + "/" + fileName);
     }
 
@@ -167,10 +168,15 @@ public class FileHelper extends AbstractHelper {
      * @return
      * @throws Exception
      */
-    public Instances loadArff(String filePath) throws Exception {
-        Instances data = new ConverterUtils.DataSource(filePath).getDataSet();
-        data.setClassIndex(0);
-        return data;
+    public Instances loadArff(String filePath) throws CouldNotLoadArffException {
+        try {
+            Instances data = new ConverterUtils.DataSource(filePath).getDataSet();
+            data.setClassIndex(0);
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CouldNotLoadArffException(e.getMessage());
+        }
     }
 
     /**

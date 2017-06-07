@@ -84,6 +84,7 @@ public class LocationHelper extends AbstractHelper {
     public LocationData readLocationData() {
         if (!CollectDataActivity.checkLocationPermission(context)) {
             alert("Please grant permission to access gps data");
+            System.out.println("Please grant permission to access gps data");
             return null;
         }
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))

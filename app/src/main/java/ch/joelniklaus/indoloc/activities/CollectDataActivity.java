@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import org.apache.commons.lang3.SerializationUtils;
 import java.util.ArrayList;
 
 import ch.joelniklaus.indoloc.R;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
+import ch.joelniklaus.indoloc.exceptions.InvalidRoomException;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.LocationHelper;
 import ch.joelniklaus.indoloc.helpers.SensorHelper;
@@ -74,6 +77,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private static final int NUMBER_OF_CLASSIFIERS = 7;
 
     private final FileHelper fileHelper = new FileHelper(this);
+
     private final SensorHelper sensorHelper = new SensorHelper(this);
     private final WifiHelper wifiHelper = new WifiHelper(this);
     private final LocationHelper locationHelper = new LocationHelper(this);
@@ -174,7 +178,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         currentDataPoint = new DataPoint(room, sensorData, rssData, locationData);
 
-        // Only collect different DataPoints
+        // Only collect datapoint which is different from the previous one
         if (!currentDataPoint.equals(previousDataPoint)) {
             saveDataPoint();
             predict();
@@ -205,6 +209,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private void requestLocationPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION);
     }
+
     /**
      * Requests from the user the permission to write to the external storage.
      */
@@ -222,6 +227,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
+
     /**
      * Checks if the storage permission has been granted by the user.
      *
@@ -363,6 +369,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         predictMLPValue.setText(predictions.get(6));
     }
 
+    /**
+     * Sets the classifiers for live (instant) prediction
+     */
     private void initPrediction() {
         for (int i = 0; i < NUMBER_OF_CLASSIFIERS; i++)
             predictions.add("NO PREDICTION YET");
@@ -399,6 +408,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      * @param view
      */
     public void startCollecting(View view) {
+        String room = roomEditText.getText().toString();
+        if (room.trim().equals("")) {
+            alert("Please enter a room.");
+            return;
+        }
         String label = startButton.getText().toString();
         try {
             // reset scan Number
@@ -433,9 +447,15 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      */
     public void predict() {
         if (predicting) {
+            Instances data = null;
             try {
-                Instances data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
-
+                data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
+            } catch (InvalidRoomException e) {
+                e.printStackTrace();
+                alert("Could not create single instance. Probably you entered an invalid room!");
+                return;
+            }
+            try {
                 for (int i = 0; i < NUMBER_OF_CLASSIFIERS; i++)
                     predictions.set(i, WekaHelper.predictInstance(classifiers.get(i), data));
             } catch (Exception e) {
@@ -451,19 +471,42 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      * @param view
      */
     public void startLiveTest(View view) {
-        String label = liveTestButton.getText().toString();
-        try {
-            if (label.equals("START LIVE TEST")) {
+        String room = roomEditText.getText().toString();
+        if (room.trim().equals("")) {
+            alert("Please enter a room.");
+            return;
+        }
 
-                Instances train = fileHelper.loadArffFromExternalStorage("train.arff");
+        try {
+            String label = liveTestButton.getText().toString();
+            if (label.equals("START LIVE TEST")) {
+                Instances train;
+                try {
+                    train = fileHelper.loadArffFromExternalStorage("train.arff");
+                } catch (CouldNotLoadArffException e) {
+                    alert("Please collect and save a train set first!");
+                    return;
+                }
+
                 alert("Creating Test File ... ");
-                test = WekaHelper.convertToSingleInstance(train, currentDataPoint);
+                try {
+                    test = WekaHelper.convertToSingleInstance(train, currentDataPoint);
+                } catch (InvalidRoomException e) {
+                    e.printStackTrace();
+                    alert("Could not create single instance. Probably you entered an invalid room!");
+                    return;
+                }
 
                 // Build Classifiers
                 alert("Training Models ...");
                 for (Classifier classifier : classifiers) {
                     alert("Training " + classifier.getClass().getSimpleName() + " ...");
-                    classifier.buildClassifier(train);
+                    try {
+                        classifier.buildClassifier(train);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        alert("Could not train classifier!");
+                    }
                     alert(classifier.getClass().getSimpleName() + " successfully trained!");
                 }
                 alert("Models successfully trained!");
@@ -472,6 +515,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
                 // Start predicting
                 predicting = true;
+
             } else {
                 liveTestButton.setText("START LIVE TEST");
 
@@ -481,7 +525,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         } catch (Exception e) {
             e.printStackTrace();
             alert(e.getMessage());
-            alert("Please enter a room!");
         }
     }
 
@@ -562,20 +605,21 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     private void createArffFile(String filePath) {
         if (dataPoints.isEmpty()) {
             alert("Please collect some Datapoints first!");
-        } else
-            try {
-                Instances data = WekaHelper.buildInstances(dataPoints);
+            return;
+        }
+        Instances data =  WekaHelper.buildInstances(dataPoints);
 
-                //fileHelper.saveArffToInternalStorage(data, filePath);
-                fileHelper.saveArffToExternalStorage(data, filePath);
+        try {
+            //fileHelper.saveArffToInternalStorage(data, filePath);
+            fileHelper.saveArffToExternalStorage(data, filePath);
 
-                this.dataPoints = new ArrayList<>();
-                this.scanNumber = 0;
-                alert("Saved data points to " + filePath);
-            } catch (Exception e) {
-                e.printStackTrace();
-                alert(e.getMessage());
-            }
+            this.dataPoints = new ArrayList<>();
+            this.scanNumber = 0;
+            alert("Saved data points to " + filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            alert(e.getMessage());
+        }
     }
 
     public void alert(String message) {

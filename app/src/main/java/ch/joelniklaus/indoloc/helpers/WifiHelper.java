@@ -38,7 +38,7 @@ public class WifiHelper extends AbstractHelper {
      * Sets up the wifi manager and the wifi receiver. Has to be called before reading data.
      */
     public void setUp() {
-        wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
+        wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
         wifiReceiver = new WifiReceiver();
         for (int i = 0; i < NUMBER_OF_ACCESS_POINTS; i++)
             rssList.add(i, 0);
@@ -117,7 +117,7 @@ public class WifiHelper extends AbstractHelper {
                 }
  */
 
- /* CDS*/
+ /* CDS
                 switch (scanResult.SSID) {
                     case "ap1":
                         rssList.set(0, level);
@@ -150,9 +150,9 @@ public class WifiHelper extends AbstractHelper {
                         rssList.set(9, level);
                         break;
                 }
+*/
 
-
- /* Rickenbach
+ /* Rickenbach*/
                 switch (scanResult.SSID) {
                     case "jxx-10375":
                         rssList.set(0, level);
@@ -178,8 +178,14 @@ public class WifiHelper extends AbstractHelper {
                     case "7":
                         rssList.set(7, level);
                         break;
+                    case "8":
+                        rssList.set(8, level);
+                        break;
+                    case "9":
+                        rssList.set(9, level);
+                        break;
                 }
-*/
+
                  /* Exeter James Owen Court
                 switch (scanResult.BSSID) {
                     case "00:c0:49:d8:db:e6": // University of Exeter
@@ -198,7 +204,6 @@ public class WifiHelper extends AbstractHelper {
                         rssList.set(3, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                    /*
                     case "b4:e9:b0:a6:40:50": // Studentcom
                         rssList.set(4, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
@@ -215,9 +220,8 @@ public class WifiHelper extends AbstractHelper {
                         rssList.set(7, level);
                         //System.out.println(i + " Name: "+scanResult.SSID +", MAC: "+ scanResult.BSSID +", Level: "+ level);
                         break;
-                       */
-            }
-
+                }
+*/
 
                 /* Exeter University Campus
 
@@ -248,6 +252,7 @@ public class WifiHelper extends AbstractHelper {
                         break;
                 }
                 */
+            }
         }
     }
 }

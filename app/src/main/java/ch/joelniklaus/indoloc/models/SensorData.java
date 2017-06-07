@@ -19,6 +19,29 @@ public class SensorData implements Serializable {
     private float[] gravity, magnetic;
     private float[] rotation = new float[9], inclination = new float[9];
 
+    public static SensorData getSensorDataTest(float ambientTemperature, float light, float pressure, float relativeHumidity, float[] gravity, float[] magnetic,
+                                        float geomagneticMagnitude, float gravityMagnitude, float magneticYProcessedOld, float magneticZProcessedOld) {
+        SensorData sensorData = new SensorData();
+
+        sensorData.setAmbientTemperature(ambientTemperature);
+        sensorData.setLight(light);
+        sensorData.setPressure(pressure);
+        sensorData.setRelativeHumidity(relativeHumidity);
+
+        sensorData.setGravity(gravity);
+        sensorData.setMagnetic(magnetic);
+
+        sensorData.setGeomagneticMagnitude(geomagneticMagnitude);
+        sensorData.setGravityMagnitude(gravityMagnitude);
+        sensorData.setMagneticYProcessedOld(magneticYProcessedOld);
+        sensorData.setMagneticZProcessedOld(magneticZProcessedOld);
+
+        return sensorData;
+    }
+
+    public SensorData() {
+
+    }
 
     public SensorData(float ambientTemperature, float light, float pressure, float relativeHumidity, float[] gravity, float[] magnetic) {
         this.ambientTemperature = ambientTemperature;
@@ -88,11 +111,6 @@ public class SensorData implements Serializable {
     public float round(float number, int decimalPlaces) {
         float factor = (float) Math.pow(10, decimalPlaces);
         return Math.round(number * factor) / factor;
-        /*
-        BigDecimal bd = new BigDecimal(number);
-        bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
-        return bd.floatValue();
-        */
     }
 
     /**
