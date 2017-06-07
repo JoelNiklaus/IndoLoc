@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Random;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
@@ -16,14 +17,14 @@ import weka.core.Utils;
 import weka.filters.Filter;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Provides tests with methods which figure out the best combination of features.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class AttributeSelectionTest extends AbstractTest {
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("final_cds/train_room", "final_cds/test_room");
     }
 

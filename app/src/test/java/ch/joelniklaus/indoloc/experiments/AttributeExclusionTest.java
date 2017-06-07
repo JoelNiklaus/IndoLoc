@@ -3,10 +3,13 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 
 /**
+ * Tests the accuracy of the prediction when certain features are removed
  *
+ * @author joelniklaus
  */
 public class AttributeExclusionTest extends AbstractTest {
 
@@ -42,7 +45,7 @@ public class AttributeExclusionTest extends AbstractTest {
 
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("final_cds/train_room", "final_cds/test_room");
     }
 

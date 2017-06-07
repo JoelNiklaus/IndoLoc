@@ -7,6 +7,7 @@ import org.junit.Before;
 import java.util.ArrayList;
 import java.util.Random;
 
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.exceptions.DifferentHeaderException;
 import ch.joelniklaus.indoloc.helpers.FileHelper;
 import ch.joelniklaus.indoloc.helpers.Timer;
@@ -42,9 +43,9 @@ import weka.core.Instances;
 
 /**
  * (Provides infrastructure which can be used by most of the other tests.)
+ *
+ * @author joelniklaus
  */
-
-// TODO klassenkommentar mit @author bei allen tests hinzufügen
 public abstract class AbstractTest {
 
 
@@ -61,7 +62,7 @@ public abstract class AbstractTest {
     public static final String ENDING = ".arff";
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Exception, CouldNotLoadArffException {
         fetchData();
 
         addClassifiers();
@@ -71,14 +72,14 @@ public abstract class AbstractTest {
         conductPerformanceExperiment(train, test);
     }
 
-    protected abstract void fetchData() throws Exception;
+    protected abstract void fetchData() throws Exception, CouldNotLoadArffException;
 
-    protected void loadFiles(String trainPath, String testPath) throws Exception {
+    protected void loadFiles(String trainPath, String testPath) throws Exception, CouldNotLoadArffException {
         train = loadFile(trainPath);
         test = loadFile(testPath);
     }
 
-    protected Instances loadFile(String fileName) throws Exception {
+    protected Instances loadFile(String fileName) throws Exception, CouldNotLoadArffException {
         Instances data = fileHelper.loadArff(getFilePath(fileName));
         //data = WekaHelper.removeDuplicates(data);
         // prepare data

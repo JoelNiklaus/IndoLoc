@@ -3,22 +3,23 @@ package ch.joelniklaus.indoloc.experiments;
 import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
 
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Tests the landmarks.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class LandmarkTest extends AbstractTest {
     public static final String UNDEFINED = "undefined";
     public static final double BORDER = 0.5;
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
     }
 

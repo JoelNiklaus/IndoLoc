@@ -3,18 +3,19 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Tests the accuracy of certain classifiers with train/test set and with cross validation.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class AccuracyTest extends AbstractTest {
 
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("final_cds/train_landmark", "final_cds/test_landmark");
     }
 

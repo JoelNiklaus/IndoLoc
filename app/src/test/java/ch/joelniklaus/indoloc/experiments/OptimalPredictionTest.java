@@ -3,19 +3,20 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Tests the optimally tailored dataset with its best classifier to achieve maximal accuracy.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class OptimalPredictionTest extends AbstractTest {
 
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("final_cds/train_landmark", "final_cds/test_landmark");
     }
 

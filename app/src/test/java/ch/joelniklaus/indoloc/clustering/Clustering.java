@@ -3,6 +3,7 @@ package ch.joelniklaus.indoloc.clustering;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import weka.clusterers.Canopy;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.Clusterer;
@@ -14,14 +15,14 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Provides some testing infrastructure for trying out clustering. Not very important for this application.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class Clustering extends AbstractTest {
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("exeter/train_margin", "exeter/test_margin");
     }
 

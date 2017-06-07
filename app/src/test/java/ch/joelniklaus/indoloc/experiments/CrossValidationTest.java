@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.Random;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.RandomForest;
@@ -18,14 +19,14 @@ import weka.filters.supervised.attribute.AddClassification;
 
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Provides some infrastructure for trying out cross validation.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class CrossValidationTest extends AbstractTest {
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("experiments/experiment_new", "experiments/experiment_new");
     }
 

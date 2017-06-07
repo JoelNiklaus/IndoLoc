@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.meta.AutoWEKAClassifier;
@@ -20,14 +21,14 @@ import weka.core.setupgenerator.ListParameter;
 import weka.core.setupgenerator.MathParameter;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Provides infrastructure for finding the best hyperparameters for the classifiers.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class HyperParameterSearchTest extends AbstractTest {
 
     @Override
-    protected void fetchData() throws Exception {
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
         loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
     }
 

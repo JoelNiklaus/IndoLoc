@@ -3,19 +3,20 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Measures the training and testing performance of the chosen classifiers.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class PerformanceTest extends AbstractTest {
 
 
     @Override
-    protected void fetchData() throws Exception {
-        loadFiles("exeter/train_landmarks", "exeter/test_landmarks");
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
+        loadFiles("final_cds/train_room", "final_cds/test_room");
     }
 
     @Test

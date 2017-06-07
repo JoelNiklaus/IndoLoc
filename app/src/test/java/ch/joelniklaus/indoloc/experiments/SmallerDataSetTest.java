@@ -3,20 +3,21 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 import weka.core.Instances;
 
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Tests if the accuracy is improved if some parts of the datasets are left out.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author joelniklaus
  */
 public class SmallerDataSetTest extends AbstractTest {
 
     @Override
-    protected void fetchData() throws Exception {
-        loadFiles("final_cds/train_landmark", "final_cds/test_landmark");
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
+        loadFiles("thesis/exeter/landmark/train", "thesis/exeter/landmark/test");
     }
 
     @Test

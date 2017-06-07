@@ -3,17 +3,20 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 
 /**
+ * Tests if there is an increase in the accuracy if duplicate datapoints are removed.
  *
+ * @author joelniklaus
  */
 public class DuplicatesTest extends AbstractTest {
 
 
     @Override
-    protected void fetchData() throws Exception {
-        loadFiles("final_cds/train_room", "final_cds/test_room");
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
+        loadFiles("thesis/exeter/landmark/train", "thesis/exeter/landmark/test");
     }
 
     @Test

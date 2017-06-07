@@ -3,10 +3,13 @@ package ch.joelniklaus.indoloc.experiments;
 import org.junit.Test;
 
 import ch.joelniklaus.indoloc.AbstractTest;
+import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 
 /**
+ * Tests if rounding of certain features improve the accuracy.
  *
+ * @author joelniklaus
  */
 public class RoundingTest extends AbstractTest {
 
@@ -42,8 +45,8 @@ public class RoundingTest extends AbstractTest {
 
 
     @Override
-    protected void fetchData() throws Exception {
-        loadFiles("final_cds/train_room", "final_cds/test_room");
+    protected void fetchData() throws Exception, CouldNotLoadArffException {
+        loadFiles("thesis/exeter/train_landmarks", "thesis/exeter/test_landmarks");
     }
 
     @Test
