@@ -23,6 +23,9 @@ public class AccuracyStatistics {
         this.ratings = ratings;
     }
 
+    /**
+     * Prints the statistics including the confusion matrices.
+     */
     public void printStatistics() {
         sortByAccuracy();
 
@@ -44,6 +47,9 @@ public class AccuracyStatistics {
         Collections.reverse(ratings);
     }
 
+    /**
+     * Sorts the statistics by accuracy.
+     */
     public void sortByAccuracy() {
         // Only possible in Java 8
         //classifierRatings.sort(Comparator.comparing(AccuracyRating::getAccuracy));

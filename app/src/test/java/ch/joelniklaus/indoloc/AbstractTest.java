@@ -72,13 +72,35 @@ public abstract class AbstractTest {
         conductPerformanceExperiment(train, test);
     }
 
+    /**
+     * Can be used in the subclasses to load the datasets
+     *
+     * @throws Exception
+     * @throws CouldNotLoadArffException
+     */
     protected abstract void fetchData() throws Exception, CouldNotLoadArffException;
 
+    /**
+     * Loads the train and test sets
+     *
+     * @param trainPath
+     * @param testPath
+     * @throws Exception
+     * @throws CouldNotLoadArffException
+     */
     protected void loadFiles(String trainPath, String testPath) throws Exception, CouldNotLoadArffException {
         train = loadFile(trainPath);
         test = loadFile(testPath);
     }
 
+    /**
+     * Loads a dataset and prepares it
+     *
+     * @param fileName
+     * @return
+     * @throws Exception
+     * @throws CouldNotLoadArffException
+     */
     protected Instances loadFile(String fileName) throws Exception, CouldNotLoadArffException {
         Instances data = fileHelper.loadArff(getFilePath(fileName));
         //data = WekaHelper.removeDuplicates(data);
@@ -90,10 +112,21 @@ public abstract class AbstractTest {
         return data;
     }
 
+    /**
+     * Gets the filepath of the dataset
+     *
+     * @param fileName
+     * @return
+     */
     public String getFilePath(String fileName) {
         return ASSETS_PATH + fileName + ENDING;
     }
 
+    /**
+     * Here the classifiers to be tested can be specified. The parametrization of the classifiers also happens here.
+     *
+     * @throws Exception
+     */
     private void addClassifiers() throws Exception {
         /* ==============================
         Functions
@@ -219,6 +252,15 @@ public abstract class AbstractTest {
         //classifiers.add(mlp);
     }
 
+    /**
+     * Conducts an experiment focusing on accuracy. High execution speed, contains confusion matrices.
+     *
+     * @param train
+     * @param test
+     * @param crossValidation determines if the experiment should be conducted with crossvalidation (true) or with train/test set (false)
+     * @return
+     * @throws Exception
+     */
     protected AccuracyStatistics conductAccuracyExperiment(Instances train, Instances test, boolean crossValidation) throws Exception {
         Instances data = null;
         if (crossValidation) {
@@ -248,6 +290,15 @@ public abstract class AbstractTest {
         return accuracyStatistics;
     }
 
+    /**
+     * Evaluates a classifier with a train and test set.
+     *
+     * @param classifier
+     * @param train
+     * @param test
+     * @return
+     * @throws Exception
+     */
     protected Evaluation trainTestClassifier(Classifier classifier, Instances train, Instances test) throws Exception {
         classifier.buildClassifier(train);
         Evaluation evaluation = new Evaluation(train);
@@ -256,6 +307,14 @@ public abstract class AbstractTest {
         return evaluation;
     }
 
+    /**
+     * Evaluates a classifier with crossvalidation
+     *
+     * @param classifier
+     * @param data
+     * @return
+     * @throws Exception
+     */
     protected Evaluation crossValidateClassifier(Classifier classifier, Instances data) throws Exception {
         int folds = 10;     // the number of folds to generate, >=2
 
@@ -284,7 +343,13 @@ public abstract class AbstractTest {
         return evaluation;
     }
 
-
+    /**
+     * Randomizes a dataset
+     *
+     * @param data
+     * @param seed
+     * @return
+     */
     @NonNull
     protected Instances randomizeData(Instances data, int seed) {
         Random rand = new Random(seed);
@@ -294,7 +359,15 @@ public abstract class AbstractTest {
         return randData;
     }
 
-
+    /**
+     * Conducts an experiment focusing on the performance.
+     * Low execution speed, tabular overview format, can be sorted by accuracy (default), train time or test time.
+     *
+     * @param train
+     * @param test
+     * @return
+     * @throws Exception
+     */
     protected PerformanceStatistics conductPerformanceExperiment(Instances train, Instances test) throws Exception {
         PerformanceStatistics statistics = new PerformanceStatistics();
         for (Classifier classifier : classifiers) {
@@ -309,6 +382,15 @@ public abstract class AbstractTest {
         return statistics;
     }
 
+    /**
+     * Tests the performance of a classifier.
+     *
+     * @param classifier
+     * @param train
+     * @param test
+     * @return
+     * @throws Exception
+     */
     @NonNull
     protected PerformanceRating testClassifierPerformance(Classifier classifier, Instances train, Instances test) throws Exception {
         final int NUMBER_OF_TEST_ROUNDS = 5;

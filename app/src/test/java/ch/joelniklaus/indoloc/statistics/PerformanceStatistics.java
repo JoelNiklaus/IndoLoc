@@ -24,6 +24,9 @@ public class PerformanceStatistics {
         sortByAccuracy();
     }
 
+    /**
+     * Prints the statistics in a tabular overview format.
+     */
     public void printStatistics() {
         String format = "| %-15s |  %2.2f %% |  %5.0f µs |   %5.0f µs |";
 
@@ -46,6 +49,9 @@ public class PerformanceStatistics {
         Collections.reverse(ratings);
     }
 
+    /**
+     * Sorts the table by accuracy.
+     */
     public void sortByAccuracy() {
         // Only possible in Java 8
         //classifierRatings.sort(Comparator.comparing(PerformanceRating::getMeanAccuracy));
@@ -58,6 +64,9 @@ public class PerformanceStatistics {
         });
     }
 
+    /**
+     * Sorts the table by test time.
+     */
     public void sortByMeanTestTime() {
         // Only possible in Java 8
         //classifierRatings.sort(Comparator.comparing(PerformanceRating::getMeanTestTime));
@@ -70,6 +79,9 @@ public class PerformanceStatistics {
         });
     }
 
+    /**
+     * Sorts the table by train time.
+     */
     public void sortByMeanTrainTime() {
         // Only possible in Java 8
         //classifierRatings.sort(Comparator.comparing(PerformanceRating::getMeanTrainTime));
