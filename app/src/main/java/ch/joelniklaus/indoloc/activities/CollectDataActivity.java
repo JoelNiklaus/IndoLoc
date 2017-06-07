@@ -98,9 +98,11 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         wifiHelper.setUp();
 
-        locationHelper.setUp();
-        // Request Permission for GPS (dangerous permission)
-        showPermissionDialog();
+        if (Build.VERSION.SDK_INT > 22) {
+            locationHelper.setUp();
+            // Request Permission for GPS (dangerous permission)
+            showPermissionDialog();
+        }
 
         setUpTextViews();
 
@@ -118,7 +120,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         wifiHelper.registerListeners();
 
-        locationHelper.registerListeners();
+        if (Build.VERSION.SDK_INT > 22)
+            locationHelper.registerListeners();
 
         loadDataPoints();
     }
@@ -135,7 +138,8 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
 
         wifiHelper.unRegisterListeners();
 
-        locationHelper.unRegisterListeners();
+        if (Build.VERSION.SDK_INT > 22)
+            locationHelper.unRegisterListeners();
 
         saveDataPoints();
     }
@@ -165,7 +169,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         String room = roomEditText.getText().toString();
         RSSData rssData = wifiHelper.readWifiData(getIntent());
         SensorData sensorData = sensorHelper.readSensorData(event);
-        LocationData locationData = locationHelper.readLocationData();
+        LocationData locationData = new LocationData(0, 0);
+        if (Build.VERSION.SDK_INT > 22)
+            locationData = locationHelper.readLocationData();
 
         /*
         if (location != null)
