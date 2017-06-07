@@ -69,7 +69,7 @@ public abstract class AbstractTest {
 
         // conduct one first experiment without any changes as a starting point for comparison
         System.out.println("===== Starting Experiment =====");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     /**
@@ -365,10 +365,11 @@ public abstract class AbstractTest {
      *
      * @param train
      * @param test
+     * @param csv determines if the statistics are printed in tabular (false) or csv (true) format.
      * @return
      * @throws Exception
      */
-    protected PerformanceStatistics conductPerformanceExperiment(Instances train, Instances test) throws Exception {
+    protected PerformanceStatistics conductPerformanceExperiment(Instances train, Instances test, boolean csv) throws Exception {
         PerformanceStatistics statistics = new PerformanceStatistics();
         for (Classifier classifier : classifiers) {
             PerformanceRating performanceRating = testClassifierPerformance(classifier, train, test);
@@ -377,7 +378,11 @@ public abstract class AbstractTest {
 
         System.out.println(train.numInstances() + " training instances, " + test.numInstances() + " testing instances");
         statistics.sortByAccuracy();
-        statistics.printStatistics();
+
+        if (csv)
+            statistics.printStatisticsCSV();
+        else
+            statistics.printStatisticsTabular();
 
         return statistics;
     }

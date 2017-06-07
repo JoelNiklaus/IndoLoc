@@ -27,18 +27,29 @@ public class PerformanceStatistics {
     /**
      * Prints the statistics in a tabular overview format.
      */
-    public void printStatistics() {
-        String format = "| %-15s |  %2.2f %% |  %5.0f µs |   %5.0f µs |";
+    public void printStatisticsTabular() {
+        String format = "| %-25s |  %2.2f %% |  %5.0f µs |   %5.0f µs |";
 
-        System.out.format("+=================+==========+===========+============+%n");
-        System.out.format("| Classifier Name | Accuracy | Test Time | Train Time |%n");
-        System.out.format("+=================+==========+===========+============+%n");
+        System.out.format("+===========================+==========+===========+============+%n");
+        System.out.format("| Classifier Name           | Accuracy | Test Time | Train Time |%n");
+        System.out.format("+===========================+==========+===========+============+%n");
 
         for (PerformanceRating performanceRating : ratings) {
             System.out.format(format, performanceRating.getName(), performanceRating.getAccuracy(), performanceRating.getMeanTestTime(), performanceRating.getMeanTrainTime());
-            System.out.format("%n+-----------------+----------+-----------+------------+%n");
+            System.out.format("%n+---------------------------+----------+-----------+------------+%n");
         }
     }
+
+    /**
+     * Prints the statistics in csv format.
+     */
+    public void printStatisticsCSV() {
+        System.out.println("Classifier Name, Accuracy, Test Time, Train Time");
+
+        for (PerformanceRating performanceRating : ratings)
+            System.out.println(performanceRating.getName() + ", " + performanceRating.getAccuracy() + ", " + performanceRating.getMeanTestTime() + ", " + performanceRating.getMeanTrainTime());
+    }
+
 
     public void add(PerformanceRating performanceRating) {
         ratings.add(performanceRating);

@@ -23,7 +23,7 @@ public class DuplicatesTest extends AbstractTest {
     public void removeDuplicates() throws Exception {
         train = WekaHelper.removeDuplicates(train);
         test = WekaHelper.removeDuplicates(test);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
 }

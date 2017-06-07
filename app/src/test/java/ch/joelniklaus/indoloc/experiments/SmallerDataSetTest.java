@@ -55,7 +55,7 @@ public class SmallerDataSetTest extends AbstractTest {
         Instances newTrain = WekaHelper.getEveryNThInstance(train, n);
         Instances newTest = WekaHelper.getEveryNThInstance(test, n);
 
-        conductPerformanceExperiment(newTrain, newTest);
+        conductPerformanceExperiment(newTrain, newTest, true);
     }
 
 }

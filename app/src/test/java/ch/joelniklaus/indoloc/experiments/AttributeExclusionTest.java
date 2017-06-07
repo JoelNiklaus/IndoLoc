@@ -53,42 +53,42 @@ public class AttributeExclusionTest extends AbstractTest {
     public void excludeLight() throws Exception {
         train = WekaHelper.removeAttributes(train, "3");
         test = WekaHelper.removeAttributes(test, "3");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void excludeGravity() throws Exception {
         train = WekaHelper.removeAttributes(train, "6-8");
         test = WekaHelper.removeAttributes(test, "6-8");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void excludeMagnetic() throws Exception {
         train = WekaHelper.removeAttributes(train, "9-11");
         test = WekaHelper.removeAttributes(test, "9-11");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void excludeGravityMagnitude() throws Exception {
         train = WekaHelper.removeAttributes(train, "12");
         test = WekaHelper.removeAttributes(test, "12");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void excludeGeomagneticMagnitude() throws Exception {
         train = WekaHelper.removeAttributes(train, "13");
         test = WekaHelper.removeAttributes(test, "13");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void excludeMagneticProcessed() throws Exception {
         train = WekaHelper.removeAttributes(train, "14-15");
         test = WekaHelper.removeAttributes(test, "14-15");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
 
@@ -96,7 +96,7 @@ public class AttributeExclusionTest extends AbstractTest {
     public void excludeGPS() throws Exception {
         train = WekaHelper.removeAttributes(train, "16-17");
         test = WekaHelper.removeAttributes(test, "16-17");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
 
@@ -104,7 +104,7 @@ public class AttributeExclusionTest extends AbstractTest {
     public void excludeRSS() throws Exception {
         train = WekaHelper.removeAttributes(train, "18-27");
          test = WekaHelper.removeAttributes(test, "18-27");
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
 

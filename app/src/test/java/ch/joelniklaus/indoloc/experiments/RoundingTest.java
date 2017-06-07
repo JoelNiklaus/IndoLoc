@@ -53,7 +53,7 @@ public class RoundingTest extends AbstractTest {
     public void roundLight() throws Exception {
         train = WekaHelper.roundAttribute(train, 2, 0.1);
         test = WekaHelper.roundAttribute(test, 2, 0.1);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class RoundingTest extends AbstractTest {
         test = WekaHelper.roundAttribute(test, 6, 0.2);
         train = WekaHelper.roundAttribute(train, 7, 0.2);
         test = WekaHelper.roundAttribute(test, 7, 0.2);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
@@ -75,21 +75,21 @@ public class RoundingTest extends AbstractTest {
         test = WekaHelper.roundAttribute(test, 9, 0.2);
         train = WekaHelper.roundAttribute(train, 10, 0.2);
         test = WekaHelper.roundAttribute(test, 10, 0.2);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void roundGravityMagnitude() throws Exception {
         train = WekaHelper.roundAttribute(train, 11, 0.2);
         test = WekaHelper.roundAttribute(test, 11, 0.2);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
     public void roundGeomagneticMagnitude() throws Exception {
         train = WekaHelper.roundAttribute(train, 12, 0.2);
         test = WekaHelper.roundAttribute(test, 12, 0.2);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
     @Test
@@ -98,7 +98,7 @@ public class RoundingTest extends AbstractTest {
         test = WekaHelper.roundAttribute(test, 13, 0.2);
         train = WekaHelper.roundAttribute(train, 14, 0.2);
         test = WekaHelper.roundAttribute(test, 14, 0.2);
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
 }

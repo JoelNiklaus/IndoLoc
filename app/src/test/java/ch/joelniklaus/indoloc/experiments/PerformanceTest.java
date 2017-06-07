@@ -21,7 +21,7 @@ public class PerformanceTest extends AbstractTest {
 
     @Test
     public void testPerformance() throws Exception {
-        conductPerformanceExperiment(train, test);
+        conductPerformanceExperiment(train, test, false);
     }
 
 
