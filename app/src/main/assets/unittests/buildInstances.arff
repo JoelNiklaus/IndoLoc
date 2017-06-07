@@ -1,8 +1,22 @@
 @relation TestInstances
 
 @attribute room {stube,kueche,badgross,badklein,gang}
+@attribute ambientTemperature numeric
+@attribute light numeric
+@attribute pressure numeric
+@attribute relativeHumidity numeric
+@attribute gravityX numeric
+@attribute gravityY numeric
+@attribute gravityZ numeric
+@attribute magneticX numeric
 @attribute magneticY numeric
 @attribute magneticZ numeric
+@attribute gravityMagnitude numeric
+@attribute geomagneticMagnitude numeric
+@attribute magneticProcessedY numeric
+@attribute magneticProcessedZ numeric
+@attribute latitude numeric
+@attribute longitude numeric
 @attribute rssValue0 numeric
 @attribute rssValue1 numeric
 @attribute rssValue2 numeric
@@ -11,19 +25,14 @@
 @attribute rssValue5 numeric
 @attribute rssValue6 numeric
 @attribute rssValue7 numeric
-@attribute mean numeric
-@attribute rssVariance0 numeric
-@attribute rssVariance1 numeric
-@attribute rssVariance2 numeric
-@attribute rssVariance3 numeric
-@attribute rssVariance4 numeric
-@attribute rssVariance5 numeric
-@attribute rssVariance6 numeric
-@attribute rssVariance7 numeric
+@attribute rssValue8 numeric
+@attribute rssValue9 numeric
 
 @data
-stube,17,-39,0,23,39,39,39,39,39,39,32.125,32.125,9.125,-6.875,-6.875,-6.875,-6.875,-6.875,-6.875
-kueche,8,-38,0,10,31,31,31,31,31,31,24.5,24.5,14.5,-6.5,-6.5,-6.5,-6.5,-6.5,-6.5
-badgross,4,-42,0,16,16,23,23,23,14,14,16.125,16.125,0.125,0.125,-6.875,-6.875,-6.875,2.125,2.125
-badklein,5,-44,0,20,33,33,33,33,33,33,27.25,27.25,7.25,-5.75,-5.75,-5.75,-5.75,-5.75,-5.75
-gang,11,-39,0,11,34,34,34,34,34,34,26.875,26.875,15.875,-7.125,-7.125,-7.125,-7.125,-7.125,-7.125
+stube,0,121,12,0,8.1111,11.1111,8.111,3.41111,11.4111,6.16341,32.122002,23.23,56.676998,5.96,7.12094,8.38923,0,23,39,39,39,39,39,39,0,0
+kueche,0,222,22,0,8.2222,22.2222,8.222,3.42222,22.422199,6.26342,32.222,23.23,56.676998,5.96,7.22094,8.38923,0,23,39,39,39,39,39,39,0,0
+badgross,0,323,32,0,8.3232,32.322201,8.233,3.43232,22.422199,6.26343,32.321999,23.23,56.676998,5.96,7.32094,8.38923,0,23,39,39,39,39,39,39,0,0
+badklein,0,424,42,0,8.4242,42.422199,8.244,3.44242,22.422199,6.26344,32.422001,23.23,56.676998,5.96,7.42094,8.38923,0,23,39,39,39,39,39,39,0,0
+gang,0,525,52,0,8.5252,52.522202,8.255,3.45252,22.422199,6.26345,32.521999,23.23,56.676998,5.96,7.52094,8.38923,0,23,39,39,39,39,39,39,0,0
+
+
