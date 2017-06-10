@@ -1,0 +1,4 @@
+1. Clone this repository
+2. Verify that everything needed is installed (gradle, android sdk, etc.)
+3. Let IDE do the magic. I strongly suggest using Android Studio (https://developer.android.com/studio/index.html)
+4. Run app in emulator or on android device connected with usb.
