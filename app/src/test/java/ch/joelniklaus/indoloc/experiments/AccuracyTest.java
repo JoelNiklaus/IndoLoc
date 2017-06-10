@@ -16,7 +16,7 @@ public class AccuracyTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception, CouldNotLoadArffException {
-        loadFiles("final_cds/train_landmark", "final_cds/test_landmark");
+        loadFiles("thesis/bern/room/train", "thesis/bern/room/test");
     }
 
     @Test

@@ -16,14 +16,19 @@ public class DuplicatesTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception, CouldNotLoadArffException {
-        loadFiles("thesis/exeter/landmark/train", "thesis/exeter/landmark/test");
+        loadFiles("thesis/bern/room/train", "thesis/bern/room/test");
     }
 
+    /**
+     * IMPORTANT: remove line "data = WekaHelper.removeDuplicates(data);" in the method loadFile in AbstractTest!
+     *
+     * @throws Exception
+     */
     @Test
     public void removeDuplicates() throws Exception {
         train = WekaHelper.removeDuplicates(train);
         test = WekaHelper.removeDuplicates(test);
-        conductPerformanceExperiment(train, test, false);
+        conductPerformanceExperiment(train, test, true);
     }
 
 }

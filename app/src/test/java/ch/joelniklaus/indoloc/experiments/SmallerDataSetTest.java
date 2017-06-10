@@ -22,36 +22,36 @@ public class SmallerDataSetTest extends AbstractTest {
 
     @Test
     public void testOneHalf() throws Exception {
-        testOneNth(train, 2);
+        testOneNth(2);
     }
 
     @Test
     public void testOneThird() throws Exception {
-        testOneNth(train, 3);
+        testOneNth(3);
     }
 
     @Test
     public void testOneFourth() throws Exception {
-        testOneNth(train, 4);
+        testOneNth(4);
     }
 
     @Test
     public void testOneFifth() throws Exception {
-        testOneNth(train, 5);
+        testOneNth(5);
     }
 
     @Test
     public void testOneTenth() throws Exception {
-        testOneNth(train, 10);
+        testOneNth(10);
     }
 
     @Test
     public void testOneTwentieth() throws Exception {
-        testOneNth(train, 20);
+        testOneNth(20);
     }
 
 
-    private void testOneNth(Instances train, int n) throws Exception {
+    private void testOneNth(int n) throws Exception {
         Instances newTrain = WekaHelper.getEveryNThInstance(train, n);
         Instances newTest = WekaHelper.getEveryNThInstance(test, n);
 

@@ -6,6 +6,19 @@ import ch.joelniklaus.indoloc.AbstractTest;
 import ch.joelniklaus.indoloc.exceptions.CouldNotLoadArffException;
 import ch.joelniklaus.indoloc.helpers.WekaHelper;
 
+// TODO find best simple method and add it to the meta classifiers.
+
+// TODO Add confusion matrices to report
+// TODO define groups:
+/**
+ * 1: Best number of access points ONLY WIFI
+ * 2:
+ * A: 7 WIFI
+ * B: 7 WIFI, MagneticProcessed
+ * C: 7 WIFI, MagneticProcessed, Latitude/Longitude
+ * D: 7 WIFI, MagneticProcessed, GravityMagnitude
+ */
+
 /**
  * Tests the accuracy of the prediction when certain features are removed
  *
@@ -46,9 +59,191 @@ public class AttributeExclusionTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception, CouldNotLoadArffException {
-        loadFiles("thesis/cds/room/train", "thesis/cds/room/test");
+        loadFiles("thesis/bern/room/train", "thesis/bern/room/test");
     }
 
+    @Test
+    public void OnlyWifi5AccessPoints() throws Exception {
+        train = WekaHelper.removeAttributes(train, "23-27");
+        test = WekaHelper.removeAttributes(test, "23-27");
+        train = WekaHelper.removeAttributes(train, "2-17");
+        test = WekaHelper.removeAttributes(test, "2-17");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void OnlyWifi6AccessPoints() throws Exception {
+        train = WekaHelper.removeAttributes(train, "24-27");
+        test = WekaHelper.removeAttributes(test, "24-27");
+        train = WekaHelper.removeAttributes(train, "2-17");
+        test = WekaHelper.removeAttributes(test, "2-17");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void OnlyWifi7AccessPoints() throws Exception {
+        train = WekaHelper.removeAttributes(train, "25-27");
+        test = WekaHelper.removeAttributes(test, "25-27");
+        train = WekaHelper.removeAttributes(train, "2-17");
+        test = WekaHelper.removeAttributes(test, "2-17");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void OnlyWifi8AccessPoints() throws Exception {
+        train = WekaHelper.removeAttributes(train, "26-27");
+        test = WekaHelper.removeAttributes(test, "26-27");
+        train = WekaHelper.removeAttributes(train, "2-17");
+        test = WekaHelper.removeAttributes(test, "2-17");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void OnlyWifi9AccessPoints() throws Exception {
+        train = WekaHelper.removeAttributes(train, "27");
+        test = WekaHelper.removeAttributes(test, "27");
+        train = WekaHelper.removeAttributes(train, "2-17");
+        test = WekaHelper.removeAttributes(test, "2-17");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+    @Test
+    public void OnlyWifi10AccessPoints() throws Exception {
+        train = WekaHelper.removeAttributes(train, "2-17");
+        test = WekaHelper.removeAttributes(test, "2-17");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void WifiAndMagneticProcessed() throws Exception {
+        // wifi 8, 9, 10
+        train = WekaHelper.removeAttributes(train, "25-27");
+        test = WekaHelper.removeAttributes(test, "25-27");
+
+        // latitude, longitude
+        train = WekaHelper.removeAttributes(train, "16-17");
+        test = WekaHelper.removeAttributes(test, "16-17");
+
+        // everything before magneticProcessed
+        train = WekaHelper.removeAttributes(train, "2-13");
+        test = WekaHelper.removeAttributes(test, "2-13");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void WifiAndMagneticProcessedAndLatitudeLongitude() throws Exception {
+        // wifi 8, 9, 10
+        train = WekaHelper.removeAttributes(train, "25-27");
+        test = WekaHelper.removeAttributes(test, "25-27");
+
+        // everything before magneticProcessed
+        train = WekaHelper.removeAttributes(train, "2-13");
+        test = WekaHelper.removeAttributes(test, "2-13");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+
+    @Test
+    public void WifiAndMagneticProcessedAndGravityMagnitudeGeomagneticMagnitude() throws Exception {
+        // wifi 8, 9, 10
+        train = WekaHelper.removeAttributes(train, "25-27");
+        test = WekaHelper.removeAttributes(test, "25-27");
+
+        // latitude, longitude
+        train = WekaHelper.removeAttributes(train, "16-17");
+        test = WekaHelper.removeAttributes(test, "16-17");
+
+        // everything before gravityMagnitude
+        train = WekaHelper.removeAttributes(train, "2-11");
+        test = WekaHelper.removeAttributes(test, "2-11");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void WifiAndMagneticProcessedAndLight() throws Exception {
+        // wifi 8, 9, 10
+        train = WekaHelper.removeAttributes(train, "25-27");
+        test = WekaHelper.removeAttributes(test, "25-27");
+
+        // latitude, longitude
+        train = WekaHelper.removeAttributes(train, "16-17");
+        test = WekaHelper.removeAttributes(test, "16-17");
+
+        // everything before magneticProcessed but leave light
+        train = WekaHelper.removeAttributes(train, "4-13");
+        test = WekaHelper.removeAttributes(test, "4-13");
+
+        train = WekaHelper.removeAttributes(train, "2");
+        test = WekaHelper.removeAttributes(test, "2");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        System.out.println(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
+
+    @Test
+    public void WifiAndMagneticProcessedAndGravityMagneticRaw() throws Exception {
+        // wifi 8, 9, 10
+        train = WekaHelper.removeAttributes(train, "25-27");
+        test = WekaHelper.removeAttributes(test, "25-27");
+
+        // latitude, longitude
+        train = WekaHelper.removeAttributes(train, "16-17");
+        test = WekaHelper.removeAttributes(test, "16-17");
+
+        // gravityMagnitude magneticMagnitude
+        train = WekaHelper.removeAttributes(train, "12-13");
+        test = WekaHelper.removeAttributes(test, "12-13");
+
+        // everything before
+        train = WekaHelper.removeAttributes(train, "2-5");
+        test = WekaHelper.removeAttributes(test, "2-5");
+
+        train = WekaHelper.removeDuplicates(train);
+        test = WekaHelper.removeDuplicates(test);
+
+        System.out.println(test);
+
+        conductPerformanceExperiment(train, test, true);
+    }
     @Test
     public void excludeLight() throws Exception {
         train = WekaHelper.removeAttributes(train, "3");
@@ -103,7 +298,7 @@ public class AttributeExclusionTest extends AbstractTest {
     @Test
     public void excludeRSS() throws Exception {
         train = WekaHelper.removeAttributes(train, "18-27");
-         test = WekaHelper.removeAttributes(test, "18-27");
+        test = WekaHelper.removeAttributes(test, "18-27");
         conductPerformanceExperiment(train, test, false);
     }
 

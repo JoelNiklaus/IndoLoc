@@ -46,7 +46,7 @@ public class RoundingTest extends AbstractTest {
 
     @Override
     protected void fetchData() throws Exception, CouldNotLoadArffException {
-        loadFiles("thesis/exeter/train_landmarks", "thesis/exeter/test_landmarks");
+        loadFiles("thesis/bern/room/train", "thesis/bern/room/test");
     }
 
     @Test

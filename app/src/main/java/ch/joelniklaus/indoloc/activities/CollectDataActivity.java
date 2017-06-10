@@ -50,6 +50,11 @@ import weka.core.Instances;
 // TODO cleanup Code
 // TODO add Exception handling
 
+
+// TODO MORE COMMENTS INSIDE METHODS
+
+// TODO ADD README FILE!!!
+
 /**
  * The activity which controls the data collection and also live testing of several trained classifiers based on the collected data.
  */

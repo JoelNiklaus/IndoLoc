@@ -67,10 +67,12 @@ public abstract class AbstractTest {
         addClassifiers();
 
         // conduct one first experiment without any changes as a starting point for comparison
+
         System.out.println("===== Starting Experiment =====");
         PerformanceStatistics performanceStatistics = conductPerformanceExperiment(train, test, false);
         System.out.println(train.numInstances() + " training instances, " + test.numInstances() + " testing instances");
         performanceStatistics.printStatisticsCSV();
+
     }
 
     /**
@@ -107,8 +109,8 @@ public abstract class AbstractTest {
         //data = WekaHelper.removeDuplicates(data);
         // prepare data
         int seed = 0;       // the seed for randomizing the data
-        // randomize data
-        data = randomizeData(data, seed);
+        // randomize data (sometimes produces different accuracies with different seed!)
+        //data = randomizeData(data, seed);
 
         return data;
     }
@@ -135,7 +137,7 @@ public abstract class AbstractTest {
 
         // Logistic Regression
         Logistic logistic = new Logistic();
-        //classifiers.add(logistic);
+        classifiers.add(logistic);
 
         // Support Vector Machine
         Classifier libSVM = new LibSVM();
@@ -153,9 +155,9 @@ public abstract class AbstractTest {
         String[] iBkOptions = {"-K", "4", "-I"};
         IBk iBk = new IBk();
         iBk.setOptions(iBkOptions);
-        //classifiers.add(iBk);
+        classifiers.add(iBk);
 
-        // KStar (Auto Weka Suggestion 5 min) -> very slow in testing
+        // KStar (Auto Weka Suggestion 5 min) -> very slow in testing!!!
         String[] kStarOptions = {"-B", "59", "-M", "m"};
         KStar kStar = new KStar();
         kStar.setOptions(kStarOptions);
@@ -181,7 +183,7 @@ public abstract class AbstractTest {
 
         // J48 Tree
         J48 j48 = new J48();
-        //classifiers.add(j48);
+        classifiers.add(j48);
 
         // Random Forest (Auto Weka Suggestion 10 min)
         String[] randomForestOptions = {"-I", "10", "-K", "0", "-depth", "0"};
@@ -219,7 +221,7 @@ public abstract class AbstractTest {
 
         // Dagging
         Dagging dagging = new Dagging();
-        classifiers.add(dagging);
+        //classifiers.add(dagging);
 
         // Grading -> very bad
         Grading grading = new Grading();
@@ -246,7 +248,7 @@ public abstract class AbstractTest {
         mlp.setMomentum(0.2);
         mlp.setTrainingTime(50);
         mlp.setHiddenLayers("3");
-        //classifiers.add(mlp);
+        classifiers.add(mlp);
     }
 
     /**
@@ -395,7 +397,7 @@ public abstract class AbstractTest {
      */
     @NonNull
     protected PerformanceRating testClassifierPerformance(Classifier classifier, Instances train, Instances test) throws Exception {
-        final int NUMBER_OF_TEST_ROUNDS = 5;
+        final int NUMBER_OF_TEST_ROUNDS = 1;
 
         long trainTimeSum = 0;
         long testTimeSum = 0;
