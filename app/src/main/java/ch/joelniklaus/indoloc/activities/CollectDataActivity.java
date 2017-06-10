@@ -48,7 +48,6 @@ import weka.core.Instances;
 // TODO Run Code inspection tools
 // TODO add Log everywhere
 // TODO cleanup Code
-// TODO add Exception handling
 
 
 // TODO MORE COMMENTS INSIDE METHODS
@@ -66,7 +65,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
     //private TextView scanText, rss1Text, rss2Text, rss3Text, rss4Text, rss5Text, rss6Text, rss7Text, rss8Text, magneticYText, magneticZText;
     private TextView scanValue, rss1Value, rss2Value, rss3Value, rss4Value, rss5Value, rss6Value, rss7Value, rss8Value, magneticYValue, magneticZValue, predictNBValue, predictKNNValue, predictSVMValue, predictRFValue, predictBaggingValue, predictBoostingValue, predictMLPValue;
     private Button startButton, liveTestButton;
-    private EditText roomEditText;//, landmarkEditText;
+    private EditText roomEditText;
 
     private ArrayList<DataPoint> dataPoints = new ArrayList<>();
     private DataPoint currentDataPoint;
@@ -128,6 +127,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         if (Build.VERSION.SDK_INT > 22)
             locationHelper.registerListeners();
 
+        // loads the collected datapoints  last time again (backup if something fails)
         loadDataPoints();
     }
 
@@ -146,6 +146,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         if (Build.VERSION.SDK_INT > 22)
             locationHelper.unRegisterListeners();
 
+        // saves the collected datapoints (backup if something fails)
         saveDataPoints();
     }
 
@@ -169,8 +170,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         }
         */
 
-        //String landmark = landmarkEditText.getText().toString();
-
         String room = roomEditText.getText().toString();
         RSSData rssData = wifiHelper.readWifiData(getIntent());
         SensorData sensorData = sensorHelper.readSensorData(event);
@@ -178,15 +177,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         if (Build.VERSION.SDK_INT > 22)
             locationData = locationHelper.readLocationData();
 
-        /*
-        if (location != null)
-            alert("Longitude: " + location.getLongitude() + ", Latitude: " + location.getLatitude());
-        else {
-            alert("location is null");
-        }
-        */
-
-
+        // build the current datapoint with all the collected data
         currentDataPoint = new DataPoint(room, sensorData, rssData, locationData);
 
         // Only collect datapoint which is different from the previous one
@@ -195,6 +186,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             predict();
         }
 
+        // update the gui
         setTextViewValues();
     }
 
@@ -256,13 +248,10 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     alert("Location Permission granted!");
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
+                    // permission was granted, yay! Do the tasks related to this permission.
                 } else {
                     alert("Location Permission denied!");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied, boo! Disable the functionality that depends on this permission.
                 }
                 return;
             }
@@ -270,19 +259,15 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     alert("Storage Permission granted!");
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
+                    // permission was granted, yay! Do the tasks related to this permission.
                 } else {
                     alert("Storage Permission denied!");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied, boo! Disable the functionality that depends on this permission.
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
+            // other 'case' lines to check for other permissions this app might request
         }
     }
 
@@ -291,49 +276,16 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      */
     private void setUpTextViews() {
         // TODO automate label initialization
-
-        //scanText = (TextView) findViewById(R.id.txtScanV);
-        //scanText.setText("Scan Number");
         scanValue = (TextView) findViewById(R.id.txtScan);
-
-        //rss1Text = (TextView) findViewById(R.id.txtRSS1V);
-        //rss1Text.setText("My Passwort is Monkey");
         rss1Value = (TextView) findViewById(R.id.txtRSS1);
-
-        //rss2Text = (TextView) findViewById(R.id.txtRSS2V);
-        //rss2Text.setText("Chris Breezy");
         rss2Value = (TextView) findViewById(R.id.txtRSS2);
-
-        //rss3Text = (TextView) findViewById(R.id.txtRSS3V);
-        //rss3Text.setText("Core-Guest");
         rss3Value = (TextView) findViewById(R.id.txtRSS3);
-
-        //rss4Text = (TextView) findViewById(R.id.txtRSS4V);
-        //rss4Text.setText("ADCH-Guest");
         rss4Value = (TextView) findViewById(R.id.txtRSS4);
-
-        //rss5Text = (TextView) findViewById(R.id.txtRSS5V);
-        //rss5Text.setText("UPC503960977");
         rss5Value = (TextView) findViewById(R.id.txtRSS5);
-
-        //rss6Text = (TextView) findViewById(R.id.txtRSS6V);
-        //rss6Text.setText("UPC731B685");
         rss6Value = (TextView) findViewById(R.id.txtRSS6);
-
-        //rss7Text = (TextView) findViewById(R.id.txtRSS7V);
-        //rss7Text.setText("UPC2058401");
         rss7Value = (TextView) findViewById(R.id.txtRSS7);
-
-        //rss8Text = (TextView) findViewById(R.id.txtRSS8V);
-        //rss8Text.setText("UPC248577407");
         rss8Value = (TextView) findViewById(R.id.txtRSS8);
-
-        //magneticYText = (TextView) findViewById(R.id.txtmagneticYV);
-        //magneticYText.setText("MagneticY");
         magneticYValue = (TextView) findViewById(R.id.txtmagneticY);
-
-        //magneticZText = (TextView) findViewById(R.id.txtmagneticZV);
-        //magneticZText.setText("MagneticZ");
         magneticZValue = (TextView) findViewById(R.id.txtmagneticZ);
 
         // TODO initialize labels with simple names of classifiers (getClass().getSimpleName())
@@ -350,7 +302,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
         liveTestButton = (Button) findViewById(R.id.btnStartLiveTest);
 
         roomEditText = (EditText) findViewById(R.id.editRoom);
-        //landmarkEditText = (EditText) findViewById(R.id.editLandmark);
     }
 
     /**
@@ -420,6 +371,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      */
     public void startCollecting(View view) {
         String room = roomEditText.getText().toString();
+        // if the user has not entered a room yet
         if (room.trim().equals("")) {
             alert("Please enter a room.");
             return;
@@ -458,8 +410,9 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
      */
     public void predict() {
         if (predicting) {
-            Instances data = null;
+            Instances data;
             try {
+                // make a dataset with only one instance (the one at the moment)
                 data = WekaHelper.convertToSingleInstance(test, currentDataPoint);
             } catch (InvalidRoomException e) {
                 e.printStackTrace();
@@ -493,6 +446,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             if (label.equals("START LIVE TEST")) {
                 Instances train;
                 try {
+                    // load the train set
                     train = fileHelper.loadArffFromExternalStorage("train.arff");
                 } catch (CouldNotLoadArffException e) {
                     alert("Please collect and save a train set first!");
@@ -513,6 +467,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
                 for (Classifier classifier : classifiers) {
                     alert("Training " + classifier.getClass().getSimpleName() + " ...");
                     try {
+                        // trains the ml models
                         classifier.buildClassifier(train);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -538,55 +493,6 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             alert(e.getMessage());
         }
     }
-
-    /*
-    public void trainModels(View v) {
-        try {
-            Instances data = fileHelper.loadArffFromExternalStorage("train.arff");
-
-            test = wekaHelper.trainForView(data);
-
-            //fileHelper.saveArffToExternalStorage(test, "test.arff");
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert(e.getMessage());
-        }
-    }
-
-    public void testModel(View v) {
-        try {
-            Instances test = fileHelper.loadArffFromExternalStorage("test.arff");
-
-            wekaHelper.testForView(test);
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert(e.getMessage());
-        }
-    }
-
-    public void evaluateModel(View v) {
-        try {
-            Instances data = fileHelper.loadArffFromAssets("data.arff");
-
-            wekaHelper.evaluateForView(data);
-        } catch (Exception e) {
-            e.printStackTrace();
-            alert(e.getMessage());
-        }
-    }
-
-
-    public void readFile(View v) {
-        String filePath = "data.arff";
-        try {
-            Instances instances = fileHelper.loadArffFromInternalStorage(filePath);
-            Toast.makeText(this, instances.toString(), Toast.LENGTH_LONG).show();
-            Toast.makeText(this, instances.toSummaryString(), Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    */
 
     /**
      * Creates a train file (train.arff) from the collected data and saves it to the external storage.
@@ -625,6 +531,7 @@ public class CollectDataActivity extends AppCompatActivity implements SensorEven
             fileHelper.saveArffToExternalStorage(data, filePath);
 
             this.dataPoints = new ArrayList<>();
+            // resets the scan number for the next data collection.
             this.scanNumber = 0;
             alert("Saved data points to " + filePath);
         } catch (Exception e) {
