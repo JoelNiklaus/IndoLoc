@@ -1,7 +1,7 @@
 # IndoLoc
 Indoor Localization Using Machine Learning
 
- ## What is it?
+## What is it about?
 Nowadays, Smartphones can collect huge amounts of data in their surrounding environment, especially also with highly accurate sensors.
 The combination of the Received Signal Strengths of the surrounding Access Points and sensor data is assumed to be unique in every location.
 So it should be possible to use this information to accurately predict a smartphone's location. 
@@ -12,7 +12,7 @@ The final goal of this application is to be included into an indoor tracking app
 
 My thesis is available on https://github.com/JoelNiklaus/IndoLoc/thesis.
 
-This 
+This is the app which makes it possible.
 
 
 
@@ -20,16 +20,16 @@ This
 
   The documentation to my code is available as javadoc for most of the classes and methods directly in the code.
   Here there are some useful links for information about
-  Android: https://developers.google.com/android/
+  Android: https://developers.google.com/android/ and
   Weka: http://weka.wikispaces.com/, https://weka.wikispaces.com/Use+WEKA+in+your+Java+code, 
 
- ## Installation
+## Installation
 
-  Please see the file called INSTALL.
+Please see the file called INSTALL.
 
- ## Licensing
+## Licensing
 
-  Please see the file called LICENSE.
+Please see the file called LICENSE.
 
 ## Contact
 
