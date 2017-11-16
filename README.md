@@ -2,19 +2,9 @@
 Indoor Localization Using Machine Learning
 
 ## What is it about?
-Nowadays, Smartphones can collect huge amounts of data in their surrounding environment, especially also with highly accurate sensors.
-The combination of the Received Signal Strengths of the surrounding Access Points and sensor data is assumed to be unique in every location.
-So it should be possible to use this information to accurately predict a smartphone's location. 
-As the correlation between these values is extremely difficult to figure out, machine learning methods are used. 
-As part of this work there has been developed an android application which is able to distinguish different rooms on a floor and special landmarks within a room.
-This is accomplished using machine learning methods based on the java library Weka.
-The final goal of this application is to be included into an indoor tracking application in order to improve its accuracy.
+Nowadays, smartphones can collect huge amounts of data in their surrounding environment with the help of highly accurate sensors. Since the combination of the Received Signal Strengths of surrounding Access Points and sensor data is assumed to be unique in every location, it should be possible to use this information to accurately predict a smartphone’s location. As it is very difficult to derive the correlation between these values, we must use machine learning methods. As part of this project, we have developed an Android application that is able to distinguish between rooms on a floor and special landmarks within a room. This has been accomplished using machine learning methods based on the Java library Weka. Ultimately, we hope to include this application into an indoor tracking system in order to improve its accuracy.
 
-My thesis is available on https://github.com/JoelNiklaus/IndoLoc/thesis.pdf.
-
-This is the app which makes it possible.
-
-
+My thesis is available on https://github.com/JoelNiklaus/IndoLoc/Bachelor_Thesis_Joel_Niklaus.pdf.
 
 ## Documentation
 
