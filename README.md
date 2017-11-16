@@ -10,7 +10,7 @@ As part of this work there has been developed an android application which is ab
 This is accomplished using machine learning methods based on the java library Weka.
 The final goal of this application is to be included into an indoor tracking application in order to improve its accuracy.
 
-My thesis is available on https://github.com/JoelNiklaus/IndoLoc/thesis.
+My thesis is available on https://github.com/JoelNiklaus/IndoLoc/thesis.pdf.
 
 This is the app which makes it possible.
 
