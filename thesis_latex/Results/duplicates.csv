@@ -1,0 +1,25 @@
+Dataset thesis/exeter/landmark
+
+With Duplicates,,,,,Classifier Name,With Duplicates,Without Duplicates
+2522 training instances, 1269 testing instances,,,,MultilayerPerceptron,88.42,91.41
+Classifier Name, Accuracy, Test Time, Train Time,,Logistic,85.03,89.29
+MultilayerPerceptron,88.42,2,131,,SMO,84.87,89.9
+Logistic,85.03,10,287,,KStar,80.61,82.83
+SMO,84.87,15,94,,J48,80.54,75.45
+KStar,80.61,5339,0,,RandomForest,80.46,79.49
+J48,80.54,4,65,,NaiveBayes,78.33,82.12
+RandomForest,80.46,11,59,,IBk,75.1,79.49
+NaiveBayes,78.33,30,8,,,,
+IBk,75.1,544,1,,,,
+,,,,,,,
+Without Duplicates,,,,,,,
+1772 training instances, 990 testing instances,,,,,,
+Classifier Name, Accuracy, Test Time, Train Time,,,,
+MultilayerPerceptron,91.41,1,112,,,,
+SMO,89.9,2,33,,,,
+Logistic,89.29,2,96,,,,
+KStar,82.83,3672,0,,,,
+NaiveBayes,82.12,23,2,,,,
+IBk,79.49,244,0,,,,
+RandomForest,79.49,3,66,,,,
+J48,75.45,0,29,,,,

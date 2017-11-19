@@ -1,0 +1,35 @@
+% Chapter 1
+
+\chapter{Introduction to the Thesis Topic} % Main chapter title
+\label{Chapter1} % For referencing the chapter elsewhere, use \ref{Chapter1} 
+
+
+%----------------------------------------------------------------------------------------
+
+In this chapter we are giving a short introduction to the topic and the motivation.
+The goal of this project is to estimate the indoor locations of smart phone users on the room level accuracy using ML methods.
+
+\section{Indoor Localization}
+High localization accuracy within buildings would be very useful - in particular, large complex buildings like shopping malls, airports and hospitals would be well served by this feature. It would make orientation within these highly complicated structures much easier and would diminish the need for big plans scattered all around these buildings.
+
+However, walls, roofs, windows and doors of the buildings we live in greatly reduce the GPS signals carried by radio waves because it operates on a relatively high frequency of 1575.42 MHz (L1 signal) and 1227.6 MHz (L2 signal). This results in a severe loss of accuracy in GPS data inside buildings. (\cite{gps_signal})
+
+Different solutions already exist for indoor localization of mobile devices such as Pedestrian Dead Reckoning (PDR) and WiFi fingerprinting based methods. In PDR at every step/current location of the user his/her direction and therefore future location is predicted using inertial sensors. In WiFi fingerprinting, the Received Signal Strength (hereafter referred to as RSS) values of several access points in range are collected and stored together with the coordinates of the location. A new set of RSS values is then compared with the stored fingerprints and the location of the closest match is returned.  (\cite{survey})
+
+%----------------------------------------------------------------------------------------
+
+\section{WiFi and Sensor Data}
+\label{WiFiAndSensorData}
+In contrast to outdoors, building interiors normally have a large number of different WiFi access points constantly emitting signals. So why do we not use these to predict the user's location? By scanning the area around the device, we can measure the received signal strength of each of the nearby access points. And because there typically are so many of them, we presume that the list of all these values combined is unique at every distinct point in the building.
+
+Furthermore, we can strongly assume that these values are also constant over time as the access points are fixed in place and are constantly emitting signals of the same strength. Of course, there may be occasional changes, for instance if the network is remodelled, but we expect these changes to be infrequent. 
+
+%PROVIDE (MORE) JUSTIFICATION HERE
+In addition to the RSS values, we also suggest using the earth's magnetic and gravity field and collecting other data using the sensors available in modern smart phones.
+
+%----------------------------------------------------------------------------------------
+
+\section{Machine Learning}
+In this way, we can collect lots of labelled location data of the building. However, because each data point may contain a very large number of WiFi access point RSS values and magnetic field values, the data is very complex. Therefore, we propose using supervised Machine Learning (herafter referred to as ML) methods to make sense of this large amount of collected data. By training a classifier (supervised learning algorithm such as K-Nearest-Neighbour) on the collected labelled data, rules can be extracted. Feeding in the actual live data (RSS values, magnetic field values, etc.) of a moving user, the trained classifier can then predict the user's location. We propose using machine learning to solve this task because the data is highly complex, containing many different features, such as RSS values, magnetic field values and other sensor data. We expect the supervised learning algorithms to discover patterns in the data which can then be used to differentiate between different rooms for instance. (\cite{machine_learning_indoor_localization, lips})
+
+%----------------------------------------------------------------------------------------

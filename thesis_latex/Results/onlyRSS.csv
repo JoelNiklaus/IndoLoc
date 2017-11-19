@@ -1,0 +1,73 @@
+Dataset thesis/cds/room,,,
+,,,
+5 First Wifi Values,,,
+126 training instances, 78 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+NaiveBayes,82.05,108,69
+IBk,76.92,283,4
+KStar,75.64,863,2
+SMO,74.36,58,1301
+Logistic,73.08,20,1328
+RandomForest,71.79,31,316
+J48,64.1,20,289
+MultilayerPerceptron,42.31,9,1110
+,,,
+6 First Wifi Values,,,
+126 training instances, 78 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+NaiveBayes,79.49,201,164
+IBk,76.92,231,5
+KStar,75.64,1747,2
+RandomForest,71.79,39,453
+SMO,70.51,55,1556
+Logistic,66.67,24,2433
+J48,57.69,25,372
+MultilayerPerceptron,42.31,10,681
+,,,
+7 First Wifi Values,,,
+126 training instances, 78 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+KStar,83.33,1095,2
+SMO,82.05,63,1758
+IBk,82.05,262,7
+NaiveBayes,82.05,150,49
+RandomForest,79.49,46,483
+Logistic,73.08,21,1758
+J48,64.1,59,296
+MultilayerPerceptron,43.59,11,883
+,,,
+8 First Wifi Values,,,
+126 training instances, 78 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+NaiveBayes,80.77,106,42
+SMO,79.49,45,1694
+IBk,79.49,230,4
+KStar,78.21,1139,1
+RandomForest,75.64,20,315
+Logistic,66.67,22,1504
+J48,64.1,25,320
+MultilayerPerceptron,48.72,10,551
+,,,
+9 First Wifi Values,,,
+126 training instances, 78 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+NaiveBayes,84.62,83,55
+IBk,82.05,294,4
+KStar,79.49,1285,2
+SMO,78.21,62,1295
+RandomForest,73.08,38,313
+Logistic,71.79,23,1475
+J48,64.1,22,279
+MultilayerPerceptron,46.15,7,755
+,,,
+All 10 Wifi Values,,,
+126 training instances, 78 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+NaiveBayes,79.49,173,44
+SMO,76.92,63,1665
+IBk,75.64,297,4
+RandomForest,75.64,34,359
+KStar,74.36,1633,2
+Logistic,69.23,28,1356
+J48,64.1,23,555
+MultilayerPerceptron,44.87,12,771

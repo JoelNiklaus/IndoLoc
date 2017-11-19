@@ -1,0 +1,43 @@
+Dataset thesis/bern/room,,,
+Not Rounded,,,
+12022 training instances, 7152 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+SMO,86.98,9,92
+IBk,83.71,1103,0
+NaiveBayes,79.99,27,6
+MultilayerPerceptron,79.81,1,137
+Logistic,73.21,17,1539
+RandomForest,72.25,6,35
+J48,71.27,2,38
+Rounded to one tenth,,,
+11892 training instances, 7066 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+SMO,86.41,1,65
+IBk,83.71,1025,0
+NaiveBayes,80.05,19,1
+MultilayerPerceptron,78.09,1,127
+RandomForest,74.41,1,11
+Logistic,73.41,7,1653
+J48,71.3,0,5
+,,,
+Rounded to one fifth,,,
+11459 training instances, 6829 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+SMO,86.89,1,74
+IBk,83.94,1339,0
+NaiveBayes,80.45,21,1
+RandomForest,77.73,0,12
+Logistic,74.32,12,1468
+MultilayerPerceptron,73.89,1,121
+J48,70.89,0,9
+,,,
+Rounded to integer,,,
+5997 training instances, 3780 testing instances,,
+Classifier Name, Accuracy, Test Time, Train Time
+SMO,85.93,2,75
+IBk,83.92,948,0
+RandomForest,82.67,1,15
+NaiveBayes,82.12,27,1
+Logistic,76.75,14,1408
+MultilayerPerceptron,71.4,1,156
+J48,67.96,0,24

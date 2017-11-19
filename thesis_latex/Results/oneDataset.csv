@@ -1,0 +1,22 @@
+Dataset thesis/exeter/landmark,,,,,,,,
+Original Train and Test,,,,,,,,
+1772 training instances,990 testing instances,,,,,Classifier Name,Original Train and Test,Merged and Split again
+Classifier Name, Accuracy, Test Time, Train Time,,,MultilayerPerceptron,91.41,88.9
+MultilayerPerceptron,91.41,5,282,,,SMO,89.9,92.88
+SMO,89.9,10,115,,,Logistic,89.29,92.88
+Logistic,89.29,8,224,,,NaiveBayes,82.12,91.19
+NaiveBayes,82.12,34,11,,,IBk,79.49,98.67
+IBk,79.49,283,0,,,RandomForest,79.49,99.16
+RandomForest,79.49,13,75,,,J48,75.45,97.59
+J48,75.45,4,79,,,,,
+,,,,,,,,
+,,,,,,,,
+1933 training instances, 829 testing instances,,,,,,,
+Classifier Name, Accuracy, Test Time, Train Time,,,,,
+RandomForest,99.16,2,32,,,,,
+IBk,98.67,124,0,,,,,
+J48,97.59,0,19,,,,,
+Logistic,92.88,11,143,,,,,
+SMO,92.88,3,29,,,,,
+NaiveBayes,91.19,20,3,,,,,
+MultilayerPerceptron,88.9,1,93,,,,,

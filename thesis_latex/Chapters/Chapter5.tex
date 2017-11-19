@@ -1,0 +1,57 @@
+% Chapter 5
+
+\chapter{Conclusions and Future Directions} % Main chapter title
+\label{Chapter5} % For referencing the chapter elsewhere, use \ref{Chapter5} 
+
+
+%----------------------------------------------------------------------------------------
+
+In this chapter we conclude the main contributions and findings of this thesis and over the entire project and give ideas for future work in this area. 
+
+
+\section{Conclusion}
+In this thesis we first developed an Android app, which is able to collect data of the phone's surroundings. This data comprises of the RSS values of the nearby WiFi access points, of information about the earth's magnetic and gravity field and of sensor information, namely pressure, ambient temperature, relative humidity and light. The application is further able to train several ML methods to distinguish between different rooms and landmarks (specified areas within rooms).
+Second, we collected data in order to analyze and then optimize the performance of the chosen ML algorithms.
+
+For room recognition in the dataset taken in the INF building in Bern (see Section \ref{sec:BernDataset}), distinguishing between 9 different rooms we achieved the following results:
+A Multilayer Perceptron, the best base classifier, reached an accuracy of 92.08\% (see evaluation \ref{ver:ConfusionMatrixMultilayerPerceptron}). Combining several base learners using Majority Vote (namely three MultilayerPerceptrons, a ClasssificationViaRegression, a RandomSubspace, a LogitBoost, a RandomForest,  a Logistic Regression,  a SMO and a Naive Bayes classifier) we could reach a maximal accuracy of even 94.0399 \% (see evaluation \ref{ver:ConfusionMatrixMajorityVote}). For landmark recognition in the dataset taken in student accommodation in Exeter (see Section \ref{sec:ExeterDataset}) distinguishing between 5 different landmarks we achieved 91.41\% accuracy using a Multilayer Perceptron. 
+
+Because of these very high accuracies in both room and landmark recognition we are confident that this approach using machine learning can improve the ITS. 
+
+%----------------------------------------------------------------------------------------
+
+\section{Future Directions}
+
+\subsection{Device Independence}
+In the experiments done in the scope of this project, we collected the training and the testing data sets on the same phone. Different hardware measuring the environment differently could make the accuracy deteriorate vastly. This could be tested with various current smart phones.
+
+One solution for this problem could be data normalization. For instance, we would not store the RSS values directly, but compute the difference to a representative starting point and normalize the result to a value between 0 and 1. 
+
+\subsection{Only Predict if Sure}
+An idea to improve the security of a prediction would be to only forward a prediction from Indoloc to the ITS if the Indoloc system is sure (probability greater than some defined threshold). In this way we could ensure that almost no wrong predictions are made which could confuse the ITS. But of course, it would also come with less predictions over all. And it still has to be tested if false predictions are (almost) only made when the Indoloc system is not sure.
+
+
+\subsection{Further Optimization of HyperParameters}
+As already discussed, it is very difficult to find optimal hyperparameters for the ML methods. Further testing could be done to optimize these.
+
+
+\subsection{Longterm Stability}
+As described in Section \ref{WiFiAndSensorData}, no test about longterm stability has been done yet. So it has to be tested if a model trained with data collected at point A is still performing well enough a month, a year or even more later. 
+
+\subsection{Light}
+\label{light}
+As described in the results of Section \ref{AdditionalFeatures}, the light feature improves the accuracy for most algorithms. But in the night, or if it is a cloudy day, or in a different season or under some other different condition, it probably decreases the accuracy. 
+
+A possible solution for this would be the following: we only consider the relative light difference between the different rooms or landmarks respectively. \\
+But of course if we detect that the proportionalities of the light strengths in the rooms or landmarks respectively are not similar under some circumstances it does not make sense to include the light feature at all!
+
+
+\subsection{Bluetooth}
+By using specially installed Bluetooth beacons at the borders of the room (predominantly doors) we hope to further improve the accuracy of the ITS because that is where Indoloc has the greatest problems identifying the correct room. 
+
+\subsection{RSS Values}
+As described in Section \ref{sec:RSS} we collected the RSS values of all the nearby access points. A value lower than -80 is very weak and may suggest that the access point is very far away or there are many or big obstacles between the access point and the collecting device. This means that the access point is of little or no use to the system. Therefore, we could remove access points with values smaller than -80 from the list in a future version.
+
+
+
+%----------------------------------------------------------------------------------------
